@@ -9,6 +9,8 @@ ULSAnimInstance::ULSAnimInstance()
 {
     CurrentPawnSpeed = 0.0f;
     IsInAir = false;
+
+	bIsDead = false;
 }
 
 void ULSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -16,7 +18,9 @@ void ULSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Super::NativeUpdateAnimation(DeltaSeconds);
 
     APawn* Pawn = TryGetPawnOwner();
-    if (::IsValid(Pawn))
+    if (!::IsValid(Pawn)) return;
+
+    if (!bIsDead)
     {
         CurrentPawnSpeed = Pawn->GetVelocity().Size();
 

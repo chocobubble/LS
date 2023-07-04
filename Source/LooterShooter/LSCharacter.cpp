@@ -7,6 +7,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DrawDebugHelpers.h"
+
+#include "Engine/DamageEvents.h"
+
 //#include "Animation/AnimInstance.h"
 
 
@@ -48,7 +52,7 @@ ALSCharacter::ALSCharacter()
 	// SpringArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
 
 	// max jump height
-	GetCharacterMovement()->JumpZVelocity = 800.0f;
+	GetCharacterMovement()->JumpZVelocity = 450.0f;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
 	if ( SKM_QUINN.Succeeded() )
@@ -59,6 +63,9 @@ ALSCharacter::ALSCharacter()
 	{
 		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
 	}
+
+	
+
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -97,6 +104,16 @@ ALSCharacter::ALSCharacter()
 	{
 		LookAction = LS_LOOK.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_SHOOT(TEXT("/Game/LS/Input/Actions/LS_SHOOT.LS_SHOOT"));
+	if ( LS_SHOOT.Succeeded())
+	{
+		ShootAction = LS_SHOOT.Object;
+	}
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
+
+	AttackRange = 1000.0f;
 }
 
 // Called when the game starts or when spawned
@@ -120,6 +137,20 @@ void ALSCharacter::BeginPlay()
 	}
 	Subsystem->AddMappingContext(InputMapping, 0);
 */
+
+	FName WeaponSocket(TEXT("weapon_r_socket"));
+	ALSWeapon* CurWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != CurWeapon)
+	{
+		CurWeapon->AttachToComponent(
+			GetMesh(), 
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+			WeaponSocket);
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
+	}
 }
 
 // Called every frame
@@ -162,6 +193,7 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALSCharacter::Move);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ALSCharacter::Jump);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALSCharacter::Look);
+	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
 
 
 }
@@ -207,14 +239,87 @@ void ALSCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ALSCharacter::Shoot(const FInputActionValue& Value)
+{
+	AttackCheck();
+	LSLOG(Warning, TEXT("Shoot"));
+}
+
 void ALSCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	LSLOG_S(Warning);
+
+	LSAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+	LSCHECK(nullptr != LSAnim);
+
+	LSAnim->OnAttackHitCheck.AddUObject(this, &ALSCharacter::AttackCheck);
 }
 
 void ALSCharacter::PossessedBy(AController * NewController)
 {
 	LSLOG_S(Warning);
 	Super::PossessedBy(NewController);
+}
+
+void ALSCharacter::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		Params
+	);
+
+#if ENABLE_DRAW_DEBUG
+
+	// #include "DrawDebugHelpers.h"
+
+	DrawDebugLine(
+		GetWorld(),
+		GetActorLocation() + GetActorForwardVector(),
+		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		bResult ? FColor::Green : FColor::Red,
+		true,
+		1.0f,
+		0,
+		1.f
+	);
+
+#endif
+
+	if (bResult)
+	{
+		if (HitResult.HasValidHitObjectHandle())
+		{
+			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+
+			// #include "Engine/DamageEvents.h"
+			FDamageEvent DamageEvent;
+			HitResult.GetActor()->TakeDamage(50.0f, DamageEvent, GetController(), this);
+		}
+		else
+		{
+			LSLOG(Warning, TEXT("Actor nullptr"));
+		}
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("Didn't hit"));
+	}
+}
+
+float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (FinalDamage > 0.0f)
+	{
+		LSAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+	}
+	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
+	return FinalDamage;
 }

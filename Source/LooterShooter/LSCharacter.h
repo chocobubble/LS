@@ -9,7 +9,12 @@
 #include "InputActionValue.h"
 #include "Components/CapsuleComponent.h"
 
+#include "LSAnimInstance.h"
+
+#include "LSWeapon.h"
+
 #include "LSCharacter.generated.h"
+
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -36,6 +41,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ShootAction;
+
+	UPROPERTY()
+	class ULSAnimInstance* LSAnim;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	float AttackRange;
+
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,6 +62,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	USkeletalMeshComponent* RifleWeapon;
+
 	// #include "GameFramework/SpringArmComponent.h"
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
@@ -54,10 +73,14 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 
 
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Shoot(const FInputActionValue& Value);
+
+	void AttackCheck();
 };

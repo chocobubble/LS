@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "LSAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
+
 /**
  * 
  */
@@ -19,6 +21,10 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	void SetDeadAnim() { bIsDead = true; }
+
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))
 	float CurrentPawnSpeed = 0.0f;
@@ -26,4 +32,7 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	bool IsInAir = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	bool bIsDead;
 };
