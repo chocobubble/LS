@@ -28,7 +28,8 @@
 			"complex": "cpp",
 			"functional": "cpp",
 			"xtr1common": "cpp",
-			"xutility": "cpp"
+			"xutility": "cpp",
+			"xiosbase": "cpp"
 		}
 	},
 	"extensions": {

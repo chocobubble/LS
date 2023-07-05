@@ -11,6 +11,10 @@
 
 #include "Engine/DamageEvents.h"
 
+#include "LSWeapon.h"
+
+#include "LSCharacterStatComponent.h"
+
 //#include "Animation/AnimInstance.h"
 
 
@@ -34,6 +38,7 @@ ALSCharacter::ALSCharacter()
  
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
 
 	// #include "Components/CapsuleComponent.h"
@@ -114,6 +119,8 @@ ALSCharacter::ALSCharacter()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
 	AttackRange = 1000.0f;
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -138,6 +145,8 @@ void ALSCharacter::BeginPlay()
 	Subsystem->AddMappingContext(InputMapping, 0);
 */
 
+/*
+
 	FName WeaponSocket(TEXT("weapon_r_socket"));
 	ALSWeapon* CurWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 	if (nullptr != CurWeapon)
@@ -151,6 +160,7 @@ void ALSCharacter::BeginPlay()
 	{
 		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
 	}
+*/
 }
 
 // Called every frame
@@ -254,6 +264,12 @@ void ALSCharacter::PostInitializeComponents()
 	LSCHECK(nullptr != LSAnim);
 
 	LSAnim->OnAttackHitCheck.AddUObject(this, &ALSCharacter::AttackCheck);
+
+	CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
+		LSLOG(Warning, TEXT("OnHPIsZero"));
+		LSAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+	});
 }
 
 void ALSCharacter::PossessedBy(AController * NewController)
@@ -299,7 +315,7 @@ void ALSCharacter::AttackCheck()
 
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(50.0f, DamageEvent, GetController(), this);
+			HitResult.GetActor()->TakeDamage(CharacterStat->GetAttack(), DamageEvent, GetController(), this);
 		}
 		else
 		{
@@ -315,11 +331,33 @@ void ALSCharacter::AttackCheck()
 float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if (FinalDamage > 0.0f)
-	{
-		LSAnim->SetDeadAnim();
-		SetActorEnableCollision(false);
-	}
 	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
+
+	CharacterStat->SetDamage(FinalDamage);
+
 	return FinalDamage;
+}
+
+bool ALSCharacter::CanSetWeapon()
+{
+	return (nullptr == CurrentWeapon);
+}
+
+void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
+{
+	LSCHECK(nullptr != NewWeapon && nullptr == CurrentWeapon);
+	FName WeaponSocket(TEXT("weapon_r_socket"));
+	if (nullptr != NewWeapon)
+	{
+		CurrentWeapon->AttachToComponent(
+			GetMesh(), 
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+			WeaponSocket);
+		NewWeapon->SetOwner(this);
+		CurrentWeapon = NewWeapon;
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
+	}
 }

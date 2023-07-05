@@ -11,7 +11,7 @@
 
 #include "LSAnimInstance.h"
 
-#include "LSWeapon.h"
+//#include "LSWeapon.h"
 
 #include "LSCharacter.generated.h"
 
@@ -50,6 +50,7 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
 
+
 	
 
 public:	
@@ -75,6 +76,14 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 
+	bool CanSetWeapon();
+	void SetWeapon(class ALSWeapon* NewWeapon);
+
+	UPROPERTY(VisibleAnywhere, Category=Weapon)
+	class ALSWeapon* CurrentWeapon;
+
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	class ULSCharacterStatComponent* CharacterStat;
 
 private:
 	void JumpAct(const FInputActionValue& Value);
