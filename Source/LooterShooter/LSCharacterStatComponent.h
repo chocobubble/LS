@@ -7,6 +7,7 @@
 #include "LSCharacterStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,12 +31,14 @@ public:
 	void SetDamage(float NewDamage);
 	float GetAttack();
 
-	FOnHPIsZeroDelegate OnHPIsZero;
 
-	//void SetHP(float NewHP);
-	//float GetHPRatio();
+	void SetHP(float NewHP);
+	float GetHPRatio();
 
 	//int32 GetDropExp() const;
+	
+	FOnHPIsZeroDelegate OnHPIsZero;
+	FOnHPChangedDelegate OnHPChanged;
 
 	
 

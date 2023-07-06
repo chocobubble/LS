@@ -74,6 +74,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* HPBarWidget;
+
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 
 	bool CanSetWeapon();

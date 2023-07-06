@@ -15,6 +15,11 @@
 
 #include "LSCharacterStatComponent.h"
 
+#include "Components/WidgetComponent.h"
+
+#include "LSCharacterWidget.h"
+
+#include "LSAIController.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -40,10 +45,15 @@ ALSCharacter::ALSCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
+	//#include "Components/WidgetComponent.h"
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
+
 
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
+
+	HPBarWidget->SetupAttachment(GetMesh());
 
 
 	GetMesh()->SetRelativeLocationAndRotation(
@@ -120,7 +130,17 @@ ALSCharacter::ALSCharacter()
 
 	AttackRange = 1000.0f;
 
-	
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+	}
+
+	AIControllerClass = ALSAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
@@ -161,6 +181,11 @@ void ALSCharacter::BeginPlay()
 		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
 	}
 */
+	ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != CharacterWidget)
+	{
+		CharacterWidget->BindCharacterStat(CharacterStat);
+	}
 }
 
 // Called every frame
@@ -347,9 +372,18 @@ void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
 {
 	LSCHECK(nullptr != NewWeapon && nullptr == CurrentWeapon);
 	FName WeaponSocket(TEXT("weapon_r_socket"));
+	if(nullptr == RootComponent)
+	{
+		LSLOG(Warning, TEXT("No RootComponent"));
+	}
+	if(nullptr == GetMesh())
+	{
+		LSLOG(Warning, TEXT("no mesh"));
+		return;
+	}
 	if (nullptr != NewWeapon)
 	{
-		CurrentWeapon->AttachToComponent(
+		NewWeapon->AttachToComponent(
 			GetMesh(), 
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
 			WeaponSocket);

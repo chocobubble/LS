@@ -77,7 +77,7 @@ void ULSCharacterStatComponent::SetDamage(float NewDamage)
 	}
 	
 
-	//SetHP(FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP));
+	SetHP(FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP));
 }
 
 float ULSCharacterStatComponent::GetAttack()
@@ -86,7 +86,7 @@ float ULSCharacterStatComponent::GetAttack()
 	return CurrentStatData->Attack;
 }
 
-/*
+
 void ULSCharacterStatComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
@@ -105,7 +105,7 @@ float ULSCharacterStatComponent::GetHPRatio()
 
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
-
+/*
 int32 ULSCharacterStatComponent::GetDropExp() const
 {
 	return CurrentStatData->DropExp;
