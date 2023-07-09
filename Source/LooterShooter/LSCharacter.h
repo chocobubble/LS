@@ -15,6 +15,8 @@
 
 #include "LSCharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
+
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -43,6 +45,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ShootAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	class UInputAction* MeleeAction;
 
 	UPROPERTY()
 	class ULSAnimInstance* LSAnim;
@@ -88,11 +93,22 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	class ULSCharacterStatComponent* CharacterStat;
 
+	void Attack();
+
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	FOnAttackEndDelegate OnAttackEnd;
+
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
+	void Melee(const FInputActionValue& Value);
 
 	void AttackCheck();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	bool bIsAttacking;
 };

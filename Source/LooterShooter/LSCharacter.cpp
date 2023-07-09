@@ -20,6 +20,7 @@
 #include "LSCharacterWidget.h"
 
 #include "LSAIController.h"
+#include "LSAnimInstance.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -126,6 +127,12 @@ ALSCharacter::ALSCharacter()
 		ShootAction = LS_SHOOT.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_MELEE(TEXT("/Game/LS/Input/Actions/LS_MELEE.LS_MELEE"));
+	if ( LS_MELEE.Succeeded())
+	{
+		MeleeAction = LS_MELEE.Object;
+	}
+
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
 	AttackRange = 1000.0f;
@@ -141,6 +148,8 @@ ALSCharacter::ALSCharacter()
 
 	AIControllerClass = ALSAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	bIsAttacking = false;
 }
 
 // Called when the game starts or when spawned
@@ -229,6 +238,7 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ALSCharacter::Jump);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALSCharacter::Look);
 	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
+	EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &ALSCharacter::Melee);
 
 
 }
@@ -295,6 +305,10 @@ void ALSCharacter::PostInitializeComponents()
 		LSAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 	});
+
+	ULSAnimInstance* AnimInstance = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+	LSCHECK(nullptr != AnimInstance);
+	AnimInstance->OnMontageEnded.AddDynamic(this, &ALSCharacter::OnAttackMontageEnded);
 }
 
 void ALSCharacter::PossessedBy(AController * NewController)
@@ -394,4 +408,27 @@ void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
 	{
 		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
 	}
+}
+
+void ALSCharacter::Melee(const FInputActionValue& Value)
+{
+	if (bIsAttacking) return;
+	LSAnim->PlayAttackMontage();
+	bIsAttacking = true;
+}
+
+void ALSCharacter::Attack()
+{
+	LSLOG(Warning, TEXT("Attack"));
+	if (bIsAttacking) return;
+	LSAnim->PlayAttackMontage();
+	bIsAttacking = true;
+}
+
+void ALSCharacter::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
+{
+	LSCHECK(bIsAttacking);
+	bIsAttacking = false;
+
+	OnAttackEnd.Broadcast();
 }

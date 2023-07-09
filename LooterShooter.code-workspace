@@ -29,7 +29,8 @@
 			"functional": "cpp",
 			"xtr1common": "cpp",
 			"xutility": "cpp",
-			"xiosbase": "cpp"
+			"xiosbase": "cpp",
+			"random": "cpp"
 		}
 	},
 	"extensions": {
