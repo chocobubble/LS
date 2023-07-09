@@ -16,29 +16,33 @@ class LOOTERSHOOTER_API ALSAIController : public AAIController
 
 public:
 	ALSAIController();
+
 	virtual void OnPossess(APawn* InPawn) override;
-	 virtual void OnUnPossess() override;
 
 /*
+	virtual void OnUnPossess() override;
+*/
+
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
-
+/*
 	void RunAI();
 	void StopAI();
 */
 private:
 
+/*
 	void OnRepeatTimer();
 
 	FTimerHandle RepeatTimerHandle;
 	float RepeatInterval;
+*/
 
-/*
 	UPROPERTY()
 	class UBehaviorTree* BTAsset;
 
 	UPROPERTY()
 	class UBlackboardData* BBAsset;
-*/
+
 };

@@ -16,6 +16,8 @@ public class LooterShooter : ModuleRules
 			"HeadMountedDisplay",
 			"EnhancedInput",
 			"UMG",
-			"NavigationSystem" });
+			"NavigationSystem",
+			"AIModule",
+			"GameplayTasks" });
 	}
 }
