@@ -55,6 +55,9 @@ private:
 
 	void OnNPCSpawn();
 
+	UFUNCTION()
+	void OnKeyNPCDestroyed(AActor* DestroyedActor);
+
 	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
 	float EnemySpawnTime;
 

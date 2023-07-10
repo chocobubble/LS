@@ -5,13 +5,14 @@
 #include "LooterShooter.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
+#include "Engine/StreamableManager.h"
 
 #include "LSGameInstance.generated.h"
 
 USTRUCT(BlueprintType)
 struct FLSCharacterData : public FTableRowBase
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 public:
 	FLSCharacterData() : Level(1), MaxHP(100.0f), Attack(10.0f), DropExp(10), NextExp(30) {}
@@ -46,6 +47,8 @@ public:
 
 	virtual void Init() override;
 	FLSCharacterData* GetLSCharacterData(int32 Level);
+
+	FStreamableManager StreamableManager;
 
 private:
 	UPROPERTY()

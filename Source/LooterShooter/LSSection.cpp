@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "LSCharacter.h"
 #include "LSItemBox.h"
+#include "LSPlayerController.h"
+#include "LSGameMode.h"
 
 // Sets default values
 ALSSection::ALSSection()
@@ -103,8 +105,31 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent * OverlappedComponent
 
 void ALSSection::OnNPCSpawn()
 {
+/*
 	GetWorld()->SpawnActor<ALSCharacter>(GetActorLocation() + FVector::UpVector * 80.0f,
 										 FRotator::ZeroRotator);
+*/
+	GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
+	auto KeyNPC = GetWorld()->SpawnActor<ALSCharacter>(GetActorLocation() + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
+	if (nullptr != KeyNPC)
+	{
+		KeyNPC->OnDestroyed.AddDynamic(this, &ALSSection::OnKeyNPCDestroyed);
+	}
+}
+
+void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
+{
+	auto LSCharacter = Cast<ALSCharacter>(DestroyedActor);
+	LSCHECK(nullptr != LSCharacter);
+
+	auto LSPlayerController = Cast<ALSPlayerController>(LSCharacter->LastHitBy);
+	LSCHECK(nullptr != LSPlayerController);
+
+	auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
+	LSCHECK(nullptr != LSGameMode);
+	LSGameMode->AddScore(LSPlayerController);
+
+	SetState(ESectionState::COMPLETE);
 }
 // Called every frame
 /*

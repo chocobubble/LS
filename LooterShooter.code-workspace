@@ -10,28 +10,7 @@
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off",
-		"files.associations": {
-			"*.rh": "cpp",
-			"*.ipp": "cpp",
-			"__bit_reference": "cpp",
-			"bitset": "cpp",
-			"deque": "cpp",
-			"__memory": "cpp",
-			"limits": "cpp",
-			"ratio": "cpp",
-			"scoped_allocator": "cpp",
-			"tuple": "cpp",
-			"type_traits": "cpp",
-			"vector": "cpp",
-			"algorithm": "cpp",
-			"complex": "cpp",
-			"functional": "cpp",
-			"xtr1common": "cpp",
-			"xutility": "cpp",
-			"xiosbase": "cpp",
-			"random": "cpp"
-		}
+		"typescript.tsc.autoDetect": "off"
 	},
 	"extensions": {
 		"recommendations": [

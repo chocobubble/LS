@@ -21,6 +21,10 @@
 
 #include "LSAIController.h"
 #include "LSAnimInstance.h"
+#include "LSPlayerController.h"
+#include "LSPlayerState.h"
+#include "LSGameInstance.h"
+#include "LSHUDWidget.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -150,6 +154,12 @@ ALSCharacter::ALSCharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	bIsAttacking = false;
+
+	SetActorHiddenInGame(true);
+	HPBarWidget->SetHiddenInGame(true);
+	SetCanBeDamaged(false);
+
+	DeadTimer = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -190,11 +200,144 @@ void ALSCharacter::BeginPlay()
 		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
 	}
 */
+/*
 	ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != CharacterWidget)
 	{
 		CharacterWidget->BindCharacterStat(CharacterStat);
 	}
+*/
+	bIsPlayer = IsPlayerControlled();
+	if (bIsPlayer)
+	{
+		LSPlayerController = Cast<ALSPlayerController>(GetController());
+		LSCHECK(nullptr != LSPlayerController);
+	}
+	else
+	{
+		LSAIController = Cast<ALSAIController>(GetController());
+		LSCHECK(nullptr != LSAIController);
+	}
+
+	// auto DefaultSetting = GetDefault<ULSCharacterSetting>();
+
+	if (bIsPlayer)
+	{
+		//AssetIndex = 4;
+		auto LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
+		LSCHECK(nullptr != LSPlayerState);
+		//AssetIndex = LSPlayerState->GetCharacterIndex();
+	}
+	else
+	{
+		//AssetIndex = FMath::RandRange(0, DefaultSetting->CharacterAssets.Num() - 1);
+	}
+
+	//CharacterAssetToLoad = DefaultSetting->CharacterAssets[AssetIndex];
+	CharacterAssetToLoad.SetPath(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn'"));
+	auto LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
+	LSCHECK(nullptr != LSGameInstance);
+	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSCharacter::OnAssetLoadCompleted));
+	SetCharacterState(ECharacterState::LOADING);
+}
+
+void ALSCharacter::SetCharacterState(ECharacterState NewState)
+{
+	LSCHECK(CurrentState != NewState);
+	CurrentState = NewState;
+
+	switch (CurrentState)
+	{
+	case ECharacterState::LOADING:
+	{
+		if(bIsPlayer)
+		{
+			DisableInput(LSPlayerController);
+
+			LSPlayerController->GetHUDWidget()->BindCharacterStat(CharacterStat);
+
+			auto LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
+			LSCHECK(nullptr != LSPlayerState);
+			CharacterStat->SetNewLevel(LSPlayerState->GetCharacterLevel());
+		}
+		else
+		{
+			auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
+			LSCHECK(nullptr != LSGameMode);
+			int32 TargetLevel = FMath::CeilToInt(5.0f);//(((float)LSGameMode->GetScore() * 0.8f));
+			int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
+			LSLOG(Warning, TEXT("New NPC Level : %d"), FinalLevel);
+			CharacterStat->SetNewLevel(FinalLevel);
+		}
+
+		SetActorHiddenInGame(true);
+		HPBarWidget->SetHiddenInGame(true);
+		SetCanBeDamaged(false);
+		break;
+	}
+	case ECharacterState::READY:
+	{
+		SetActorHiddenInGame(false);
+		HPBarWidget->SetHiddenInGame(false);
+		SetCanBeDamaged(true);
+
+		CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
+			SetCharacterState(ECharacterState::DEAD);
+		});
+		
+		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+		LSCHECK(nullptr != CharacterWidget);
+		CharacterWidget->BindCharacterStat(CharacterStat);
+
+		if (bIsPlayer)
+		{
+			//SetControlMode(EControlMode::DIABLO);
+			GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+			EnableInput(LSPlayerController);
+		}
+		else
+		{
+			//SetControlMode(EControlMode::NPC);
+			GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+			LSAIController->RunAI();
+		}
+		break;
+	}
+	case ECharacterState::DEAD:
+	{
+		SetActorEnableCollision(false);
+		GetMesh()->SetHiddenInGame(false);
+		HPBarWidget->SetHiddenInGame(true);
+		LSAnim->SetDeadAnim();
+		SetCanBeDamaged(false);
+		
+		if(bIsPlayer)
+		{
+			DisableInput(LSPlayerController);
+		}
+		else
+		{
+			LSAIController->StopAI();
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+			if (bIsPlayer)
+			{
+				//LSPlayerController->RestartLevel();
+				//LSPlayerController->ShowResultUI();
+			}
+			else
+			{
+				Destroy();
+			}
+		}), DeadTimer, false);
+	}
+	}
+}
+
+ECharacterState ALSCharacter::GetCharacterState() const
+{
+	return CurrentState;
 }
 
 // Called every frame
@@ -374,6 +517,16 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 	CharacterStat->SetDamage(FinalDamage);
 
+	if (CurrentState == ECharacterState::DEAD)
+	{
+		if (EventInstigator->IsPlayerController())
+		{
+			ALSPlayerController* LSPC = Cast<ALSPlayerController>(EventInstigator);
+			LSCHECK(nullptr != LSPC, 0.0f);
+			LSPC->NPCKill(this);
+		}
+	}
+
 	return FinalDamage;
 }
 
@@ -431,4 +584,24 @@ void ALSCharacter::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupte
 	bIsAttacking = false;
 
 	OnAttackEnd.Broadcast();
+}
+
+void ALSCharacter::OnAssetLoadCompleted()
+{
+	USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
+	AssetStreamingHandle.Reset();
+/*
+	if(nullptr != AssetLoaded)
+	{
+		GetMesh()->SetSkeletalMesh(AssetLoaded);
+	}
+*/
+	LSCHECK(nullptr != AssetLoaded);
+	GetMesh()->SetSkeletalMesh(AssetLoaded);
+	SetCharacterState(ECharacterState::READY);
+}
+
+int32 ALSCharacter::GetExp() const
+{
+	return CharacterStat->GetDropExp();
 }

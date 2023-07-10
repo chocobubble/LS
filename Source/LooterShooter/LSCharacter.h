@@ -13,10 +13,15 @@
 
 //#include "LSWeapon.h"
 
+
 #include "LSCharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 
+
+class ALSAIController;
+class ALSPlayerController;
+class ULSHUDWidget;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -26,6 +31,11 @@ class LOOTERSHOOTER_API ALSCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ALSCharacter();
+
+	void SetCharacterState(ECharacterState NewState);
+	ECharacterState GetCharacterState() const;
+
+	int32 GetExp() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -109,6 +119,28 @@ private:
 
 	void AttackCheck();
 
+	void OnAssetLoadCompleted();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	bool bIsAttacking;
+
+	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
+	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	ECharacterState CurrentState;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsPlayer;
+
+	UPROPERTY()
+	ALSAIController* LSAIController;
+
+	UPROPERTY()
+	ALSPlayerController* LSPlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float DeadTimer;
+
+	FTimerHandle DeadTimerHandle = { };
 };

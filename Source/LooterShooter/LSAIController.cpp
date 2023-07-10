@@ -35,13 +35,15 @@ void ALSAIController::OnPossess(APawn* InPawn)
     
     //GetWorld()->GetTimerManager().SetTimer(RepeatTimerHandle, this, &ALSAIController::OnRepeatTimer, RepeatInterval, true);
 
+/*
+
     // #include "BehaviorTree/BlackboardComponent.h"
     UBlackboardComponent* BlackboardComp = Blackboard.Get();
     if (UseBlackboard(BBAsset, BlackboardComp))
     {
-        /*
+        
         this->Blackboard = BlackboardComp;
-        */
+        
         Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
 
 
@@ -50,7 +52,7 @@ void ALSAIController::OnPossess(APawn* InPawn)
             LSLOG(Error, TEXT("AIController couldn't run behavior tree!"));
         }
     }
-
+*/
 }
 
 /*
@@ -81,3 +83,26 @@ void ALSAIController::OnRepeatTimer()
     }
 }
 */
+
+void ALSAIController::RunAI()
+{
+    UBlackboardComponent* BlackboardComp = Blackboard.Get();
+    if (UseBlackboard(BBAsset, BlackboardComp))
+    {
+        this->Blackboard = BlackboardComp;
+        Blackboard->SetValueAsVector(HomePosKey, GetPawn()->GetActorLocation());
+        if (!RunBehaviorTree(BTAsset))
+        {
+            LSLOG(Error, TEXT("AIController couldn't run behavior tree!"));
+        }
+    }
+}
+
+void ALSAIController::StopAI()
+{
+    auto BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+    if (nullptr != BehaviorTreeComponent )
+    {
+        BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+    }
+}
