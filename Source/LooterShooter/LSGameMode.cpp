@@ -67,3 +67,8 @@ void ALSGameMode::AddScore(ALSPlayerController* ScoredPlayer)
     }
 */
 }
+
+int32 ALSGameMode::GetScore() const
+{
+    return LSGameState->GetTotalGameScore();
+}

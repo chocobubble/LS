@@ -25,6 +25,7 @@
 #include "LSPlayerState.h"
 #include "LSGameInstance.h"
 #include "LSHUDWidget.h"
+#include "LSGameMode.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -264,7 +265,7 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		{
 			auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 			LSCHECK(nullptr != LSGameMode);
-			int32 TargetLevel = FMath::CeilToInt(5.0f);//(((float)LSGameMode->GetScore() * 0.8f));
+			int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
 			int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
 			LSLOG(Warning, TEXT("New NPC Level : %d"), FinalLevel);
 			CharacterStat->SetNewLevel(FinalLevel);
@@ -462,12 +463,14 @@ void ALSCharacter::PossessedBy(AController * NewController)
 
 void ALSCharacter::AttackCheck()
 {
+	float FinalAttackRange = GetFinalAttackRange();
+
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
 		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		GetActorLocation() + GetActorForwardVector() * FinalAttackRange, //AttackRange,
 		ECollisionChannel::ECC_GameTraceChannel2,
 		Params
 	);
@@ -479,7 +482,7 @@ void ALSCharacter::AttackCheck()
 	DrawDebugLine(
 		GetWorld(),
 		GetActorLocation() + GetActorForwardVector(),
-		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		GetActorLocation() + GetActorForwardVector() * FinalAttackRange, //AttackRange,
 		bResult ? FColor::Green : FColor::Red,
 		true,
 		1.0f,
@@ -497,7 +500,7 @@ void ALSCharacter::AttackCheck()
 
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(CharacterStat->GetAttack(), DamageEvent, GetController(), this);
+			HitResult.GetActor()->TakeDamage(GetFianlAttackDamage(), DamageEvent, GetController(), this);
 		}
 		else
 		{
@@ -532,12 +535,21 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 bool ALSCharacter::CanSetWeapon()
 {
-	return (nullptr == CurrentWeapon);
+	return true; //(nullptr == CurrentWeapon);
 }
 
 void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
 {
-	LSCHECK(nullptr != NewWeapon && nullptr == CurrentWeapon);
+	LSCHECK(nullptr != NewWeapon);// && nullptr == CurrentWeapon);
+
+	if (nullptr != CurrentWeapon)
+	{
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		CurrentWeapon->Destroy();
+		CurrentWeapon = nullptr;
+	}
+	
+	
 	FName WeaponSocket(TEXT("weapon_r_socket"));
 	if(nullptr == RootComponent)
 	{
@@ -604,4 +616,17 @@ void ALSCharacter::OnAssetLoadCompleted()
 int32 ALSCharacter::GetExp() const
 {
 	return CharacterStat->GetDropExp();
+}
+
+float ALSCharacter::GetFinalAttackRange() const
+{
+	return (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackRange() : AttackRange;
+}
+
+float ALSCharacter::GetFianlAttackDamage() const
+{
+	float AttackDamage = (nullptr != CurrentWeapon) ? (CharacterStat->GetAttack() + CurrentWeapon->GetAttackDamage())
+		: CharacterStat->GetAttack();
+	float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
+	return AttackDamage * AttackModifier;
 }

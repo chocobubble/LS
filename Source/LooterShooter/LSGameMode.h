@@ -24,7 +24,7 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void AddScore(ALSPlayerController* ScoredPlayer);
-
+	int32 GetScore() const;
 private:
 	UPROPERTY()
 	ALSGameState* LSGameState;

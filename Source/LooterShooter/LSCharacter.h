@@ -110,6 +110,9 @@ public:
 
 	FOnAttackEndDelegate OnAttackEnd;
 
+	float GetFinalAttackRange() const;
+	float GetFianlAttackDamage() const;
+
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
