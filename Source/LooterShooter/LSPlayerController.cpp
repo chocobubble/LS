@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "LSGameplayWidget.h"
 #include "LSGameplayResultWidget.h"
+#include "LSGameState.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ALSPlayerController::ALSPlayerController()
@@ -167,6 +169,11 @@ void ALSPlayerController::ChangeInputMode(bool bGameMode)
 
 void ALSPlayerController::ShowResultUI()
 {
+    // #include "Kismet/GameplayStatics.h"
+    ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
+    LSCHECK(nullptr != LSGameState);
+    ResultWidget->BindGameState(LSGameState);
+
     ResultWidget->AddToViewport();
     ChangeInputMode(false);
 }

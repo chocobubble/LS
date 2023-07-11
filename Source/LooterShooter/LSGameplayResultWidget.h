@@ -6,6 +6,7 @@
 #include "LSGameplayWidget.h"
 #include "LSGameplayResultWidget.generated.h"
 
+class ALSGameState;
 /**
  * 
  */
@@ -14,6 +15,13 @@ class LOOTERSHOOTER_API ULSGameplayResultWidget : public ULSGameplayWidget
 {
 	GENERATED_BODY()
 
+
 public:
+	void BindGameState(ALSGameState* GameState);
+
+protected:
 	virtual void NativeConstruct() override;
+
+private:
+	TWeakObjectPtr<ALSGameState> CurrentGameState;
 };

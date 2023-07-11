@@ -325,7 +325,7 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 			if (bIsPlayer)
 			{
 				//LSPlayerController->RestartLevel();
-				//LSPlayerController->ShowResultUI();
+				LSPlayerController->ShowResultUI();
 			}
 			else
 			{

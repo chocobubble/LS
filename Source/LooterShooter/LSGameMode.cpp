@@ -6,6 +6,7 @@
 #include "LSPlayerController.h"
 #include "LSPlayerState.h"
 #include "LSGameState.h"
+#include "Engine/PawnIterator.h"
 
 ALSGameMode::ALSGameMode()
 {
@@ -13,6 +14,8 @@ ALSGameMode::ALSGameMode()
     PlayerControllerClass = ALSPlayerController::StaticClass();
     PlayerStateClass = ALSPlayerState::StaticClass();
     GameStateClass = ALSGameState::StaticClass();
+
+    ScoreToClear = 2;
 } 
 
 void ALSGameMode::PostLogin(APlayerController * NewPlayer)
@@ -46,11 +49,11 @@ void ALSGameMode::AddScore(ALSPlayerController* ScoredPlayer)
 
     LSGameState->AddGameScore();
 
-/*
+
     if (GetScore() >= ScoreToClear)
     {
         LSGameState->SetGameCleared();
-
+        // #include "Engine/PawnIterator.h"
         for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
         {
             (*It)->TurnOff();
@@ -65,7 +68,6 @@ void ALSGameMode::AddScore(ALSPlayerController* ScoredPlayer)
             }
         }
     }
-*/
 }
 
 int32 ALSGameMode::GetScore() const

@@ -7,7 +7,7 @@ ALSGameState::ALSGameState()
 {
     TotalGameScore = 0;
     
-    // bGameCleared = false;
+    bGameCleared = false;
 }
 
 int32 ALSGameState::GetTotalGameScore() const
@@ -19,7 +19,7 @@ void ALSGameState::AddGameScore()
 {
     TotalGameScore++;
 }
-/*
+
 void ALSGameState::SetGameCleared()
 {
     bGameCleared = true;
@@ -29,5 +29,5 @@ bool ALSGameState::IsGameCleared() const
 {
     return bGameCleared;
 }
-*/
+
 

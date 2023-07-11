@@ -19,8 +19,6 @@ class LOOTERSHOOTER_API ALSGameMode : public AGameModeBase
 public:
 	ALSGameMode();
 
-	//int32 GetScore() const;
-
 	virtual void PostInitializeComponents() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void AddScore(ALSPlayerController* ScoredPlayer);
@@ -28,4 +26,7 @@ public:
 private:
 	UPROPERTY()
 	ALSGameState* LSGameState;
+
+	UPROPERTY()
+	int32 ScoreToClear;
 };
