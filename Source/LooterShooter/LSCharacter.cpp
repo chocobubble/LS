@@ -70,7 +70,7 @@ ALSCharacter::ALSCharacter()
 
 	SpringArm->TargetArmLength = 400.0f;
 	SpringArm->bUsePawnControlRotation = true;
-	// SpringArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
+	SpringArm->SetRelativeLocation(FVector(0.0f, 90.0f, 90.0f));
 
 	// max jump height
 	GetCharacterMovement()->JumpZVelocity = 450.0f;
@@ -135,7 +135,13 @@ ALSCharacter::ALSCharacter()
 	static ConstructorHelpers::FObjectFinder<UInputAction> LS_MELEE(TEXT("/Game/LS/Input/Actions/LS_MELEE.LS_MELEE"));
 	if ( LS_MELEE.Succeeded())
 	{
-		MeleeAction = LS_MELEE.Object;
+		MeleeAttackAction = LS_MELEE.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_AUTO_RUN(TEXT("/Game/LS/Input/Actions/LS_Auto_Run.LS_Auto_Run"));
+	if ( LS_AUTO_RUN.Succeeded())
+	{
+		AutoRunAction = LS_AUTO_RUN.Object;
 	}
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
@@ -382,7 +388,8 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ALSCharacter::Jump);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALSCharacter::Look);
 	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
-	EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &ALSCharacter::Melee);
+	EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &ALSCharacter::MeleeAttack);
+	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
 
 
 }
@@ -432,6 +439,19 @@ void ALSCharacter::Shoot(const FInputActionValue& Value)
 {
 	AttackCheck();
 	LSLOG(Warning, TEXT("Shoot"));
+}
+
+void ALSCharacter::MeleeAttack(const FInputActionValue& Value)
+{
+	if (bIsAttacking) return;
+	LSAnim->PlayAttackMontage();
+	bIsAttacking = true;
+}
+
+void ALSCharacter::AutoRun(const FInputActionValue& Value)
+{
+	LSCHECK(nullptr != LSPlayerController);
+	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
 }
 
 void ALSCharacter::PostInitializeComponents()
@@ -573,13 +593,6 @@ void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
 	{
 		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
 	}
-}
-
-void ALSCharacter::Melee(const FInputActionValue& Value)
-{
-	if (bIsAttacking) return;
-	LSAnim->PlayAttackMontage();
-	bIsAttacking = true;
 }
 
 void ALSCharacter::Attack()

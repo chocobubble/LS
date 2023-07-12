@@ -60,6 +60,22 @@ void ALSPlayerController::OnPossess(APawn* aPawn)
     Super::OnPossess(aPawn);
 }
 
+void ALSPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	// AutoRun이 활성화 되었을 때
+	if (GetIsAutoRunning())
+	{
+		if (APawn* CurrentPawn = GetPawn())
+		{
+			const FRotator MovementRotation(0.0f, GetControlRotation().Yaw, 0.0f);
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			CurrentPawn->AddMovementInput(MovementDirection, 1.0f);	
+		}
+	}    
+}
+
 void ALSPlayerController::BeginPlay()
 {
     Super::BeginPlay();
@@ -176,4 +192,14 @@ void ALSPlayerController::ShowResultUI()
 
     ResultWidget->AddToViewport();
     ChangeInputMode(false);
+}
+
+bool ALSPlayerController::GetIsAutoRunning() const
+{
+    return bIsAutoRunning;
+}
+
+void ALSPlayerController::SetIsAutoRunning(const bool bEnabled)
+{
+    bIsAutoRunning = bEnabled;
 }

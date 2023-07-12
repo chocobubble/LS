@@ -28,6 +28,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override; 
+	virtual void PlayerTick(float DeltaTime) override;
 	//virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void SetupInputComponent() override;
 
@@ -43,6 +44,10 @@ public:
 	void ChangeInputMode(bool bGameMode = true);
 
 	void ShowResultUI();
+
+	bool GetIsAutoRunning() const;
+
+	void SetIsAutoRunning(const bool bEnabled);
 
 protected:
 	virtual void BeginPlay() override;
@@ -78,4 +83,6 @@ private:
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;
+
+	bool bIsAutoRunning = false;
 };

@@ -22,6 +22,8 @@ DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 class ALSAIController;
 class ALSPlayerController;
 class ULSHUDWidget;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -42,25 +44,28 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input")
-	class UInputMappingContext* InputMapping;
+	UInputMappingContext* InputMapping;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+	UInputAction* MoveAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
+	UInputAction* JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+	UInputAction* LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* ShootAction;
+	UInputAction* ShootAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MeleeAction;
+	UInputAction* MeleeAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* AutoRunAction;
 
 	UPROPERTY()
-	class ULSAnimInstance* LSAnim;
+	ULSAnimInstance* LSAnim;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
@@ -118,7 +123,8 @@ private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
-	void Melee(const FInputActionValue& Value);
+	void MeleeAttack(const FInputActionValue& Value);
+	void AutoRun(const FInputActionValue& Value);
 
 	void AttackCheck();
 
