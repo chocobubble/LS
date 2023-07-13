@@ -12,6 +12,8 @@ ULSAnimInstance::ULSAnimInstance()
 
 	bIsDead = false;
 
+    bIsAiming = false;
+
     static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("/Script/Engine.AnimMontage'/Game/LS/Animations/AM_MM_Rifle_Melee.AM_MM_Rifle_Melee'"));
     //TEXT("/Script/Engine.AnimMontage'/Game/LS/Animations/Montage/UE4_Mannequin_Skeleton_Montage.UE4_Mannequin_Skeleton_Montage'"));
     //(TEXT("/Game/LS/Animations/AM_MM_Pistol_Melee.AM_MM_Pistol_Melee"));
@@ -54,4 +56,9 @@ void ULSAnimInstance::PlayAttackMontage()
 {
     Montage_Play(AttackMontage, 1.0f);
     LSLOG(Warning, TEXT("Montage playing"));
+}
+
+void ULSAnimInstance::SetAimAnim(bool IsAiming)
+{
+    bIsAiming = IsAiming;
 }

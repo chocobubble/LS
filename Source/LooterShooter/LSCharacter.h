@@ -64,11 +64,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* AutoRunAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* AimAction;
+
 	UPROPERTY()
 	ULSAnimInstance* LSAnim;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	float AttackRange;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
+	float InteractRange = 800.0f;
 
 
 	
@@ -117,6 +123,7 @@ public:
 
 	float GetFinalAttackRange() const;
 	float GetFianlAttackDamage() const;
+	float GetFinalInteractRange() const;
 
 private:
 	void JumpAct(const FInputActionValue& Value);
@@ -125,8 +132,12 @@ private:
 	void Shoot(const FInputActionValue& Value);
 	void MeleeAttack(const FInputActionValue& Value);
 	void AutoRun(const FInputActionValue& Value);
+	void OnAiming(const FInputActionValue& Value);
+	void EndAiming(const FInputActionValue& Value);
 
 	void AttackCheck();
+
+	void InteractCheck();
 
 	void OnAssetLoadCompleted();
 
@@ -152,4 +163,17 @@ private:
 	float DeadTimer;
 
 	FTimerHandle DeadTimerHandle = { };
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthTo = 0.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthOnAiming = 200.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthOnIdle = 450.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthChangingSpeed = 3.0f;
 };
+

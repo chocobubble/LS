@@ -26,6 +26,7 @@
 #include "LSGameInstance.h"
 #include "LSHUDWidget.h"
 #include "LSGameMode.h"
+#include "Math/RotationMatrix.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -68,7 +69,8 @@ ALSCharacter::ALSCharacter()
 	);
 
 
-	SpringArm->TargetArmLength = 400.0f;
+	ArmLengthTo = ArmLengthOnIdle;
+	SpringArm->TargetArmLength = ArmLengthTo;  //400.0f;
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetRelativeLocation(FVector(0.0f, 90.0f, 90.0f));
 
@@ -144,6 +146,12 @@ ALSCharacter::ALSCharacter()
 		AutoRunAction = LS_AUTO_RUN.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_AIM(TEXT("/Game/LS/Input/Actions/LS_Aim.LS_Aim"));
+	if ( LS_AIM.Succeeded())
+	{
+		AimAction = LS_AIM.Object;
+	}
+
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
 	AttackRange = 1000.0f;
@@ -167,6 +175,7 @@ ALSCharacter::ALSCharacter()
 	SetCanBeDamaged(false);
 
 	DeadTimer = 5.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -352,6 +361,9 @@ void ALSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
+
+	InteractCheck();
 }
 
 // Called to bind functionality to input
@@ -390,6 +402,8 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
 	EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &ALSCharacter::MeleeAttack);
 	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
+	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ALSCharacter::OnAiming);
+	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ALSCharacter::EndAiming);
 
 
 }
@@ -454,6 +468,22 @@ void ALSCharacter::AutoRun(const FInputActionValue& Value)
 	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
 }
 
+void ALSCharacter::OnAiming(const FInputActionValue& Value)
+{
+	LSCHECK(nullptr != SpringArm);
+	LSLOG(Warning, TEXT("OnAiming"));
+	ArmLengthTo = ArmLengthOnAiming;
+	LSAnim->SetAimAnim(true);
+}
+
+void ALSCharacter::EndAiming(const FInputActionValue& Value)
+{
+	LSCHECK(nullptr != SpringArm);
+	LSLOG(Warning, TEXT("EndAiming"));
+	ArmLengthTo = ArmLengthOnIdle;
+	LSAnim->SetAimAnim(false);
+}
+
 void ALSCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -484,7 +514,7 @@ void ALSCharacter::PossessedBy(AController * NewController)
 void ALSCharacter::AttackCheck()
 {
 	float FinalAttackRange = GetFinalAttackRange();
-
+/*
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -494,16 +524,61 @@ void ALSCharacter::AttackCheck()
 		ECollisionChannel::ECC_GameTraceChannel2,
 		Params
 	);
+*/
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)),
+		ECollisionChannel::ECC_GameTraceChannel4,
+		Params
+	);
+
 
 #if ENABLE_DRAW_DEBUG
 
 	// #include "DrawDebugHelpers.h"
-
+/*
 	DrawDebugLine(
 		GetWorld(),
 		GetActorLocation() + GetActorForwardVector(),
 		GetActorLocation() + GetActorForwardVector() * FinalAttackRange, //AttackRange,
 		bResult ? FColor::Green : FColor::Red,
+		true,
+		1.0f,
+		0,
+		1.f
+	);
+
+	DrawDebugLine(
+		GetWorld(),
+		GetActorLocation() + FVector(0.0f, 0.0f, 30.0f),
+		//	#include "Math/RotationMatrix.h"
+		GetActorLocation() + (SpringArm->GetComponentLocation() + (FRotationMatrix(SpringArm->GetComponentRotation()).GetUnitAxis(EAxis::X)* FinalAttackRange) - GetActorLocation()), //AttackRange,
+		bResult ? FColor::Green : FColor::Yellow,
+		true,
+		1.0f,
+		0,
+		1.f
+	);
+
+	DrawDebugLine(
+		GetWorld(),
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(SpringArm->GetComponentRotation()).GetUnitAxis(EAxis::X)* FinalAttackRange) ), //AttackRange,
+		bResult ? FColor::Green : FColor::Purple,
+		true,
+		1.0f,
+		0,
+		1.f
+	);
+*/
+	DrawDebugLine(
+		GetWorld(),
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)), //AttackRange,
+		bResult ? FColor::Green : FColor::White,
 		true,
 		1.0f,
 		0,
@@ -636,10 +711,35 @@ float ALSCharacter::GetFinalAttackRange() const
 	return (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackRange() : AttackRange;
 }
 
+float ALSCharacter::GetFinalInteractRange() const
+{
+	return InteractRange;
+}
+
 float ALSCharacter::GetFianlAttackDamage() const
 {
 	float AttackDamage = (nullptr != CurrentWeapon) ? (CharacterStat->GetAttack() + CurrentWeapon->GetAttackDamage())
 		: CharacterStat->GetAttack();
 	float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
 	return AttackDamage * AttackModifier;
+}
+
+void ALSCharacter::InteractCheck()
+{
+	float FinalInteractRange = GetFinalInteractRange();
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalInteractRange)),
+		ECollisionChannel::ECC_GameTraceChannel4,
+		Params
+	);	
+
+	if(bResult)
+	{
+		LSLOG(Warning, TEXT("HIT BOx"));
+	}
 }
