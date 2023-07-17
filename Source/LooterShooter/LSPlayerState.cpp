@@ -30,10 +30,12 @@ int32 ALSPlayerState::GetCharacterLevel() const
 
 void ALSPlayerState::InitPlayerData()
 {
+    LSLOG_S(Warning);
     //	#include "Kismet/GameplayStatics.h"
     auto LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
     if (nullptr == LSSaveGame)
     {
+        LSLOG(Warning, TEXT("LSSaveGame is nullptr"));
         LSSaveGame = GetMutableDefault<ULSSaveGame>();
     }
     SetPlayerName(LSSaveGame->PlayerName);

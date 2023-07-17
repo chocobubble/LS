@@ -11,6 +11,8 @@ class ALSPlayerState;
 class UProgressBar;
 class UTextBlock;
 
+class ULSResourceManageComponent;
+
 /**
  * 
  */
@@ -22,15 +24,21 @@ class LOOTERSHOOTER_API ULSHUDWidget : public UUserWidget
 public:
 	void BindCharacterStat(ULSCharacterStatComponent* CharacterStat);
 	void BindPlayerState(ALSPlayerState* PlayerState);
+	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent);
 
 protected:
 	virtual void NativeConstruct() override;
 	void UpdateCharacterStat();
 	void UpdatePlayerState();
 
+	void UpdateResource();
+
 private:
 	TWeakObjectPtr<ULSCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<ALSPlayerState> CurrentPlayerState;
+
+	
+	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManageComponent;
 
 	UPROPERTY()
 	UProgressBar* HPBar;
@@ -49,4 +57,11 @@ private:
 
 	UPROPERTY()
 	UTextBlock* HighScore;
+
+
+	UPROPERTY()
+	UTextBlock* CurrentAmmo;
+
+	UPROPERTY()
+	UTextBlock* MaxAmmo;
 };

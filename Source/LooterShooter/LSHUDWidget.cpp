@@ -7,6 +7,8 @@
 #include "LSCharacterStatComponent.h"
 #include "LSPlayerState.h"
 
+#include "LSResourceManageComponent.h"
+
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
     LSCHECK(nullptr != CharacterStat);
@@ -38,6 +40,17 @@ void ULSHUDWidget::NativeConstruct()
 
     HighScore = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtHighScore")));
     LSCHECK(nullptr != HighScore);
+
+
+    CurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo")));
+    LSCHECK(nullptr != CurrentAmmo);
+
+    MaxAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtMaxAmmo")));
+    LSCHECK(nullptr != MaxAmmo);
+
+    LSLOG_S(Warning);
+
+    
 }
 
 //Error: ULSHUDWidget::UpdateCharacterStat(45) ASSERTION : 'CurrentCharacterStat.IsValid()'
@@ -52,7 +65,10 @@ void ULSHUDWidget::UpdatePlayerState()
 {
     LSCHECK(CurrentPlayerState.IsValid());
 
-    ExpBar->SetPercent(CurrentPlayerState->GetExpRatio());
+    // Move somewhere
+    //ExpBar->SetPercent(CurrentPlayerState->GetExpRatio());
+
+
 /*
     if(CurrentPlayerState->GetPlayerName() == "")
     {
@@ -69,3 +85,23 @@ void ULSHUDWidget::UpdatePlayerState()
     HighScore->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetGameHighScore())));
 }
 
+
+void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent)
+{
+    LSCHECK(nullptr != ResourceManageComponent);
+    CurrentResourceManageComponent = ResourceManageComponent;
+    CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
+
+    MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->MaxRifleAmmo)));
+
+    LSLOG_S(Warning);
+}
+
+void ULSHUDWidget::UpdateResource()
+{
+    LSCHECK(CurrentResourceManageComponent.IsValid());
+
+    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->CurrentRifleAmmo)));
+
+    LSLOG_S(Warning);
+}

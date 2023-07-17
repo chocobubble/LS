@@ -531,7 +531,7 @@ void ALSCharacter::AttackCheck()
 		HitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)),
-		ECollisionChannel::ECC_GameTraceChannel4,
+		ECollisionChannel::ECC_GameTraceChannel1,
 		Params
 	);
 
@@ -579,7 +579,7 @@ void ALSCharacter::AttackCheck()
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)), //AttackRange,
 		bResult ? FColor::Green : FColor::White,
-		true,
+		false,
 		1.0f,
 		0,
 		1.f

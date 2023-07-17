@@ -26,7 +26,8 @@ void ALSGameMode::PostLogin(APlayerController * NewPlayer)
 
     ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(NewPlayer->PlayerState);
     LSCHECK(nullptr != LSPlayerState);
-    // LSPlayerState->InitPlayerData();
+    
+    LSPlayerState->InitPlayerData();
 }
 
 void ALSGameMode::PostInitializeComponents()
