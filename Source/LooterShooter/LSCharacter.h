@@ -24,6 +24,8 @@ class ALSPlayerController;
 class ULSHUDWidget;
 class UInputMappingContext;
 class UInputAction;
+class UWidgetComponent;
+class ULSResourceManageComponent;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -100,8 +102,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, Category = Resource)
+	ULSResourceManageComponent* ResourceManager;
+
 	UPROPERTY(VisibleAnywhere, Category = UI)
-	class UWidgetComponent* HPBarWidget;
+	UWidgetComponent* HPBarWidget;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 

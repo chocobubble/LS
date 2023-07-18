@@ -105,6 +105,10 @@ void ALSPlayerController::BeginPlay()
     HUDWidget->BindPlayerState(LSPlayerState);
     LSPlayerState->OnPlayerStateChanged.Broadcast();  
 
+    ALSCharacter* LSCharacter =  Cast<ALSCharacter>(GetCharacter());
+    LSCHECK(nullptr != LSCharacter);
+    HUDWidget->BindResourceManageComponent(LSCharacter->ResourceManager);
+
 /*
     ResultWidget = CreateWidget<ULSGameplayResultWidget>(this, ResultWidgetClass);
     LSCHECK(nullptr != ResultWidget);

@@ -92,6 +92,10 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
 
+    LSCHECK(nullptr != MaxAmmo);
+    LSCHECK(nullptr != CurrentResourceManageComponent);
+    LSCHECK(nullptr != CurrentResourceManageComponent->ResourceData);
+    //LSCHECK(nullptr != CurrentResourceManageComponent->ResourceData->MaxRifleAmmo);
     MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->MaxRifleAmmo)));
 
     LSLOG_S(Warning);

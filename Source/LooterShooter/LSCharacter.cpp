@@ -27,6 +27,7 @@
 #include "LSHUDWidget.h"
 #include "LSGameMode.h"
 #include "Math/RotationMatrix.h"
+#include "LSResourceManageComponent.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -55,12 +56,16 @@ ALSCharacter::ALSCharacter()
 	//#include "Components/WidgetComponent.h"
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 
+	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
+
 
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 
 	HPBarWidget->SetupAttachment(GetMesh());
+
+	// ResourceManager->SetupAttachment(GetMesh());
 
 
 	GetMesh()->SetRelativeLocationAndRotation(
@@ -255,6 +260,8 @@ void ALSCharacter::BeginPlay()
 	LSCHECK(nullptr != LSGameInstance);
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSCharacter::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
+
+
 }
 
 void ALSCharacter::SetCharacterState(ECharacterState NewState)
@@ -596,6 +603,8 @@ void ALSCharacter::AttackCheck()
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(GetFianlAttackDamage(), DamageEvent, GetController(), this);
+
+			ResourceManager->UpdateAmmoResource(EAmmoType::RIFLE, 1);
 		}
 		else
 		{
