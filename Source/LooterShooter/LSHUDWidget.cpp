@@ -88,6 +88,7 @@ void ULSHUDWidget::UpdatePlayerState()
 
 void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent)
 {
+    /*
     LSCHECK(nullptr != ResourceManageComponent);
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
@@ -99,13 +100,24 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
     MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->MaxRifleAmmo)));
 
     LSLOG_S(Warning);
+    */
+
+    LSCHECK(nullptr != ResourceManageComponent);
+    CurrentResourceManageComponent = ResourceManageComponent;
+    CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
+
+    LSCHECK(nullptr != MaxAmmo);
+    LSCHECK(nullptr != CurrentResourceManageComponent);
+    MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetMaxRifleAmmo())));
+
+    LSLOG_S(Warning);
 }
 
 void ULSHUDWidget::UpdateResource()
 {
     LSCHECK(CurrentResourceManageComponent.IsValid());
 
-    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->CurrentRifleAmmo)));
+    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentRifleAmmo())));
 
     LSLOG_S(Warning);
 }

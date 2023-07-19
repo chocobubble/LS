@@ -594,6 +594,9 @@ void ALSCharacter::AttackCheck()
 
 #endif
 
+	ResourceManager->UpdateAmmoResource(EAmmoType::RIFLE, -1);
+
+	
 	if (bResult)
 	{
 		if (HitResult.HasValidHitObjectHandle())
@@ -604,7 +607,6 @@ void ALSCharacter::AttackCheck()
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(GetFianlAttackDamage(), DamageEvent, GetController(), this);
 
-			ResourceManager->UpdateAmmoResource(EAmmoType::RIFLE, 1);
 		}
 		else
 		{

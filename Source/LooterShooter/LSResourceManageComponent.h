@@ -4,11 +4,13 @@
 
 #include "LooterShooter.h"
 #include "Components/ActorComponent.h"
+
 #include "LSResourceManageComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnResourceChangedDelegate);
 
-USTRUCT(BlueprintType)
+/*
+USTRUCT(Atomic, BlueprintType)
 struct FLSResourceData
 {
 	GENERATED_BODY()
@@ -17,10 +19,10 @@ struct FLSResourceData
 		CurrentRifleAmmo(1000), CurrentPistolAmmo(0), CurrentShotgunAmmo(0)
 	
 	{LSLOG(Warning, TEXT("FLSResourceData constructor"));}
-/*
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource)
 	int32 Gold = 0;
-*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource)
 	int32 MaxRifleAmmo = 1000;
 
@@ -39,6 +41,7 @@ struct FLSResourceData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource)
 	int32 CurrentShotgunAmmo = 0;
 };
+*/
 
 enum class EAmmoType
 {
@@ -60,6 +63,21 @@ public:
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
 
+	int32 GetMaxRifleAmmo() const
+	{
+		return MaxRifleAmmo;
+	}
+
+	void SetCurrentRifleAmmo(int32 AmmoAmount)
+	{
+		CurrentRifleAmmo = FMath::Clamp(CurrentRifleAmmo + AmmoAmount, 0, MaxRifleAmmo);
+	}
+
+	int32 GetCurrentRifleAmmo() const
+	{
+		return CurrentRifleAmmo;
+	}
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -68,13 +86,29 @@ protected:
 	void NoFunc() {};
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 MaxRifleAmmo = 1000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 MaxPistolAmmo = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 MaxShotgunAmmo = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 CurrentRifleAmmo = 1000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 CurrentPistolAmmo = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 CurrentShotgunAmmo = 0;
 
 public:	
 	// Called every frame
 	// virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	FLSResourceData* ResourceData = nullptr;
-	
+	// TSharedPtr<FLSResourceData> ResourceData = MakeShareable(new FLSResourceData());
 	FOnResourceChangedDelegate OnResourceChanged;
 		
 };
