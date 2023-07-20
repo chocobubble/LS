@@ -8,7 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
-
+DECLARE_MULTICAST_DELEGATE(FOnShieldChangedDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSDefenseComponent : public UActorComponent
@@ -24,24 +24,25 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void SetNewLevel(int32 NewLevel);
+	// void SetNewLevel(int32 NewLevel);
 
 	void SetDamage(float NewDamage);
-	float GetAttack();
+	
+	//float GetAttack();
 
 
-	void SetHP(float NewHP);
-	float GetHPRatio();
-
-	int32 GetDropExp() const;
+	//void SetHP(float NewHP);
+	float GetHPRatio() const;
+	float GetShiledRatio() const;
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
+	FOnShieldChangedDelegate OnShieldChanged;
 
 	
 
 private:
-	struct FLSCharacterData* CurrentStatData = nullptr;
+	// struct FLSCharacterData* CurrentStatData = nullptr;
 
 	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 MaxHP = 1000;
@@ -67,9 +68,9 @@ private:
 	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	float ShieldRechargeDelay = 2.0f;
 
-	/*
+	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	/**/
+
 };

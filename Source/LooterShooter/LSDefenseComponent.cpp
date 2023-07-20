@@ -23,7 +23,7 @@ void ULSDefenseComponent::BeginPlay()
 	
 }
 
-/*
+
 // Called every frame
 void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -31,5 +31,42 @@ void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	// ...
 }
-*/
+
+void ULSCharacterStatComponent::SetHP(float NewHP)
+{
+	CurrentHP = NewHP;
+	OnHPChanged.Broadcast();
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		CurrentHP = 0.0f;
+		OnHPIsZero.Broadcast();
+	}
+}
+
+void ULSCharacterStatComponent::SetShield(float NewShield)
+{
+	CurrentShield = NewShield;
+	OnShieldChanged.Broadcast();
+	if (CurrentShield < KINDA_SMALL_NUMBER)
+	{
+		CurrentShield = 0.0f;
+		// OnShieldIsZero.Broadcast();
+	}
+}
+
+float ULSCharacterStatComponent::GetHPRatio()
+{
+	// LSCHECK(nullptr != CurrentStatData, 0.0f);
+
+	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
+}
+
+
+float ULSCharacterStatComponent::GetShieldRatio()
+{
+	// LSCHECK(nullptr != CurrentStatData, 0.0f);
+
+	return (MaxShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+}
+
 

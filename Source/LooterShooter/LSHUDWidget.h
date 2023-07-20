@@ -12,6 +12,7 @@ class UProgressBar;
 class UTextBlock;
 
 class ULSResourceManageComponent;
+class ULSDefenseComponent;
 
 /**
  * 
@@ -25,6 +26,7 @@ public:
 	void BindCharacterStat(ULSCharacterStatComponent* CharacterStat);
 	void BindPlayerState(ALSPlayerState* PlayerState);
 	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent);
+	// void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -39,6 +41,7 @@ private:
 
 	
 	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManageComponent;
+	TWeakObjectPtr<ULSDefenseComponent> DefenseManager;
 
 	UPROPERTY()
 	UProgressBar* HPBar;
@@ -64,4 +67,7 @@ private:
 
 	UPROPERTY()
 	UTextBlock* MaxAmmo;
+
+	UPROPERTY()
+	UProgressBar* ShieldBar;
 };

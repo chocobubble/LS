@@ -26,6 +26,7 @@ class UInputMappingContext;
 class UInputAction;
 class UWidgetComponent;
 class ULSResourceManageComponent;
+class ULSDefenseComponent;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -104,6 +105,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Resource)
 	ULSResourceManageComponent* ResourceManager;
+
+	UPROPERTY(VisibleAnywhere, Category = Defense)
+	ULSDefenseComponent* DefenseManager;
 
 	UPROPERTY(VisibleAnywhere, Category = UI)
 	UWidgetComponent* HPBarWidget;

@@ -7,6 +7,8 @@
 
 #include "Components/ProgressBar.h"
 
+#include "LSDefenseComponent.h"
+
 void ULSCharacterWidget::BindCharacterStat(ULSCharacterStatComponent* NewCharacterStat)
 {
     LSCHECK(nullptr != NewCharacterStat);
@@ -21,6 +23,15 @@ void ULSCharacterWidget::BindCharacterStat(ULSCharacterStatComponent* NewCharact
         }
     });
 }
+
+void ULSCharacterWidget::BindDefenseComonent(ULSDefenseComonent* NewDefenseComonent)
+{
+    LSCHECK(nullptr != NewDefenseComonent);
+    CurrentDefenseComonent = NewDefenseComonent;
+
+    CurrentDefenseComonent->OnShieldChanged.AddUObject(this, &ULSCharacterWidget::UpdateShieldWidget);
+}
+
 
 void ULSCharacterWidget::NativeConstruct()
 {
@@ -39,6 +50,17 @@ void ULSCharacterWidget::UpdateHPWidget()
         if (nullptr != HPProgressBar)
         {
             HPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+        }
+    }
+}
+
+void ULSCharacterWidget::UpdateShieldWidget()
+{
+    if (CurrentDefenseManager.IsValid())
+    {
+        if (nullptr != ShieldProgressBar)
+        {
+            ShieldProgressBar->SetPercent(CurrentDefenseManager->GetShieldRatio());
         }
     }
 }

@@ -28,6 +28,7 @@
 #include "LSGameMode.h"
 #include "Math/RotationMatrix.h"
 #include "LSResourceManageComponent.h"
+#include "LSDefenseComponent.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -58,6 +59,7 @@ ALSCharacter::ALSCharacter()
 
 	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
 
+	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"))
 
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
