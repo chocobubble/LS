@@ -38,7 +38,7 @@ void ULSResourceManageComponent::TickComponent(float DeltaTime, ELevelTick TickT
 */
 
 
-void ULSResourceManageComponent::UpdateAmmoResource(EAmmoType AmmoType, int32 Amount)
+void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
 {
 	switch (AmmoType)
 	{
@@ -87,6 +87,34 @@ int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
 	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
 }
+
+void ULSResourceManageComponent::SetRoundsRemaining(EAmmoType AmmoType, int32 Amount)
+{
+	switch (AmmoType)
+	{
+		case EAmmoType::RIFLE:
+		{
+			RoundsRemaining = FMath::Clamp(RoundsRemaining + Amount, 0, CurrentRifleAmmo);
+			break;
+		}
+		/*
+		case EAmmoType::PISTOL:
+		{
+			//ResourceData->CurrentPistolAmmo += Amount;
+			SetCurrentRifleAmmo -= Amount
+			break;
+		}
+		case EAmmoType::SHOTGUN:
+		{
+			ResourceData->CurrentShotgunAmmo += Amount;
+			break;
+		}
+		*/
+	}	
+	LSLOG_S(Warning);
+	OnResourceChanged.Broadcast();
+}
+
 int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 {
 	switch (AmmoType)
@@ -108,4 +136,13 @@ int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 	}
 	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
+}
+
+
+void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)
+{
+	/*
+	SetRoundsRemaining(AmmoType, Amount);
+	SetCurrentAmmo(AmmoType, Amount);
+	*/
 }

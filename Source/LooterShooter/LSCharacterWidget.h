@@ -7,7 +7,7 @@
 #include "LSCharacterWidget.generated.h"
 
 class ULSDefenseComponent;
-class UProgressBar
+class UProgressBar;
 /**
  * 
  */
@@ -16,11 +16,11 @@ class LOOTERSHOOTER_API ULSCharacterWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void BindCharacterStat(class ULSCharacterStatComponent* NewCharacterStat);
-	void BindDefenseComonent(ULSDefenseComponent* DefenseManager);
+	// void BindCharacterStat(class ULSCharacterStatComponent* NewCharacterStat);
+	void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
 
 private:
-	TWeakObjectPtr<class ULSCharacterStatComponent> CurrentCharacterStat;
+	// TWeakObjectPtr<class ULSCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<ULSDefenseComponent> CurrentDefenseManager;
 
 	UPROPERTY()

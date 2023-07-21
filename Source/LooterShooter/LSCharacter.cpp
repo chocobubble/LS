@@ -59,7 +59,7 @@ ALSCharacter::ALSCharacter()
 
 	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
 
-	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"))
+	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
 
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
@@ -158,6 +158,19 @@ ALSCharacter::ALSCharacter()
 	{
 		AimAction = LS_AIM.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_GRAPPLING_HOOK(TEXT("/Game/LS/Input/Actions/LS_GrapplingHook.LS_GrapplingHook"));
+	if ( LS_GRAPPLING_HOOK.Succeeded())
+	{
+		GrapplingHookAction = LS_GRAPPLING_HOOK.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_RELOAD(TEXT("/Game/LS/Input/Actions/LS_Reload.LS_Reload"));
+	if ( LS_RELOAD.Succeeded())
+	{
+		ReloadAction = LS_RELOAD.Object;
+	}
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
@@ -312,7 +325,8 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		
 		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 		LSCHECK(nullptr != CharacterWidget);
-		CharacterWidget->BindCharacterStat(CharacterStat);
+		// CharacterWidget->BindCharacterStat(CharacterStat);
+		CharacterWidget->BindDefenseComponent(DefenseManager);
 
 		if (bIsPlayer)
 		{
@@ -413,6 +427,8 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
 	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ALSCharacter::OnAiming);
 	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ALSCharacter::EndAiming);
+	EnhancedInputComponent->BindAction(GrapplingHookAction, ETriggerEvent::Triggered, this, &ALSCharacter::GrapplingHook);
+	EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ALSCharacter::Reload);
 
 
 }
@@ -493,6 +509,31 @@ void ALSCharacter::EndAiming(const FInputActionValue& Value)
 	LSAnim->SetAimAnim(false);
 }
 
+void ALSCharacter::GrapplingHook(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("GrapplingHook"));
+}
+
+void ALSCharacter::Reload(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("Reloading"));
+	if(bIsReloading)
+	{
+		return;
+	}
+	LSCHECK(nullptr != CurrentWeapon);
+	bIsReloading = true;
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+			bIsReloading = false;
+			int32 CurrentRounds = ResourceManager->GetRoundsRemaining();
+			int32 ReloadRounds = FMath::Clamp(CurrentWeapon->GetMagazineCapacity() - CurrentRounds, 0, ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE)); 
+			ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, ReloadRounds);
+			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, -ReloadRounds);
+			LSLOG(Warning, TEXT("RELoAd Complete"));
+		}), CurrentWeapon->GetReloadTime(), false);
+
+}
+
 void ALSCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -522,18 +563,15 @@ void ALSCharacter::PossessedBy(AController * NewController)
 
 void ALSCharacter::AttackCheck()
 {
+	LSLOG_S(Warning);
+	if(!CanShoot(EAmmoType::RIFLE))
+	{
+		LSLOG(Warning, TEXT("CANNOT Shoot"));
+		return;
+	}
+
 	float FinalAttackRange = GetFinalAttackRange();
-/*
-	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
-	bool bResult = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * FinalAttackRange, //AttackRange,
-		ECollisionChannel::ECC_GameTraceChannel2,
-		Params
-	);
-*/
+
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -547,42 +585,6 @@ void ALSCharacter::AttackCheck()
 
 #if ENABLE_DRAW_DEBUG
 
-	// #include "DrawDebugHelpers.h"
-/*
-	DrawDebugLine(
-		GetWorld(),
-		GetActorLocation() + GetActorForwardVector(),
-		GetActorLocation() + GetActorForwardVector() * FinalAttackRange, //AttackRange,
-		bResult ? FColor::Green : FColor::Red,
-		true,
-		1.0f,
-		0,
-		1.f
-	);
-
-	DrawDebugLine(
-		GetWorld(),
-		GetActorLocation() + FVector(0.0f, 0.0f, 30.0f),
-		//	#include "Math/RotationMatrix.h"
-		GetActorLocation() + (SpringArm->GetComponentLocation() + (FRotationMatrix(SpringArm->GetComponentRotation()).GetUnitAxis(EAxis::X)* FinalAttackRange) - GetActorLocation()), //AttackRange,
-		bResult ? FColor::Green : FColor::Yellow,
-		true,
-		1.0f,
-		0,
-		1.f
-	);
-
-	DrawDebugLine(
-		GetWorld(),
-		SpringArm->GetComponentLocation(),
-		(SpringArm->GetComponentLocation() + (FRotationMatrix(SpringArm->GetComponentRotation()).GetUnitAxis(EAxis::X)* FinalAttackRange) ), //AttackRange,
-		bResult ? FColor::Green : FColor::Purple,
-		true,
-		1.0f,
-		0,
-		1.f
-	);
-*/
 	DrawDebugLine(
 		GetWorld(),
 		SpringArm->GetComponentLocation(),
@@ -596,7 +598,8 @@ void ALSCharacter::AttackCheck()
 
 #endif
 
-	ResourceManager->UpdateAmmoResource(EAmmoType::RIFLE, -1);
+	//ResourceManager->ConsumeAmmo(EAmmoType::RIFLE, -1);
+	ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
 
 	
 	if (bResult)
@@ -607,7 +610,7 @@ void ALSCharacter::AttackCheck()
 
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(GetFianlAttackDamage(), DamageEvent, GetController(), this);
+			HitResult.GetActor()->TakeDamage(GetFinalAttackDamage(), DamageEvent, GetController(), this);
 
 		}
 		else
@@ -621,12 +624,35 @@ void ALSCharacter::AttackCheck()
 	}
 }
 
+
+bool ALSCharacter::CanShoot(EAmmoType AmmoType)
+{
+	if(bIsReloading)
+	{
+		LSLOG(Warning, TEXT("IsReloading"));
+		return false;
+	}
+
+	//  나중에 weapon 의 magazine ammo로 바꾸기
+	if(ResourceManager->GetRoundsRemaining(AmmoType) == 0)
+	{
+		LSLOG(Warning, TEXT("No Ammo"));
+	 	return false;
+
+	}
+	
+	return true;
+}
+
+
 float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
+	
+	DefenseManager->SetDamage(FinalDamage);
 
-	CharacterStat->SetDamage(FinalDamage);
+	// CharacterStat->SetDamage(FinalDamage);
 
 	if (CurrentState == ECharacterState::DEAD)
 	{
@@ -721,7 +747,7 @@ int32 ALSCharacter::GetExp() const
 
 float ALSCharacter::GetFinalAttackRange() const
 {
-	return (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackRange() : AttackRange;
+	return (nullptr != CurrentWeapon) ? CurrentWeapon->GetMaxRange() : AttackRange;
 }
 
 float ALSCharacter::GetFinalInteractRange() const
@@ -729,12 +755,14 @@ float ALSCharacter::GetFinalInteractRange() const
 	return InteractRange;
 }
 
-float ALSCharacter::GetFianlAttackDamage() const
+float ALSCharacter::GetFinalAttackDamage() const
 {
-	float AttackDamage = (nullptr != CurrentWeapon) ? (CharacterStat->GetAttack() + CurrentWeapon->GetAttackDamage())
-		: CharacterStat->GetAttack();
-	float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
-	return AttackDamage * AttackModifier;
+	LSCHECK(nullptr != CurrentWeapon, -1.f);
+
+	float AttackDamage = CurrentWeapon->GetFinalDamage();
+
+	//float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
+	return AttackDamage; // * AttackModifier;
 }
 
 void ALSCharacter::InteractCheck()

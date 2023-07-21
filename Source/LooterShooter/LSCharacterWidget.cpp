@@ -9,6 +9,7 @@
 
 #include "LSDefenseComponent.h"
 
+/*
 void ULSCharacterWidget::BindCharacterStat(ULSCharacterStatComponent* NewCharacterStat)
 {
     LSCHECK(nullptr != NewCharacterStat);
@@ -23,13 +24,16 @@ void ULSCharacterWidget::BindCharacterStat(ULSCharacterStatComponent* NewCharact
         }
     });
 }
+*/
 
-void ULSCharacterWidget::BindDefenseComonent(ULSDefenseComonent* NewDefenseComonent)
+void ULSCharacterWidget::BindDefenseComponent(ULSDefenseComponent* NewDefenseComponent)
 {
-    LSCHECK(nullptr != NewDefenseComonent);
-    CurrentDefenseComonent = NewDefenseComonent;
+    LSCHECK(nullptr != NewDefenseComponent);
+    LSLOG(Warning, TEXT("BindDefenseComponent"))
+    CurrentDefenseManager = NewDefenseComponent;
 
-    CurrentDefenseComonent->OnShieldChanged.AddUObject(this, &ULSCharacterWidget::UpdateShieldWidget);
+    CurrentDefenseManager->OnShieldChanged.AddUObject(this, &ULSCharacterWidget::UpdateShieldWidget);
+    CurrentDefenseManager->OnHPChanged.AddUObject(this, &ULSCharacterWidget::UpdateHPWidget);
 }
 
 
@@ -41,15 +45,18 @@ void ULSCharacterWidget::NativeConstruct()
     HPProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_HPBar")));
     LSCHECK(nullptr != HPProgressBar);
     UpdateHPWidget();
+    ShieldProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_ShieldBar")));
+    LSCHECK(nullptr != ShieldProgressBar);
+    UpdateShieldWidget();
 }
 
 void ULSCharacterWidget::UpdateHPWidget()
 {
-    if (CurrentCharacterStat.IsValid())
+    if (CurrentDefenseManager.IsValid())
     {
         if (nullptr != HPProgressBar)
         {
-            HPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+            HPProgressBar->SetPercent(CurrentDefenseManager->GetHPRatio());
         }
     }
 }

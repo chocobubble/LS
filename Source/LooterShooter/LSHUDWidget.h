@@ -66,7 +66,7 @@ private:
 	UTextBlock* CurrentAmmo;
 
 	UPROPERTY()
-	UTextBlock* MaxAmmo;
+	UTextBlock* RoundsRemaining;
 
 	UPROPERTY()
 	UProgressBar* ShieldBar;

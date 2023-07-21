@@ -59,9 +59,13 @@ class LOOTERSHOOTER_API ULSResourceManageComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	ULSResourceManageComponent();
-	void UpdateAmmoResource(EAmmoType AmmoType, int32 Amount);
+	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
+	void SetRoundsRemaining(EAmmoType AmmoType, int32 Amount);
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
+
+	
+	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount);
 
 	int32 GetMaxRifleAmmo() const
 	{
@@ -76,6 +80,11 @@ public:
 	int32 GetCurrentRifleAmmo() const
 	{
 		return CurrentRifleAmmo;
+	}
+
+	int32 GetRoundsRemaining() const
+	{
+		return RoundsRemaining;
 	}
 
 protected:
@@ -103,6 +112,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
 	int32 CurrentShotgunAmmo = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 RoundsRemaining = 0;
 
 public:	
 	// Called every frame

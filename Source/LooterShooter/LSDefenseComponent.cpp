@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "LSDefenseComponent.h"
-
+#include "Engine/World.h"
 // Sets default values for this component's properties
 ULSDefenseComponent::ULSDefenseComponent()
 {
@@ -13,26 +12,15 @@ ULSDefenseComponent::ULSDefenseComponent()
 	// ...
 }
 
-
 // Called when the game starts
 void ULSDefenseComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
-
-// Called every frame
-void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-void ULSCharacterStatComponent::SetHP(float NewHP)
+void ULSDefenseComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
 	OnHPChanged.Broadcast();
@@ -43,7 +31,7 @@ void ULSCharacterStatComponent::SetHP(float NewHP)
 	}
 }
 
-void ULSCharacterStatComponent::SetShield(float NewShield)
+void ULSDefenseComponent::SetShield(float NewShield)
 {
 	CurrentShield = NewShield;
 	OnShieldChanged.Broadcast();
@@ -54,19 +42,59 @@ void ULSCharacterStatComponent::SetShield(float NewShield)
 	}
 }
 
-float ULSCharacterStatComponent::GetHPRatio()
+float ULSDefenseComponent::GetHPRatio() const
 {
 	// LSCHECK(nullptr != CurrentStatData, 0.0f);
 
-	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
+	return (CurrentHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
 }
 
-
-float ULSCharacterStatComponent::GetShieldRatio()
+float ULSDefenseComponent::GetShieldRatio() const
 {
 	// LSCHECK(nullptr != CurrentStatData, 0.0f);
 
-	return (MaxShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+	return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+}
+
+void ULSDefenseComponent::SetDamage(float NewDamage)
+{
+	LSLOG_S(Warning);
+
+	// #include "Engine/World.h"
+	LastHitTime = GetWorld()->GetTimeSeconds();
+
+	if (CurrentShield > 0)
+	{
+		CurrentShield = FMath::Clamp<float>(CurrentShield - NewDamage, 0, MaxShield);
+		SetShield(CurrentShield);
+	}
+	else
+	{
+		CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0, MaxHP);
+
+		if (CurrentHP <= 0)
+		{
+			OnHPIsZero.Broadcast();
+		}
+
+		SetHP(CurrentHP);
+	}
 }
 
 
+// Called every frame
+void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if(CurrentShield == MaxShield || (GetWorld()->GetTimeSeconds() - LastHitTime) < ShieldRechargeDelay)
+	{	
+		return;
+	}
+	else
+	{
+		SetShield((CurrentShield + ShieldRechargeRate));
+		// LSLOG(Warning, TEXT("Shield Recharging"));
+	}
+	// ...
+}

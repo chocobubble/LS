@@ -45,8 +45,8 @@ void ULSHUDWidget::NativeConstruct()
     CurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo")));
     LSCHECK(nullptr != CurrentAmmo);
 
-    MaxAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtMaxAmmo")));
-    LSCHECK(nullptr != MaxAmmo);
+    RoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining")));
+    LSCHECK(nullptr != RoundsRemaining);
 
     LSLOG_S(Warning);
 
@@ -93,11 +93,11 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
 
-    LSCHECK(nullptr != MaxAmmo);
+    LSCHECK(nullptr != RoundsRemaining);
     LSCHECK(nullptr != CurrentResourceManageComponent);
     LSCHECK(nullptr != CurrentResourceManageComponent->ResourceData);
     //LSCHECK(nullptr != CurrentResourceManageComponent->ResourceData->MaxRifleAmmo);
-    MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->MaxRifleAmmo)));
+    RoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->ResourceData->MaxRifleAmmo)));
 
     LSLOG_S(Warning);
     */
@@ -106,9 +106,10 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
 
-    LSCHECK(nullptr != MaxAmmo);
+    LSCHECK(nullptr != RoundsRemaining);
     LSCHECK(nullptr != CurrentResourceManageComponent);
-    MaxAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetMaxRifleAmmo())));
+    RoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
 
     LSLOG_S(Warning);
 }
@@ -117,7 +118,7 @@ void ULSHUDWidget::UpdateResource()
 {
     LSCHECK(CurrentResourceManageComponent.IsValid());
 
-    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentRifleAmmo())));
-
+    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
+    RoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
     LSLOG_S(Warning);
 }

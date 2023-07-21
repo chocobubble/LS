@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
 #include "Components/CapsuleComponent.h"
+#include "LSResourceManageComponent.h"
 
 #include "LSAnimInstance.h"
 
@@ -70,6 +71,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* GrapplingHookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReloadAction;
+
 	UPROPERTY()
 	ULSAnimInstance* LSAnim;
 
@@ -128,10 +135,13 @@ public:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+
+	bool CanShoot(EAmmoType AmmoType);
+
 	FOnAttackEndDelegate OnAttackEnd;
 
 	float GetFinalAttackRange() const;
-	float GetFianlAttackDamage() const;
+	float GetFinalAttackDamage() const;
 	float GetFinalInteractRange() const;
 
 private:
@@ -143,6 +153,8 @@ private:
 	void AutoRun(const FInputActionValue& Value);
 	void OnAiming(const FInputActionValue& Value);
 	void EndAiming(const FInputActionValue& Value);
+	void GrapplingHook(const FInputActionValue& Value);
+	void Reload(const FInputActionValue& Value);
 
 	void AttackCheck();
 
@@ -162,6 +174,10 @@ private:
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	bool bIsPlayer;
 
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsReloading = false;
+
+
 	UPROPERTY()
 	ALSAIController* LSAIController;
 
@@ -172,6 +188,7 @@ private:
 	float DeadTimer;
 
 	FTimerHandle DeadTimerHandle = { };
+	FTimerHandle ReloadTimerHandle = { };
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float ArmLengthTo = 0.0f;

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "LooterShooter.h"
 #include "Components/ActorComponent.h"
 #include "LSDefenseComponent.generated.h"
 
@@ -31,9 +31,11 @@ public:
 	//float GetAttack();
 
 
-	//void SetHP(float NewHP);
+	void SetHP(float NewHP);
+	void SetShield(float NewShield);
 	float GetHPRatio() const;
-	float GetShiledRatio() const;
+	float GetShieldRatio() const;
+
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
@@ -44,29 +46,32 @@ public:
 private:
 	// struct FLSCharacterData* CurrentStatData = nullptr;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 MaxHP = 1000;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float MaxHP = 1000;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 CurrentHP = 1000;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float CurrentHP = 1000;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 MaxMP;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float MaxMP;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 CurrentMP;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float CurrentMP;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 MaxShield = 100;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float MaxShield = 100.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 CurrentShield = 100;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float CurrentShield = 100.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	float ShieldRechargeRate = 5.0f;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float ShieldRechargeRate = 0.01f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float ShieldRechargeDelay = 2.0f;
+
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float LastHitTime = 0.0f;
 
 	
 public:	

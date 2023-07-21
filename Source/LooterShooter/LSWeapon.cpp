@@ -23,35 +23,51 @@ ALSWeapon::ALSWeapon()
 	}
 
 	RifleWeapon->SetCollisionProfileName(TEXT("NoCollision"));
-
+/*
 	AttackRange = 150.0f;
 	AttackDamageMax = 10.0f;
 	AttackDamageMin = -2.5f;
 	AttackModifierMax = 1.25f;
 	AttackModifierMin = 0.85f;
+*/
 }
 
-float ALSWeapon::GetAttackRange() const
+float ALSWeapon::GetMaxRange() const
 {
-	return AttackRange;
+	return MaxRange;
 }
 
-float ALSWeapon::GetAttackDamage() const
+float ALSWeapon::GetBulletDamage() const
 {
-	return AttackDamage;
+	return BulletDamage;
 }
 
-float ALSWeapon::GetAttackModifier() const
+float ALSWeapon::GetFinalDamage() const
 {
-	return AttackModifier;
+	float FinalDamage = BulletDamage;
+	float DamageMultiplier = (FMath::RandRange(0.f, 1.f) <= CriticalHitChance) ? CriticalHitMultiplier : 1.f;
+	FinalDamage *= DamageMultiplier;
+	return FinalDamage;
 }
 
+float ALSWeapon::GetReloadTime() const
+{
+	return ReloadTime;
+}
+
+float ALSWeapon::GetMagazineCapacity() const
+{
+	return MagazineCapacity;
+}
+ 
 void ALSWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
+/*
 	AttackDamage = FMath::RandRange(AttackDamageMin, AttackDamageMax);
 	AttackModifier = FMath::RandRange(AttackModifierMin, AttackModifierMax);
 	LSLOG(Warning, TEXT("Weapon Damage : %f, Modifier : %f"), AttackDamage, AttackModifier);
+*/
 }
 
