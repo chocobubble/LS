@@ -106,7 +106,7 @@ void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)
     auto LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
     LSCHECK(nullptr != LSGameInstance);
 
-    CurrentStatData = LSGameInstance->GetLSCharacterData(NewCharacterLevel);
+    CurrentStatData = LSGameInstance->GetLSPlayerData(NewCharacterLevel);
     LSCHECK(nullptr != CurrentStatData);
     if(CurrentStatData == nullptr)
     {

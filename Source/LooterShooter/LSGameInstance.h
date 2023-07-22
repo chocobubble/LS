@@ -9,13 +9,17 @@
 
 #include "LSGameInstance.generated.h"
 
+// class UDataTable;
+
 USTRUCT(BlueprintType)
-struct FLSCharacterData : public FTableRowBase
+struct FLSPlayerData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	FLSCharacterData() : Level(1), MaxHP(100.0f), Attack(10.0f), DropExp(10), NextExp(30) {}
+	FLSPlayerData() : 
+		Level(1), MaxHP(100.0f), MaxShield(50.f), MaxMP(1.f), Defense(1.f),
+		ShieldRechargeRate(0.1f), ShieldRechargeDelay(3.f), NextExp(5), MasteryExp(1) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int32 Level;
@@ -24,13 +28,57 @@ public:
 	float MaxHP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Attack;
+	float MaxShield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float MaxMP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float Defense;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ShieldRechargeRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ShieldRechargeDelay;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	int32 NextExp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	int32 MasteryExp;
+};
+
+USTRUCT(BlueprintType)
+struct FLSMonsterData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FLSMonsterData() : 
+		Level(1), MaxHP(100.0f), MaxShield(50.f), Defense(1.f),
+		ShieldRechargeRate(0.1f), ShieldRechargeDelay(3.f), DropExp(5) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float MaxHP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float MaxShield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float Defense;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ShieldRechargeRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ShieldRechargeDelay;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int32 DropExp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	int32 NextExp;
 };
 
 
@@ -46,11 +94,16 @@ public:
 	ULSGameInstance();
 
 	virtual void Init() override;
-	FLSCharacterData* GetLSCharacterData(int32 Level);
+	FLSPlayerData* GetLSPlayerData(int32 Level);
+	FLSMonsterData* GetLSMonsterData(int32 Level);
 
 	FStreamableManager StreamableManager;
 
 private:
 	UPROPERTY()
-	class UDataTable* LSCharacterTable;
+	UDataTable* LSPlayerTable;
+	
+	UPROPERTY()
+	UDataTable* LSMonsterTable;
+
 };

@@ -35,7 +35,7 @@ public:
 	void SetHP(float NewHP);
 	float GetHPRatio();
 
-	int32 GetDropExp() const;
+	// int32 GetDropExp() const;
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
@@ -43,7 +43,7 @@ public:
 	
 
 private:
-	struct FLSCharacterData* CurrentStatData = nullptr;
+	struct FLSPlayerData* CurrentStatData = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 Level;

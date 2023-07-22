@@ -42,11 +42,23 @@ void ULSHUDWidget::NativeConstruct()
     LSCHECK(nullptr != HighScore);
 
 
-    CurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo")));
-    LSCHECK(nullptr != CurrentAmmo);
+    FirstWeaponCurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo")));
+    LSCHECK(nullptr != FirstWeaponCurrentAmmo);
 
-    RoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining")));
-    LSCHECK(nullptr != RoundsRemaining);
+    FirstWeaponRoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining")));
+    LSCHECK(nullptr != FirstWeaponRoundsRemaining);
+
+    SecondWeaponCurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo_1")));
+    LSCHECK(nullptr != SecondWeaponCurrentAmmo);
+
+    SecondWeaponRoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_1")));
+    LSCHECK(nullptr != SecondWeaponRoundsRemaining);
+
+    ThirdWeaponCurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo_2")));
+    LSCHECK(nullptr != ThirdWeaponCurrentAmmo);
+
+    ThirdWeaponRoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_2")));
+    LSCHECK(nullptr != ThirdWeaponRoundsRemaining);
 
     LSLOG_S(Warning);
 
@@ -106,10 +118,9 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
 
-    LSCHECK(nullptr != RoundsRemaining);
     LSCHECK(nullptr != CurrentResourceManageComponent);
-    RoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
-    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
+    FirstWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
 
     LSLOG_S(Warning);
 }
@@ -118,7 +129,11 @@ void ULSHUDWidget::UpdateResource()
 {
     LSCHECK(CurrentResourceManageComponent.IsValid());
 
-    CurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
-    RoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
+    FirstWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
+    SecondWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
+    ThirdWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
     LSLOG_S(Warning);
 }

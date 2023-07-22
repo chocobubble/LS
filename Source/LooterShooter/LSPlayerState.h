@@ -49,5 +49,5 @@ protected:
 
 private:
 	void SetCharacterLevel(int32 NewCharacterLevel);
-	struct FLSCharacterData* CurrentStatData;
+	struct FLSPlayerData* CurrentStatData;
 };

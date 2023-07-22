@@ -28,6 +28,8 @@ class UInputAction;
 class UWidgetComponent;
 class ULSResourceManageComponent;
 class ULSDefenseComponent;
+class ULSEquipmentComponent;
+class ULSPopUpWidget;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -77,6 +79,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* EquipFirstWeaponAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* EquipSecondWeaponAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* EquipThirdWeaponAction;
+
 	UPROPERTY()
 	ULSAnimInstance* LSAnim;
 
@@ -85,7 +96,13 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
 	float InteractRange = 800.0f;
+/*
+	UPROPERTY(EditAnywhere, Category = UI)
+	TSubclassOf<UUserWidget> PopUpWidgetClass;
 
+	UPROPERTY()
+	ULSPopUpWidget* PopUpWidget;
+*/
 
 	
 
@@ -119,6 +136,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = UI)
 	UWidgetComponent* HPBarWidget;
 
+	UPROPERTY(VisibleAnywhere, Category = Equipment)
+	ULSEquipmentComponent* EquipmentManager;
+
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 
 	bool CanSetWeapon();
@@ -150,11 +170,16 @@ private:
 	void Look(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
 	void MeleeAttack(const FInputActionValue& Value);
-	void AutoRun(const FInputActionValue& Value);
+	// void AutoRun(const FInputActionValue& Value);
+	void OnRunning(const FInputActionValue& Value);
+	void EndRunning(const FInputActionValue& Value);
 	void OnAiming(const FInputActionValue& Value);
 	void EndAiming(const FInputActionValue& Value);
 	void GrapplingHook(const FInputActionValue& Value);
 	void Reload(const FInputActionValue& Value);
+	void EquipFirstWeapon(const FInputActionValue& Value);
+	void EquipSecondWeapon(const FInputActionValue& Value);
+	void EquipThirdWeapon(const FInputActionValue& Value);
 
 	void AttackCheck();
 
@@ -187,6 +212,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float DeadTimer;
 
+	
+
 	FTimerHandle DeadTimerHandle = { };
 	FTimerHandle ReloadTimerHandle = { };
 
@@ -201,5 +228,7 @@ private:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float ArmLengthChangingSpeed = 3.0f;
+
+	
 };
 

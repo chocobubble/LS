@@ -63,10 +63,22 @@ private:
 
 
 	UPROPERTY()
-	UTextBlock* CurrentAmmo;
+	UTextBlock* FirstWeaponCurrentAmmo;
 
 	UPROPERTY()
-	UTextBlock* RoundsRemaining;
+	UTextBlock* FirstWeaponRoundsRemaining;
+
+	UPROPERTY()
+	UTextBlock* SecondWeaponCurrentAmmo;
+
+	UPROPERTY()
+	UTextBlock* SecondWeaponRoundsRemaining;
+
+	UPROPERTY()
+	UTextBlock* ThirdWeaponCurrentAmmo;
+
+	UPROPERTY()
+	UTextBlock* ThirdWeaponRoundsRemaining;
 
 	UPROPERTY()
 	UProgressBar* ShieldBar;

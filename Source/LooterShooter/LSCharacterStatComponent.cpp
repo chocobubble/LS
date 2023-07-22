@@ -52,12 +52,12 @@ void ULSCharacterStatComponent::SetNewLevel(int32 NewLevel)
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	LSCHECK(nullptr != LSGameInstance);
-	CurrentStatData = LSGameInstance->GetLSCharacterData(NewLevel);
+	CurrentStatData = LSGameInstance->GetLSPlayerData(NewLevel);
 	if(nullptr != CurrentStatData)
 	{
 		Level = NewLevel;
 		CurrentHP = CurrentStatData->MaxHP;
-
+		LSLOG(Warning, TEXT("Player Data Set New Level"));
 		//SetHP(CurrentStatData->MaxHP);
 	}
 	else
@@ -83,7 +83,8 @@ void ULSCharacterStatComponent::SetDamage(float NewDamage)
 float ULSCharacterStatComponent::GetAttack()
 {
 	LSCHECK(nullptr != CurrentStatData, 0.0f);
-	return CurrentStatData->Attack;
+	// return CurrentStatData->Attack;
+	return 50.0f;
 }
 
 
@@ -106,7 +107,9 @@ float ULSCharacterStatComponent::GetHPRatio()
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
 
+/*
 int32 ULSCharacterStatComponent::GetDropExp() const
 {
 	return CurrentStatData->DropExp;
 }
+*/

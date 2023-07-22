@@ -29,6 +29,11 @@
 #include "Math/RotationMatrix.h"
 #include "LSResourceManageComponent.h"
 #include "LSDefenseComponent.h"
+#include "LSEquipmentComponent.h"
+// #include "LSPopUpWidget.h"
+#include "Components/TextBlock.h"
+#include "Blueprint/UserWidget.h"
+#include "LSTextPopup.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -57,9 +62,12 @@ ALSCharacter::ALSCharacter()
 	//#include "Components/WidgetComponent.h"
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 
+
 	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
 
 	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
+
+	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
 
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
@@ -171,6 +179,24 @@ ALSCharacter::ALSCharacter()
 		ReloadAction = LS_RELOAD.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_FIRST_WEAPON(TEXT("/Game/LS/Input/Actions/LS_FirstWeapon.LS_FirstWeapon"));
+	if ( LS_EQUIP_FIRST_WEAPON.Succeeded())
+	{
+		EquipFirstWeaponAction = LS_EQUIP_FIRST_WEAPON.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_SECOND_WEAPON(TEXT("/Game/LS/Input/Actions/LS_SecondWeapon.LS_SecondWeapon"));
+	if ( LS_EQUIP_SECOND_WEAPON.Succeeded())
+	{
+		EquipSecondWeaponAction = LS_EQUIP_SECOND_WEAPON.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_THIRD_WEAPON(TEXT("/Game/LS/Input/Actions/LS_ThirdWeapon.LS_ThirdWeapon"));
+	if ( LS_EQUIP_THIRD_WEAPON.Succeeded())
+	{
+		EquipThirdWeaponAction = LS_EQUIP_THIRD_WEAPON.Object;
+	}
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
@@ -184,7 +210,17 @@ ALSCharacter::ALSCharacter()
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 	}
-
+/*
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_POPUP(TEXT("/Game/LS/UI/UI_POPUP.UI_POPUP_C"));
+	if (UI_POPUP.Succeeded())
+	{
+		PopUpWidgetClass = UI_POPUP.Class;
+	}
+	else
+	{
+		LSLOG_S(Warning);
+	}
+*/
 	AIControllerClass = ALSAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -331,13 +367,13 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		if (bIsPlayer)
 		{
 			//SetControlMode(EControlMode::DIABLO);
-			GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+			GetCharacterMovement()->MaxWalkSpeed = 510.0f;
 			EnableInput(LSPlayerController);
 		}
 		else
 		{
 			//SetControlMode(EControlMode::NPC);
-			GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();
 		}
 		break;
@@ -424,11 +460,16 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALSCharacter::Look);
 	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
 	EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &ALSCharacter::MeleeAttack);
-	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
+	// EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
+	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Started, this, &ALSCharacter::OnRunning);
+	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Completed, this, &ALSCharacter::EndRunning);
 	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ALSCharacter::OnAiming);
 	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ALSCharacter::EndAiming);
 	EnhancedInputComponent->BindAction(GrapplingHookAction, ETriggerEvent::Triggered, this, &ALSCharacter::GrapplingHook);
 	EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ALSCharacter::Reload);
+	EnhancedInputComponent->BindAction(EquipFirstWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipFirstWeapon);
+	EnhancedInputComponent->BindAction(EquipSecondWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipSecondWeapon);
+	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipThirdWeapon);
 
 
 }
@@ -487,10 +528,26 @@ void ALSCharacter::MeleeAttack(const FInputActionValue& Value)
 	bIsAttacking = true;
 }
 
+/*
 void ALSCharacter::AutoRun(const FInputActionValue& Value)
 {
 	LSCHECK(nullptr != LSPlayerController);
 	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
+}
+*/
+
+void ALSCharacter::OnRunning(const FInputActionValue& Value)
+{
+	LSCHECK(nullptr != LSPlayerController);
+	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
+	GetCharacterMovement()->MaxWalkSpeed = 800.f;
+}
+
+void ALSCharacter::EndRunning(const FInputActionValue& Value)
+{
+	LSCHECK(nullptr != LSPlayerController);
+	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
+	GetCharacterMovement()->MaxWalkSpeed = 510.f;
 }
 
 void ALSCharacter::OnAiming(const FInputActionValue& Value)
@@ -499,6 +556,7 @@ void ALSCharacter::OnAiming(const FInputActionValue& Value)
 	LSLOG(Warning, TEXT("OnAiming"));
 	ArmLengthTo = ArmLengthOnAiming;
 	LSAnim->SetAimAnim(true);
+	GetCharacterMovement()->MaxWalkSpeed = 240.f;
 }
 
 void ALSCharacter::EndAiming(const FInputActionValue& Value)
@@ -507,6 +565,7 @@ void ALSCharacter::EndAiming(const FInputActionValue& Value)
 	LSLOG(Warning, TEXT("EndAiming"));
 	ArmLengthTo = ArmLengthOnIdle;
 	LSAnim->SetAimAnim(false);
+	GetCharacterMovement()->MaxWalkSpeed = 510.f;
 }
 
 void ALSCharacter::GrapplingHook(const FInputActionValue& Value)
@@ -532,6 +591,30 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 			LSLOG(Warning, TEXT("RELoAd Complete"));
 		}), CurrentWeapon->GetReloadTime(), false);
 
+}
+
+void ALSCharacter::EquipFirstWeapon(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("EquipFirstWeapon"));
+	LSCHECK(nullptr != EquipmentManager->GetWeapon(0));
+	SetWeapon(EquipmentManager->GetWeapon(0));
+	EquipmentManager->SetCurrentWeaponIndex(0);
+}
+
+void ALSCharacter::EquipSecondWeapon(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("EquipSecondWeapon"));
+	LSCHECK(nullptr != EquipmentManager->GetWeapon(1));
+	SetWeapon(EquipmentManager->GetWeapon(1));
+	EquipmentManager->SetCurrentWeaponIndex(1);
+}
+
+void ALSCharacter::EquipThirdWeapon(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("EquipThirdWeapon"));
+	LSCHECK(nullptr != EquipmentManager->GetWeapon(2));
+	SetWeapon(EquipmentManager->GetWeapon(2));
+	EquipmentManager->SetCurrentWeaponIndex(2);
 }
 
 void ALSCharacter::PostInitializeComponents()
@@ -608,9 +691,28 @@ void ALSCharacter::AttackCheck()
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 
+			float FinalAttackDamage = GetFinalAttackDamage();
+
+/*
+			LSCHECK(nullptr != PopUpWidgetClass);
+			PopUpWidget = Cast<ULSPopUpWidget>(CreateWidget(GetWorld(), PopUpWidgetClass));
+			LSCHECK(nullptr != PopUpWidget);
+			PopUpWidget->AddToViewport();
+			PopUpWidget->SetRelativeLocation(bResult.ImpactPoint);
+			PopUpWidget->SetWidgetSpace(EWidgetSpace::Screen);
+			LSCHECK(nullptr != PopUpWidget->GetPopUpTextBlock());
+			PopUpWidget->GetPopUpTextBlock()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
+*/
+
+			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(HitResult.ImpactPoint, FRotator::ZeroRotator);
+			//Text->GetTextRender()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
+			Text->SetPopupText(FinalAttackDamage);
+			Text->SetTextRotation(HitResult.ImpactPoint , HitResult.TraceStart);
+
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(GetFinalAttackDamage(), DamageEvent, GetController(), this);
+			HitResult.GetActor()->TakeDamage(FinalAttackDamage, DamageEvent, GetController(), this);
+
 
 		}
 		else
@@ -634,7 +736,7 @@ bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 	}
 
 	//  나중에 weapon 의 magazine ammo로 바꾸기
-	if(ResourceManager->GetRoundsRemaining(AmmoType) == 0)
+	if(ResourceManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));
 	 	return false;
@@ -696,6 +798,8 @@ void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
 	}
 	if (nullptr != NewWeapon)
 	{
+		LSLOG(Warning, TEXT("Attach to socket"));
+		NewWeapon->SetActorHiddenInGame(false);
 		NewWeapon->AttachToComponent(
 			GetMesh(), 
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
@@ -742,7 +846,8 @@ void ALSCharacter::OnAssetLoadCompleted()
 
 int32 ALSCharacter::GetExp() const
 {
-	return CharacterStat->GetDropExp();
+	// return CharacterStat->GetDropExp();
+	return 5;
 }
 
 float ALSCharacter::GetFinalAttackRange() const
