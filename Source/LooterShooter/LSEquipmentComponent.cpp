@@ -3,6 +3,7 @@
 
 #include "LSEquipmentComponent.h"
 #include "LSWeapon.h"
+#include "LSWeaponInstance.h"
 #include "LSCharacter.h"
 
 // Sets default values for this component's properties
@@ -13,6 +14,8 @@ ULSEquipmentComponent::ULSEquipmentComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	WeaponClass = ALSWeapon::StaticClass();
+	//
+	WeaponInstanceClass = ALSWeaponInstance::StaticClass();
 	// ...
 }
 
@@ -22,6 +25,7 @@ void ULSEquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+/*
 	for(int32 index = 0; index < 3; ++index)
 	{
 		ALSWeapon* NewWeapon = GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator);
@@ -30,7 +34,17 @@ void ULSEquipmentComponent::BeginPlay()
 		WeaponList.Emplace(NewWeapon);
 		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
 	}
-
+*/
+	for(int32 index = 0; index < 3; ++index)
+	{
+		ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponInstanceClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		NewWeapon->SetWeaponData(EWeaponType::RIFLE, 1);
+		NewWeapon->SetActorHiddenInGame(true);
+		NewWeapon->SetOwner(GetOwner<ALSCharacter>());
+		// LSLOG(Warning, TEXT("%s is owner"), *GetOwner<ALSCharacter>()->GetDebugName(GetOwner<ALSCharacter>()));
+		WeaponInstanceList.Emplace(NewWeapon);
+		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
+	}
 	// ...
 	
 }
@@ -76,6 +90,44 @@ void ULSEquipmentComponent::SetCurrentWeaponIndex(int32 Index)
 {
 	CurrentWeaponIndex = Index;
 }
+
+void ULSEquipmentComponent::EquipWeapon(ALSWeaponInstance* Weapon)
+{
+	if(WeaponInstanceList.Num() < 3)
+	{
+		WeaponInstanceList.Emplace(Weapon);
+		CurrentWeaponInstance = Weapon;
+		OnEquipmentChanged.Broadcast();
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("Weapon list is full"));
+	}
+}
+
+void ULSEquipmentComponent::EquipWeapon(ALSWeaponInstance* Weapon, int8 index)
+{
+
+}
+
+ALSWeaponInstance* ULSEquipmentComponent::GetCurrentWeaponInstance() 
+{
+	return GetWeaponInstance(CurrentWeaponIndex);
+}
+
+ALSWeaponInstance* ULSEquipmentComponent::GetWeaponInstance(int32 Index)
+{
+	if(WeaponInstanceList[Index] != nullptr)
+	{
+		return WeaponInstanceList[Index];
+	}
+	else
+	{
+		LSLOG(Error, TEXT("%d error"), Index);
+		return nullptr;
+	}
+} 
+
 
 /*
 // Called every frame

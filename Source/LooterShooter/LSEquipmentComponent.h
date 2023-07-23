@@ -9,6 +9,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnEquipmentChangedDelegate);
 
 class ALSWeapon;
+class ALSWeaponInstance;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,6 +26,15 @@ public:
 
 	ALSWeapon* GetCurrentWeapon();
 	ALSWeapon* GetWeapon(int32 Index) const;
+
+
+	////////
+
+	void EquipWeapon(ALSWeaponInstance* Weapon);
+	void EquipWeapon(ALSWeaponInstance* Weapon, int8 index);
+
+	ALSWeaponInstance* GetCurrentWeaponInstance();
+	ALSWeaponInstance* GetWeaponInstance(int32 Index);
 
 	void SetCurrentWeaponIndex(int32 Index);
 
@@ -51,6 +61,17 @@ public:
 
 	UPROPERTY(EditInstanceOnly, Category = Equipment)
 	TSubclassOf<ALSWeapon> WeaponClass;
+
+///////////////////////////////////
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	ALSWeaponInstance* CurrentWeaponInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	TArray<ALSWeaponInstance*> WeaponInstanceList;
+
+	UPROPERTY(EditInstanceOnly, Category = Equipment)
+	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
+
 
 	FOnEquipmentChangedDelegate OnEquipmentChanged;		
 };

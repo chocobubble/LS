@@ -35,6 +35,7 @@
 #include "Blueprint/UserWidget.h"
 #include "LSTextPopup.h"
 #include "LSAutoLootItem.h"
+#include "LSWeaponInstance.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -598,24 +599,24 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 void ALSCharacter::EquipFirstWeapon(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("EquipFirstWeapon"));
-	LSCHECK(nullptr != EquipmentManager->GetWeapon(0));
-	SetWeapon(EquipmentManager->GetWeapon(0));
+	LSCHECK(nullptr != EquipmentManager->GetWeaponInstance(0));
+	SetWeapon(EquipmentManager->GetWeaponInstance(0));
 	EquipmentManager->SetCurrentWeaponIndex(0);
 }
 
 void ALSCharacter::EquipSecondWeapon(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("EquipSecondWeapon"));
-	LSCHECK(nullptr != EquipmentManager->GetWeapon(1));
-	SetWeapon(EquipmentManager->GetWeapon(1));
+	LSCHECK(nullptr != EquipmentManager->GetWeaponInstance(1));
+	SetWeapon(EquipmentManager->GetWeaponInstance(1));
 	EquipmentManager->SetCurrentWeaponIndex(1);
 }
 
 void ALSCharacter::EquipThirdWeapon(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("EquipThirdWeapon"));
-	LSCHECK(nullptr != EquipmentManager->GetWeapon(2));
-	SetWeapon(EquipmentManager->GetWeapon(2));
+	LSCHECK(nullptr != EquipmentManager->GetWeaponInstance(2));
+	SetWeapon(EquipmentManager->GetWeaponInstance(2));
 	EquipmentManager->SetCurrentWeaponIndex(2);
 }
 
@@ -776,7 +777,7 @@ bool ALSCharacter::CanSetWeapon()
 	return true; //(nullptr == CurrentWeapon);
 }
 
-void ALSCharacter::SetWeapon(ALSWeapon* NewWeapon)
+void ALSCharacter::SetWeapon(ALSWeaponInstance* NewWeapon)
 {
 	LSCHECK(nullptr != NewWeapon);// && nullptr == CurrentWeapon);
 

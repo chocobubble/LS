@@ -24,6 +24,8 @@ void ULSCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	SetNewLevel(Level);
 	// ...
 	
 }
@@ -42,8 +44,6 @@ void ULSCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 void ULSCharacterStatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-
-	SetNewLevel(Level);
 }
 
 void ULSCharacterStatComponent::SetNewLevel(int32 NewLevel)

@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "LSCharacter.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "LSWeaponInstance.h"
 
 // Sets default values
 ALSItemBox::ALSItemBox()
@@ -39,7 +40,7 @@ ALSItemBox::ALSItemBox()
 	Trigger->SetCollisionProfileName(TEXT("ItemBox"));
 	Box->SetCollisionProfileName(TEXT("NoCollision"));
 
-	WeaponItemClass = ALSWeapon::StaticClass();
+	WeaponItemClass = ALSWeaponInstance::StaticClass();
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_CHESTOPEN(TEXT("/Game/InfinityBladeGrassLands/Effects/FX_Treasure/Chest/P_TreasureChest_Open_Mesh.P_TreasureChest_Open_Mesh"));
 	if (P_CHESTOPEN.Succeeded())
@@ -73,7 +74,7 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 	{
 		if (LSCharacter->CanSetWeapon())
 		{
-			ALSWeapon* NewWeapon = GetWorld()->SpawnActor<ALSWeapon>(WeaponItemClass, FVector::ZeroVector, FRotator::ZeroRotator);
+			ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponItemClass, FVector::ZeroVector, FRotator::ZeroRotator);
 			LSCharacter->SetWeapon(NewWeapon);
 
 			Effect->Activate(true);

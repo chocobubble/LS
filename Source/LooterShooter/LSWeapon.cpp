@@ -21,7 +21,7 @@ ALSWeapon::ALSWeapon()
 	}
 	else
 	{
-		LSLOG_S(Warning);
+		LSLOG_S(Error);
 	}
 
 	RifleWeapon->SetCollisionProfileName(TEXT("NoCollision"));

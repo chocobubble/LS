@@ -9,15 +9,15 @@
 
 #include "LSWeapon.generated.h"
 
-struct FLSWeaponData;
 
-
+/*
 enum class GunType
 {
 	RIFLE,
 	PISTOL,
 	SHOTGUN
 };
+*/
 
 
 

@@ -30,6 +30,7 @@ class ULSResourceManageComponent;
 class ULSDefenseComponent;
 class ULSEquipmentComponent;
 class ULSPopUpWidget;
+class ALSWeaponInstance;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -142,10 +143,10 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 
 	bool CanSetWeapon();
-	void SetWeapon(class ALSWeapon* NewWeapon);
+	void SetWeapon(ALSWeaponInstance* NewWeapon);
 
 	UPROPERTY(VisibleAnywhere, Category=Weapon)
-	class ALSWeapon* CurrentWeapon;
+	ALSWeaponInstance* CurrentWeapon;
 
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	class ULSCharacterStatComponent* CharacterStat;
