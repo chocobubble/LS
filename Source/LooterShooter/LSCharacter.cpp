@@ -34,6 +34,7 @@
 #include "Components/TextBlock.h"
 #include "Blueprint/UserWidget.h"
 #include "LSTextPopup.h"
+#include "LSAutoLootItem.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -312,7 +313,7 @@ void ALSCharacter::BeginPlay()
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSCharacter::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
 
-
+	DefenseManager->OnHPIsZero.AddUObject(this, &ALSCharacter::SetCharacterStateDead);
 }
 
 void ALSCharacter::SetCharacterState(ECharacterState NewState)
@@ -403,6 +404,7 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 			}
 			else
 			{
+				DropItem();
 				Destroy();
 			}
 		}), DeadTimer, false);
@@ -753,7 +755,7 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
 	
 	DefenseManager->SetDamage(FinalDamage);
-
+	
 	// CharacterStat->SetDamage(FinalDamage);
 
 	if (CurrentState == ECharacterState::DEAD)
@@ -888,4 +890,14 @@ void ALSCharacter::InteractCheck()
 	{
 		LSLOG(Warning, TEXT("HIT BOx"));
 	}
+}
+
+void ALSCharacter::DropItem()
+{
+	TWeakObjectPtr<ALSAutoLootItem> AutoLootItem = GetWorld()->SpawnActor<ALSAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+}
+
+void ALSCharacter::SetCharacterStateDead()
+{
+	SetCharacterState(ECharacterState::DEAD);
 }

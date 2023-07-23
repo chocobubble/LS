@@ -21,6 +21,12 @@ ULSGameInstance::ULSGameInstance()
     LSMonsterTable = DT_LSMONSTER.Object;
     LSCHECK(LSMonsterTable->GetRowMap().Num() > 0);
     
+    FString WeaponDataPath = TEXT("/Game/LS/GameData/WeaponBaseData.WeaponBaseData");
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSWEAPON(*WeaponDataPath);
+    //static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSCHARACTER(TEXT("/Script/Engine.DataTable'/Game/LS/GameData/LSCD.LSCD'"));
+    LSCHECK(DT_LSWEAPON.Succeeded());
+    LSWeaponTable = DT_LSWEAPON.Object;
+    LSCHECK(LSWeaponTable->GetRowMap().Num() > 0);
 
 
 
@@ -50,4 +56,14 @@ FLSMonsterData* ULSGameInstance::GetLSMonsterData(int32 Level)
         return nullptr;
     }
     return LSMonsterTable->FindRow<FLSMonsterData>(*FString::FromInt(Level), TEXT(""));
+}
+
+FLSWeaponData* ULSGameInstance::GetLSWeaponData(int32 Level)
+{
+    if(LSWeaponTable == nullptr) 
+    {
+        LSLOG_S(Warning);
+        return nullptr;
+    }
+    return LSWeaponTable->FindRow<FLSWeaponData>(*FString::FromInt(Level), TEXT(""));
 }

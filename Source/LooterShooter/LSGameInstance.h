@@ -81,7 +81,54 @@ public:
 	int32 DropExp;
 };
 
+USTRUCT(BlueprintType)
+struct FLSWeaponData : public FTableRowBase
+{
+	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 MagazineCapacity = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float FireRate = 500.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float MovementSpeed = 510.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float BulletDamage = 50.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitChance = 0.03f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitMultiplier = 1.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float DamageReduceDistance = 1000.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Weapon)
+	float ReloadTime = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 BulletsPerCatridge = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float MaxRange = 10000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	float MaxSpreadAngle  = 1.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Attack)
+	float MinSpreadAngle = 1.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Attack)
+	float HeatPerShot = 0.1f;
+};
 /**
  * 
  */
@@ -96,6 +143,7 @@ public:
 	virtual void Init() override;
 	FLSPlayerData* GetLSPlayerData(int32 Level);
 	FLSMonsterData* GetLSMonsterData(int32 Level);
+	FLSWeaponData* GetLSWeaponData(int32 Level);
 
 	FStreamableManager StreamableManager;
 
@@ -106,4 +154,6 @@ private:
 	UPROPERTY()
 	UDataTable* LSMonsterTable;
 
+	UPROPERTY()
+	UDataTable* LSWeaponTable;
 };

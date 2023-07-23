@@ -2,6 +2,8 @@
 
 
 #include "LSWeapon.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 ALSWeapon::ALSWeapon()
@@ -23,6 +25,8 @@ ALSWeapon::ALSWeapon()
 	}
 
 	RifleWeapon->SetCollisionProfileName(TEXT("NoCollision"));
+
+
 /*
 	AttackRange = 150.0f;
 	AttackDamageMax = 10.0f;
@@ -32,37 +36,43 @@ ALSWeapon::ALSWeapon()
 */
 }
 
+
+
 float ALSWeapon::GetMaxRange() const
 {
-	return MaxRange;
+	return CurrentWeaponData->MaxRange;
 }
 
 float ALSWeapon::GetBulletDamage() const
 {
-	return BulletDamage;
+	return CurrentWeaponData->BulletDamage;
 }
 
 float ALSWeapon::GetFinalDamage() const
 {
-	float FinalDamage = BulletDamage;
-	float DamageMultiplier = (FMath::RandRange(0.f, 1.f) <= CriticalHitChance) ? CriticalHitMultiplier : 1.f;
+	float FinalDamage = CurrentWeaponData->BulletDamage;
+	float DamageMultiplier = (FMath::RandRange(0.f, 1.f) <= CurrentWeaponData->CriticalHitChance) ? CurrentWeaponData->CriticalHitMultiplier : 1.f;
 	FinalDamage *= DamageMultiplier;
 	return FinalDamage;
 }
 
 float ALSWeapon::GetReloadTime() const
 {
-	return ReloadTime;
+	return CurrentWeaponData->ReloadTime;
 }
 
 float ALSWeapon::GetMagazineCapacity() const
 {
-	return MagazineCapacity;
+	return CurrentWeaponData->MagazineCapacity;
 }
  
 void ALSWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	CurrentWeaponData = LSGameInstance->GetLSWeaponData(Level);
 
 /*
 	AttackDamage = FMath::RandRange(AttackDamageMin, AttackDamageMax);

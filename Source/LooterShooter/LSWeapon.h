@@ -4,7 +4,13 @@
 
 #include "LooterShooter.h"
 #include "GameFramework/Actor.h"
+#include "LSGameInstance.h"
+
+
 #include "LSWeapon.generated.h"
+
+struct FLSWeaponData;
+
 
 enum class GunType
 {
@@ -12,6 +18,8 @@ enum class GunType
 	PISTOL,
 	SHOTGUN
 };
+
+
 
 UCLASS()
 class LOOTERSHOOTER_API ALSWeapon : public AActor
@@ -37,33 +45,45 @@ public:
 	USkeletalMeshComponent* RifleWeapon;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
-	float MaxRange = 10000.f;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float BulletDamage = 50.f;
+private:
+	FLSWeaponData* CurrentWeaponData;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float FireRate = 500.f;
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	int32 Level = 1;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float CriticalHitChance = 0.03f;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float CriticalHitMultiplier = 1.5f;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float DamageReduceDistance = 1000.f;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	float ReloadTime = 5.f;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
-	int32 BulletsPerCatridge = 1;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)
+/*
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
 	int32 MagazineCapacity = 20;
 
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float FireRate = 500.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float MovementSpeed = 510.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float BulletDamage = 50.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitChance = 0.03f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitMultiplier = 1.5f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float DamageReduceDistance = 1000.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	float ReloadTime = 2.f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon)
+	int32 BulletsPerCatridge = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float MaxRange = 10000.f;
+*/
+	
 
 /*
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Attack)

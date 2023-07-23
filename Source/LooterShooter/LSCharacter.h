@@ -187,6 +187,10 @@ private:
 
 	void OnAssetLoadCompleted();
 
+	void DropItem();
+
+	void SetCharacterStateDead();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	bool bIsAttacking;
 
