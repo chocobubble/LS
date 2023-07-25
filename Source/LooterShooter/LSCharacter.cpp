@@ -315,6 +315,10 @@ void ALSCharacter::BeginPlay()
 	SetCharacterState(ECharacterState::LOADING);
 
 	DefenseManager->OnHPIsZero.AddUObject(this, &ALSCharacter::SetCharacterStateDead);
+
+
+	LSCHECK(Camera != nullptr);
+	ToAimDirection = FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X);
 }
 
 void ALSCharacter::SetCharacterState(ECharacterState NewState)
@@ -426,6 +430,19 @@ void ALSCharacter::Tick(float DeltaTime)
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
 
 	InteractCheck();
+
+	FVector2D LookAxisVector(1.f, 1.f);// = Value.Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		// add yaw and pitch input to controller
+		AddControllerYawInput(LookAxisVector.X);
+		AddControllerPitchInput(LookAxisVector.Y);
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("PlayerController is nullptr 1"));
+	}
 }
 
 // Called to bind functionality to input
@@ -602,6 +619,9 @@ void ALSCharacter::EquipFirstWeapon(const FInputActionValue& Value)
 	LSCHECK(nullptr != EquipmentManager->GetWeaponInstance(0));
 	SetWeapon(EquipmentManager->GetWeaponInstance(0));
 	EquipmentManager->SetCurrentWeaponIndex(0);
+
+	// for test later
+	EquipmentManager->GetWeaponInstance(0)->OnAimDirChange.AddUObject(this, &ALSCharacter::ShowDebugLine);
 }
 
 void ALSCharacter::EquipSecondWeapon(const FInputActionValue& Value)
@@ -639,6 +659,7 @@ void ALSCharacter::PostInitializeComponents()
 	ULSAnimInstance* AnimInstance = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
 	LSCHECK(nullptr != AnimInstance);
 	AnimInstance->OnMontageEnded.AddDynamic(this, &ALSCharacter::OnAttackMontageEnded);
+
 }
 
 void ALSCharacter::PossessedBy(AController * NewController)
@@ -683,6 +704,9 @@ void ALSCharacter::AttackCheck()
 	);
 
 #endif
+
+	FVector TempVector = CurrentWeapon->CalculateRecoil((FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X)), CurrentWeapon->GetCurrentSpreadAngle());
+	ShowDebugLine(TempVector);
 
 	//ResourceManager->ConsumeAmmo(EAmmoType::RIFLE, -1);
 	ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
@@ -901,4 +925,18 @@ void ALSCharacter::DropItem()
 void ALSCharacter::SetCharacterStateDead()
 {
 	SetCharacterState(ECharacterState::DEAD);
+}
+
+void ALSCharacter::ShowDebugLine(FVector Dir)
+{
+	DrawDebugLine(
+		GetWorld(),
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + Dir * 1000.f), //AttackRange,
+		FColor::Red,
+		false,
+		1.0f,
+		0,
+		1.f
+	);	
 }

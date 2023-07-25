@@ -7,6 +7,9 @@
 #include "LSGameInstance.h"
 #include "LSWeaponInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FTest, FVector);
+
+class ALSCharacter;
 class ULSWeaponAbilityComponent;
 //struct FLSWeaponData;
 
@@ -46,10 +49,16 @@ public:
 	{
 		return MagazineCapacity;
 	}
+	float GetCurrentSpreadAngle() const
+	{
+		return CurrentSpreadAngle;
+	}
 
 	float GetFinalDamage() const;
 
 	void SetBulletDamage(float Value);
+
+	FVector CalculateRecoil(FVector AimDir, const float HalfAngle);
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,8 +70,14 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, Category = Ability)
 	ULSWeaponAbilityComponent* WeaponAbilityComponent;
-	
-	// virtual void Tick(float DeltaTime) override;
+
+/*
+	UPROPERTY(VisibleAnywhere, Category = Ability)
+	ALSCharacter* Owner;
+*/	
+	virtual void Tick(float DeltaTime) override;
+
+	FTest OnAimDirChange;
 
 private:
 	FLSWeaponData* WeaponBaseData;
@@ -104,12 +119,15 @@ private:
 	float MaxRange;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	float MaxSpreadAngle;
+	float MaxSpreadAngle = 1.f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	float MinSpreadAngle;
+	float MinSpreadAngle = 0.f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	float HeatPerShot;
+	float HeatPerShot = 0.1f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	float CurrentSpreadAngle = 5.5f;
 
 };

@@ -192,6 +192,9 @@ private:
 
 	void SetCharacterStateDead();
 
+	// debug line
+	void ShowDebugLine(FVector Dir);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	bool bIsAttacking;
 
@@ -233,6 +236,9 @@ private:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float ArmLengthChangingSpeed = 3.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	FVector ToAimDirection;
 
 	
 };
