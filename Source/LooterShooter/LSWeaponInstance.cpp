@@ -3,6 +3,7 @@
 
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "LSWeaponAbilityComponent.h"
 
 // Sets default values
 ALSWeaponInstance::ALSWeaponInstance()
@@ -12,6 +13,8 @@ ALSWeaponInstance::ALSWeaponInstance()
 
 	RifleWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RIFLEWEAPON"));
 	RootComponent = RifleWeapon;
+	WeaponAbilityComponent = CreateDefaultSubobject<ULSWeaponAbilityComponent>(TEXT("WEAPONABILITY"));
+	// root?
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
 	if( SK_RIFLE.Succeeded() )
@@ -44,6 +47,7 @@ void ALSWeaponInstance::SetWeaponData(EWeaponType WeaponType, int32 ItemLevel)
 	WeaponBaseData = LSGameInstance->GetLSWeaponData(Level);
 	LSCHECK(WeaponBaseData);
 	SetWeaponStats();
+	WeaponAbilityComponent->EnhanceWeaponStat(this);
 }
 
 void ALSWeaponInstance::SetWeaponStats()
@@ -68,6 +72,11 @@ float ALSWeaponInstance::GetFinalDamage() const
 	float DamageMultiplier = (FMath::RandRange(0.f, 1.f) <= CriticalHitChance) ? CriticalHitMultiplier : 1.f;
 	FinalDamage *= DamageMultiplier;
 	return FinalDamage;
+}
+
+void ALSWeaponInstance::SetBulletDamage(float Value)
+{
+	BulletDamage = Value;
 }
 
 /*

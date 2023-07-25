@@ -7,23 +7,70 @@
 #include "LSWeaponAbilityComponent.generated.h"
 
 class ALSWeaponInstance;
-
-UPROPERTY(BlueprintType)
-struct WeaponAbility
+/*
+USTRUCT(BlueprintType)
+struct FWeaponAbility
 {
+	GENERATED_BODY()
 public:
-	WeaponAbility(FString Name, float Stat) : AbilityName(Name), AbilityStat(Stat) {}
-	virtual void ApplyAbility(ALSWeaponInstance WeaponInstance);
-	FString* GetAbilityText() const;
-private:
+	FWeaponAbility(float Stat) : AbilityStat(Stat) {}
+	//FWeaponAbility(FString Name, float Stat) : AbilityName(Name), AbilityStat(Stat) {}
+	virtual ~FWeaponAbility() = default;
+	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) {}
+	virtual FString GetAbilityText() {return FString();}
+protected:
+	UPROPERTY()
 	FString AbilityName;
+	UPROPERTY()
 	float AbilityStat;
 };
 
-class BulletDamageAbility : public WeaponAbility
+USTRUCT(BlueprintType)
+struct FBulletDamageAbility : public FWeaponAbility
 {
-	virtual void ApplyAbility() override;
+	GENERATED_BODY()
+
+	FBulletDamageAbility(float Stat) : FWeaponAbility(Stat) {}
+
+	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) override;
+	virtual FString GetAbilityText() override;
 };
+*/
+
+UCLASS()
+class UWeaponAbility : public UObject
+{
+	GENERATED_BODY()
+public:
+	// UWeaponAbility(){}
+	// UWeaponAbility(float Stat) : AbilityStat(Stat) {}
+	//FWeaponAbility(FString Name, float Stat) : AbilityName(Name), AbilityStat(Stat) {}
+	//virtual ~UWeaponAbility() = default;
+	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) {}
+	virtual void SetAbilityStat(float Stat);
+	// virtual FString GetAbilityText() {return FString();}
+protected:
+/*
+	UPROPERTY()
+	FString AbilityName;
+*/	
+	UPROPERTY()
+	float AbilityStat;
+};
+
+UCLASS()
+class UBulletDamageAbility : public UWeaponAbility
+{
+	GENERATED_BODY()
+public:
+	// UBulletDamageAbility() {}
+	// UBulletDamageAbility(float Stat) : UWeaponAbility(Stat) {}
+
+	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) override;
+	// virtual FString GetAbilityText() override;
+};
+
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSWeaponAbilityComponent : public UActorComponent
@@ -38,9 +85,17 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+private:
+	UPROPERTY()
+	TArray<UWeaponAbility*> AbilityList;
+
 public:	
+
+	void EnhanceWeaponStat(ALSWeaponInstance* WeaponInstance);
+
+
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
 };

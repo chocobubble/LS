@@ -7,6 +7,7 @@
 #include "LSGameInstance.h"
 #include "LSWeaponInstance.generated.h"
 
+class ULSWeaponAbilityComponent;
 //struct FLSWeaponData;
 
 UENUM(BlueprintType)
@@ -48,6 +49,8 @@ public:
 
 	float GetFinalDamage() const;
 
+	void SetBulletDamage(float Value);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,6 +59,8 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	USkeletalMeshComponent* RifleWeapon;
 	
+	UPROPERTY(VisibleAnywhere, Category = Ability)
+	ULSWeaponAbilityComponent* WeaponAbilityComponent;
 	
 	// virtual void Tick(float DeltaTime) override;
 
