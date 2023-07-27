@@ -89,6 +89,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* EquipThirdWeaponAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	UPROPERTY()
 	ULSAnimInstance* LSAnim;
 
@@ -181,6 +184,8 @@ private:
 	void EquipFirstWeapon(const FInputActionValue& Value);
 	void EquipSecondWeapon(const FInputActionValue& Value);
 	void EquipThirdWeapon(const FInputActionValue& Value);
+	
+	void Interact(const FInputActionValue& Value);
 
 	void AttackCheck();
 
@@ -219,6 +224,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float DeadTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float TestTimer = 0.1f;
 
 	
 

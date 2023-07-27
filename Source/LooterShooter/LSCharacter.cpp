@@ -199,6 +199,18 @@ ALSCharacter::ALSCharacter()
 		EquipThirdWeaponAction = LS_EQUIP_THIRD_WEAPON.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> LS_INTERACT(TEXT("/Game/LS/Input/Actions/LS_Interact.LS_Interact"));
+	if ( LS_INTERACT.Succeeded())
+	{
+		InteractAction = LS_INTERACT.Object;
+
+		// later move
+		LSCHECK(InteractAction->Triggers.Num() > 0);
+		TObjectPtr<UInputTriggerPulse> InteractInputTrigger = Cast<UInputTriggerPulse>(InteractAction->Triggers[0]);
+		LSCHECK(nullptr != InteractInputTrigger);
+		InteractInputTrigger->Interval = 0.1f;
+	}
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
@@ -430,7 +442,7 @@ void ALSCharacter::Tick(float DeltaTime)
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
 
 	InteractCheck();
-
+/*
 	FVector2D LookAxisVector(1.f, 1.f);// = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
@@ -443,6 +455,7 @@ void ALSCharacter::Tick(float DeltaTime)
 	{
 		LSLOG(Warning, TEXT("PlayerController is nullptr 1"));
 	}
+*/
 }
 
 // Called to bind functionality to input
@@ -490,6 +503,7 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(EquipFirstWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipFirstWeapon);
 	EnhancedInputComponent->BindAction(EquipSecondWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipSecondWeapon);
 	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipThirdWeapon);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSCharacter::Interact);
 
 
 }
@@ -640,6 +654,12 @@ void ALSCharacter::EquipThirdWeapon(const FInputActionValue& Value)
 	EquipmentManager->SetCurrentWeaponIndex(2);
 }
 
+void ALSCharacter::Interact(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("Interact"));
+}
+
+
 void ALSCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -711,7 +731,10 @@ void ALSCharacter::AttackCheck()
 	//ResourceManager->ConsumeAmmo(EAmmoType::RIFLE, -1);
 	ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
 
-	
+	// later ..
+	//GetController()->SetControlRotation(FRotationMatrix((TempVector.Rotation())).GetUnitAxis(EAxis::X));
+	GetController()->SetControlRotation(TempVector.Rotation());
+
 	if (bResult)
 	{
 		if (HitResult.HasValidHitObjectHandle())
@@ -751,6 +774,8 @@ void ALSCharacter::AttackCheck()
 	{
 		LSLOG(Warning, TEXT("Didn't hit"));
 	}
+
+
 }
 
 

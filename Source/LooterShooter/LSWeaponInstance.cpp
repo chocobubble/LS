@@ -114,10 +114,13 @@ FVector ALSWeaponInstance::CalculateRecoil(FVector AimDir, const float HalfAngle
 
 		OnAimDirChange.Broadcast(FinalDirectionQuat.RotateVector(FVector::ForwardVector));
 		return FinalDirectionQuat.RotateVector(FVector::ForwardVector);
+		//return FinalDirectionQuat.Rotator();
 	}
 	else
 	{
 		return AimDir.GetSafeNormal();
+		//return FQuat::Identity;
+		//return FRotator::ZeroRotator;
 	}
 
 
