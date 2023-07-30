@@ -61,7 +61,7 @@ public:
 	ULSResourceManageComponent();
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
-	void SetRoundsRemaining(EAmmoType AmmoType, int32 Amount);
+//	void SetRoundsRemaining(EAmmoType AmmoType, int32 Amount);
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
 	
 	void SetGoldAmount(int32 Amount) ;
@@ -82,12 +82,12 @@ public:
 	{
 		return CurrentRifleAmmo;
 	}
-
+/*
 	int32 GetRoundsRemaining() const
 	{
 		return RoundsRemaining;
 	}
-
+*/
 	int32 GetGoldAmount() const
 	{
 		return GoldAmount;
@@ -119,8 +119,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
 	int32 CurrentShotgunAmmo = 0;
 
+/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
 	int32 RoundsRemaining = 0;
+*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
 	int32 GoldAmount = 0;

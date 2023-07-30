@@ -6,7 +6,7 @@
 #include "Components/TextBlock.h"
 #include "LSCharacterStatComponent.h"
 #include "LSPlayerState.h"
-
+#include "LSEquipmentComponent.h"
 #include "LSResourceManageComponent.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
@@ -21,6 +21,20 @@ void ULSHUDWidget::BindPlayerState(ALSPlayerState* PlayerState)
     LSCHECK(nullptr != PlayerState);
     CurrentPlayerState = PlayerState;
     PlayerState->OnPlayerStateChanged.AddUObject(this, &ULSHUDWidget::UpdatePlayerState);
+}
+
+void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* ResourceManager)
+{
+    LSCHECK(nullptr != ResourceManager);
+    CurrentResourceManager = ResourceManager;
+    CurrentResourceManager->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentAmmo);
+}
+
+void ULSHUDWidget::BindEquipmentComponent(ULSEquipmentComponent* EquipmentComponent)
+{
+    LSCHECK(nullptr != EquipmentComponent);
+    CurrentEquipmentComponent = EquipmentComponent;
+    CurrentEquipmentComponent->OnRoundsRemainingChanged.AddUObject(this, &ULSHUDWidget::UpdateRoundsRemaining);
 }
 
 void ULSHUDWidget::NativeConstruct()
@@ -62,7 +76,9 @@ void ULSHUDWidget::NativeConstruct()
 
     LSLOG_S(Warning);
 
-    
+    RoundsRemainingTextList.Add(FirstWeaponRoundsRemaining);
+    RoundsRemainingTextList.Add(SecondWeaponRoundsRemaining);
+    RoundsRemainingTextList.Add(ThirdWeaponRoundsRemaining);
 }
 
 //Error: ULSHUDWidget::UpdateCharacterStat(45) ASSERTION : 'CurrentCharacterStat.IsValid()'
@@ -97,7 +113,7 @@ void ULSHUDWidget::UpdatePlayerState()
     HighScore->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetGameHighScore())));
 }
 
-
+/*
 void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent)
 {
     /*
@@ -113,7 +129,7 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
 
     LSLOG_S(Warning);
     */
-
+/*
     LSCHECK(nullptr != ResourceManageComponent);
     CurrentResourceManageComponent = ResourceManageComponent;
     CurrentResourceManageComponent->OnResourceChanged.AddUObject(this, &ULSHUDWidget::UpdateResource);
@@ -124,7 +140,8 @@ void ULSHUDWidget::BindResourceManageComponent(ULSResourceManageComponent* Resou
 
     LSLOG_S(Warning);
 }
-
+*/
+/*
 void ULSHUDWidget::UpdateResource()
 {
     LSCHECK(CurrentResourceManageComponent.IsValid());
@@ -135,5 +152,22 @@ void ULSHUDWidget::UpdateResource()
     SecondWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
     ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetCurrentAmmo(EAmmoType::RIFLE))));
     ThirdWeaponRoundsRemaining->SetText(FText::FromString(FString::FromInt(CurrentResourceManageComponent->GetRoundsRemaining())));
+    LSLOG_S(Warning);
+}
+*/
+
+void ULSHUDWidget::UpdateRoundsRemaining(int32 CurrentWeaponIndex)
+{
+    LSCHECK(CurrentEquipmentComponent.IsValid());
+    RoundsRemainingTextList[CurrentWeaponIndex]->SetText(FText::FromString(FString::FromInt(CurrentEquipmentComponent->GetRoundsRemaining())));
+}
+
+
+void ULSHUDWidget::UpdateCurrentAmmo()
+{
+    LSCHECK(CurrentResourceManager.IsValid());
+    FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
+    SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
+    ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
     LSLOG_S(Warning);
 }

@@ -88,6 +88,7 @@ int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
 	return -1;
 }
 
+/*
 void ULSResourceManageComponent::SetRoundsRemaining(EAmmoType AmmoType, int32 Amount)
 {
 	switch (AmmoType)
@@ -97,7 +98,7 @@ void ULSResourceManageComponent::SetRoundsRemaining(EAmmoType AmmoType, int32 Am
 			RoundsRemaining = FMath::Clamp(RoundsRemaining + Amount, 0, CurrentRifleAmmo);
 			break;
 		}
-		/*
+		
 		case EAmmoType::PISTOL:
 		{
 			//ResourceData->CurrentPistolAmmo += Amount;
@@ -109,11 +110,12 @@ void ULSResourceManageComponent::SetRoundsRemaining(EAmmoType AmmoType, int32 Am
 			ResourceData->CurrentShotgunAmmo += Amount;
 			break;
 		}
-		*/
+		
 	}	
 	LSLOG_S(Warning);
 	OnResourceChanged.Broadcast();
 }
+*/
 
 int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 {

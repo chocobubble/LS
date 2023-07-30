@@ -53,6 +53,7 @@ void ALSWeaponInstance::SetWeaponData(EWeaponType WeaponType, int32 ItemLevel)
 	LSCHECK(WeaponBaseData);
 	SetWeaponStats();
 	WeaponAbilityComponent->EnhanceWeaponStat(this);
+	RoundsRemaining = WeaponBaseData->MagazineCapacity;
 }
 
 void ALSWeaponInstance::SetWeaponStats()
@@ -126,3 +127,8 @@ FVector ALSWeaponInstance::CalculateRecoil(FVector AimDir, const float HalfAngle
 
 }
 
+void ALSWeaponInstance::SetRoundsRemaining(int32 NewRoundsRemaining)
+{
+	RoundsRemaining = NewRoundsRemaining;
+	// OnRoundsChaged.Broadcast();
+}

@@ -614,16 +614,16 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 	{
 		return;
 	}
-	LSCHECK(nullptr != CurrentWeapon);
+	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance());
 	bIsReloading = true;
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			bIsReloading = false;
-			int32 CurrentRounds = ResourceManager->GetRoundsRemaining();
-			int32 ReloadRounds = FMath::Clamp(CurrentWeapon->GetMagazineCapacity() - CurrentRounds, 0, ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE)); 
-			ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, ReloadRounds);
+			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
+			int32 ReloadRounds = FMath::Clamp(EquipmentManager->GetCurrentWeaponInstance()->GetMagazineCapacity() - CurrentRounds, 0, ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE)); 
+			EquipmentManager->SetRoundsRemaining(EquipmentManager->GetCurrentWeaponInstance()->GetMagazineCapacity());
 			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, -ReloadRounds);
 			LSLOG(Warning, TEXT("RELoAd Complete"));
-		}), CurrentWeapon->GetReloadTime(), false);
+		}), EquipmentManager->GetCurrentWeaponInstance()->GetReloadTime(), false);
 
 }
 
@@ -690,6 +690,7 @@ void ALSCharacter::PossessedBy(AController * NewController)
 
 void ALSCharacter::AttackCheck()
 {
+	LSCHECK(EquipmentManager->GetCurrentWeaponInstance() != nullptr);
 	LSLOG_S(Warning);
 	if(!CanShoot(EAmmoType::RIFLE))
 	{
@@ -725,11 +726,13 @@ void ALSCharacter::AttackCheck()
 
 #endif
 
-	FVector TempVector = CurrentWeapon->CalculateRecoil((FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X)), CurrentWeapon->GetCurrentSpreadAngle());
+	FVector TempVector = EquipmentManager->GetCurrentWeaponInstance()->CalculateRecoil((FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X)), EquipmentManager->GetCurrentWeaponInstance()->GetCurrentSpreadAngle());
 	ShowDebugLine(TempVector);
 
 	//ResourceManager->ConsumeAmmo(EAmmoType::RIFLE, -1);
-	ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
+	// ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
+	// EquipmentManager->SetRoundsRemaining( -1);
+	EquipmentManager->DecreaseRoundsRemaining();
 
 	// later ..
 	//GetController()->SetControlRotation(FRotationMatrix((TempVector.Rotation())).GetUnitAxis(EAxis::X));
@@ -788,7 +791,7 @@ bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 	}
 
 	//  나중에 weapon 의 magazine ammo로 바꾸기
-	if(ResourceManager->GetRoundsRemaining() == 0)
+	if(EquipmentManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));
 	 	return false;
@@ -830,11 +833,13 @@ void ALSCharacter::SetWeapon(ALSWeaponInstance* NewWeapon)
 {
 	LSCHECK(nullptr != NewWeapon);// && nullptr == CurrentWeapon);
 
-	if (nullptr != CurrentWeapon)
+	if (nullptr != EquipmentManager->GetCurrentWeaponInstance())
 	{
+		/*
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurrentWeapon->Destroy();
 		CurrentWeapon = nullptr;
+		*/
 	}
 	
 	
@@ -904,7 +909,7 @@ int32 ALSCharacter::GetExp() const
 
 float ALSCharacter::GetFinalAttackRange() const
 {
-	return (nullptr != CurrentWeapon) ? CurrentWeapon->GetMaxRange() : AttackRange;
+	return (nullptr != EquipmentManager->GetCurrentWeaponInstance()) ? EquipmentManager->GetCurrentWeaponInstance()->GetMaxRange() : AttackRange;
 }
 
 float ALSCharacter::GetFinalInteractRange() const
@@ -914,9 +919,9 @@ float ALSCharacter::GetFinalInteractRange() const
 
 float ALSCharacter::GetFinalAttackDamage() const
 {
-	LSCHECK(nullptr != CurrentWeapon, -1.f);
+	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance(), -1.f);
 
-	float AttackDamage = CurrentWeapon->GetFinalDamage();
+	float AttackDamage = EquipmentManager->GetCurrentWeaponInstance()->GetFinalDamage();
 
 	//float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
 	return AttackDamage; // * AttackModifier;

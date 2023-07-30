@@ -13,6 +13,7 @@ class UTextBlock;
 
 class ULSResourceManageComponent;
 class ULSDefenseComponent;
+class ULSEquipmentComponent;
 
 /**
  * 
@@ -25,7 +26,8 @@ class LOOTERSHOOTER_API ULSHUDWidget : public UUserWidget
 public:
 	void BindCharacterStat(ULSCharacterStatComponent* CharacterStat);
 	void BindPlayerState(ALSPlayerState* PlayerState);
-	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManageComponent);
+	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManager);
+	void BindEquipmentComponent(ULSEquipmentComponent* EquipmentComponent);
 	// void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
 
 protected:
@@ -33,15 +35,16 @@ protected:
 	void UpdateCharacterStat();
 	void UpdatePlayerState();
 
-	void UpdateResource();
+	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
+	void UpdateCurrentAmmo();
 
 private:
 	TWeakObjectPtr<ULSCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<ALSPlayerState> CurrentPlayerState;
-
+	TWeakObjectPtr<ULSEquipmentComponent> CurrentEquipmentComponent;
 	
-	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManageComponent;
-	TWeakObjectPtr<ULSDefenseComponent> DefenseManager;
+	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManager;
+	// TWeakObjectPtr<ULSDefenseComponent> DefenseManager;
 
 	UPROPERTY()
 	UProgressBar* HPBar;
@@ -80,6 +83,11 @@ private:
 	UPROPERTY()
 	UTextBlock* ThirdWeaponRoundsRemaining;
 
+
 	UPROPERTY()
 	UProgressBar* ShieldBar;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	TArray<UTextBlock*> RoundsRemainingTextList;
 };

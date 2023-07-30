@@ -35,18 +35,30 @@ void ULSEquipmentComponent::BeginPlay()
 		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
 	}
 */
+
 	for(int32 index = 0; index < 3; ++index)
 	{
 		ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponInstanceClass, FVector::ZeroVector, FRotator::ZeroRotator);
 		NewWeapon->SetWeaponData(EWeaponType::RIFLE, 1);
 		NewWeapon->SetActorHiddenInGame(true);
-		NewWeapon->SetOwner(GetOwner<ALSCharacter>());
+		NewWeapon->SetOwner(GetOwner());
 		// LSLOG(Warning, TEXT("%s is owner"), *GetOwner<ALSCharacter>()->GetDebugName(GetOwner<ALSCharacter>()));
 		WeaponInstanceList.Emplace(NewWeapon);
 		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
 	}
+
+/*
+	ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponInstanceClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	NewWeapon->SetWeaponData(EWeaponType::RIFLE, 1);
+	NewWeapon->SetActorHiddenInGame(true);
+	NewWeapon->SetOwner(this);//GetOwner<ALSCharacter>());
+	WeaponInstanceList.Emplace(NewWeapon);
+	CurrentWeaponIndex = 0;
 	// ...
-	
+	*/
+
+	CurrentWeaponIndex = 0;
+	CurrentWeaponInstance = WeaponInstanceList[CurrentWeaponIndex];
 }
 
 void ULSEquipmentComponent::EquipWeapon(ALSWeapon* Weapon)
@@ -89,6 +101,7 @@ ALSWeapon* ULSEquipmentComponent::GetWeapon(int32 Index) const
 void ULSEquipmentComponent::SetCurrentWeaponIndex(int32 Index)
 {
 	CurrentWeaponIndex = Index;
+	CurrentWeaponInstance = WeaponInstanceList[Index];
 }
 
 void ULSEquipmentComponent::EquipWeapon(ALSWeaponInstance* Weapon)
@@ -128,6 +141,24 @@ ALSWeaponInstance* ULSEquipmentComponent::GetWeaponInstance(int32 Index)
 	}
 } 
 
+void ULSEquipmentComponent::SetRoundsRemaining(int32 NewRoundsRemaining)
+{
+	LSCHECK(CurrentWeaponInstance != nullptr);
+	CurrentWeaponInstance->SetRoundsRemaining(NewRoundsRemaining);
+	OnRoundsRemainingChanged.Broadcast(CurrentWeaponIndex);
+}
+
+int32 ULSEquipmentComponent::GetRoundsRemaining() const
+{
+	LSCHECK(CurrentWeaponInstance != nullptr, -1);
+	return CurrentWeaponInstance->GetRoundsRemaining();
+}
+
+void ULSEquipmentComponent::DecreaseRoundsRemaining()
+{
+	int32 NewRoundsRemaining = CurrentWeaponInstance->GetRoundsRemaining() - 1;
+	SetRoundsRemaining(NewRoundsRemaining);
+}
 
 /*
 // Called every frame

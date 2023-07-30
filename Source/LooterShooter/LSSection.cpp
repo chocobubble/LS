@@ -73,7 +73,7 @@ void ALSSection::SetState(ESectionState NewState)
 					FVector2D RandXY = FMath::RandPointInCircle(600.0f);
 					GetWorld()->SpawnActor<ALSItemBox>(GetActorLocation() +
 						FVector(RandXY, 30.0f), FRotator::ZeroRotator);
-				}), ItemBoxSpawnTime, false);
+				}), ItemBoxSpawnTime, true);
 
 
 			break;

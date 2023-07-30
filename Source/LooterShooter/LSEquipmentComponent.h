@@ -7,6 +7,7 @@
 #include "LSEquipmentComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnEquipmentChangedDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnRoundsRemainingChangedDelegate, int32);
 
 class ALSWeapon;
 class ALSWeaponInstance;
@@ -38,6 +39,10 @@ public:
 
 	void SetCurrentWeaponIndex(int32 Index);
 
+	void SetRoundsRemaining(int32 NewRoundsRemaining);
+	int32 GetRoundsRemaining() const;
+
+	void DecreaseRoundsRemaining();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -74,4 +79,5 @@ public:
 
 
 	FOnEquipmentChangedDelegate OnEquipmentChanged;		
+	FOnRoundsRemainingChangedDelegate OnRoundsRemainingChanged;
 };

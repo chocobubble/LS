@@ -8,6 +8,7 @@
 #include "LSWeaponInstance.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FTest, FVector);
+// DECLARE_MULTICAST_DELEGATE(FOnRoundsChangedDelegate);
 
 class ALSCharacter;
 class ULSWeaponAbilityComponent;
@@ -60,6 +61,13 @@ public:
 
 	FVector CalculateRecoil(FVector AimDir, const float HalfAngle);
 
+	int32 GetRoundsRemaining() const
+	{
+		return RoundsRemaining;
+	}
+
+	void SetRoundsRemaining(int32 NewRoundsRemaining);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,6 +86,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FTest OnAimDirChange;
+	// FOnRoundsChangedDelegate OnRoundsChaged;
 
 private:
 	FLSWeaponData* WeaponBaseData;
@@ -130,4 +139,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	float CurrentSpreadAngle = 0.1f;
 
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	int32 RoundsRemaining = 0;
 };
