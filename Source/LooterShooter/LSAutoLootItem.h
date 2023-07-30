@@ -17,9 +17,12 @@ class LOOTERSHOOTER_API ALSAutoLootItem : public ALSLootItem
 public:
 	ALSAutoLootItem();
 
-protected:
-	//virtual void BeginPlay() override;
-	//virtual void PostInitializeComponents() override;
+	void SetAutoLootItem(ELootItemType LootItemType, int32 Amount);
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Loot, meta = (AllowPrivateAccess = "true"))
+	int32 LootingAmount = 0;
+
 	
 public:
 	//UFUNCTION()

@@ -122,6 +122,7 @@ int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 		case EAmmoType::RIFLE:
 		{
 			return GetMaxRifleAmmo();
+			break;
 		}
 		/*
 		case EAmmoType::PISTOL:
@@ -145,4 +146,9 @@ void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)
 	SetRoundsRemaining(AmmoType, Amount);
 	SetCurrentAmmo(AmmoType, Amount);
 	*/
+}
+
+void ULSResourceManageComponent::SetGoldAmount(int32 Amount)
+{
+	GoldAmount += Amount;
 }

@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
 #include "Engine/StreamableManager.h"
+#include "LSAutoLootItem.h"
 
 #include "LSGameInstance.generated.h"
 
@@ -145,7 +146,29 @@ public:
 	FLSMonsterData* GetLSMonsterData(int32 Level);
 	FLSWeaponData* GetLSWeaponData(int32 Level);
 
+	void SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount);
+
 	FStreamableManager StreamableManager;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* HPMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* MPMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* GoldMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* RifleAmmoMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* ShotgunAmmoMesh;
+	
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UStaticMesh* PistolAmmoMesh;
+
+
 
 private:
 	UPROPERTY()

@@ -128,6 +128,6 @@ private:
 	float HeatPerShot = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	float CurrentSpreadAngle = 5.5f;
+	float CurrentSpreadAngle = 0.1f;
 
 };

@@ -10,15 +10,17 @@ class UBoxComponent;
 class UStaticMeshComponent;
 class UParticleSystemComponent;
 
-enum class LootItemType 
+UENUM(BlueprintType)
+enum class ELootItemType 
 {
-	Gold,
+	DEFAULT,
+	GOLD,
 	HP,
 	MP,
-	Ammo1,
-	Ammo2,
-	Ammo3,
-	Equipment
+	RIFLEAMMO,
+	SHOTGUNAMMO,
+	PISTOLAMMO,
+	EQUIPMENT
 };
 
 UCLASS()
@@ -49,13 +51,16 @@ public:
 	// virtual void Tick(float DeltaTime) override;
 
 
-protected:
+public:
 	UPROPERTY(VisibleAnywhere, Category = Loot)
 	UBoxComponent* Trigger;
 
 	UPROPERTY(VisibleAnywhere, Category = Loot)
-	UStaticMeshComponent* LootItem;
+	UStaticMeshComponent* ItemMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = Effect)
 	UParticleSystemComponent* Effect;
+
+	UPROPERTY(VisibleAnywhere, Category = Loot)
+	ELootItemType LootItemType;
 };

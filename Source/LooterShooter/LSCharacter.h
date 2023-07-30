@@ -31,6 +31,7 @@ class ULSDefenseComponent;
 class ULSEquipmentComponent;
 class ULSPopUpWidget;
 class ALSWeaponInstance;
+class ULSGameInstance;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -142,6 +143,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;
+
+	UPROPERTY()
+	ULSGameInstance* LSGameInstance;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
 

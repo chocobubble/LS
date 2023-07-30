@@ -63,7 +63,8 @@ public:
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
 	void SetRoundsRemaining(EAmmoType AmmoType, int32 Amount);
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
-
+	
+	void SetGoldAmount(int32 Amount) ;
 	
 	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount);
 
@@ -85,6 +86,11 @@ public:
 	int32 GetRoundsRemaining() const
 	{
 		return RoundsRemaining;
+	}
+
+	int32 GetGoldAmount() const
+	{
+		return GoldAmount;
 	}
 
 protected:
@@ -115,6 +121,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
 	int32 RoundsRemaining = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 GoldAmount = 0;
 
 public:	
 	// Called every frame

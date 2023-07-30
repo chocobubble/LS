@@ -12,20 +12,22 @@ ALSLootItem::ALSLootItem()
 	LSLOG(Warning, TEXT("ALSLootItem Contstructor"));
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	 
+	LootItemType = ELootItemType::DEFAULT;
 
 	Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TRIGGER"));
-	LootItem = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LOOTITEM"));
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LOOTITEM"));
 	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EFFECT"));
 	RootComponent = Trigger;
-	LootItem->SetupAttachment(RootComponent);
+	ItemMesh->SetupAttachment(RootComponent);
 	Effect->SetupAttachment(RootComponent);
 	Trigger->SetBoxExtent(FVector(20.0f, 20.0f, 20.0f));
 	Trigger->SetCollisionProfileName(TEXT("LootItem"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_LOOTITEM(TEXT("/Game/LS/Meshes/SM_Error.SM_Error"));
-	if (SM_LOOTITEM.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DEFAULTITEM(TEXT("/Game/LS/Meshes/Shape_Sphere.Shape_Sphere"));
+	if (SM_DEFAULTITEM.Succeeded())
 	{
-		LootItem->SetStaticMesh(SM_LOOTITEM.Object);
+		ItemMesh->SetStaticMesh(SM_DEFAULTITEM.Object);
 	}
 	else
 	{
@@ -33,7 +35,7 @@ ALSLootItem::ALSLootItem()
 	}
 
 	//LootItem->SetRelativeLocation(FVector(0.0f, -3.5f, -30.0f));
-	LootItem->SetCollisionProfileName(TEXT("NoCollision"));
+	ItemMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_ITEMDROP(TEXT("/Game/LS/Particle/P_Default.P_Default"));
 	if (P_ITEMDROP.Succeeded())

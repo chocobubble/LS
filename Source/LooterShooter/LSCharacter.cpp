@@ -321,7 +321,7 @@ void ALSCharacter::BeginPlay()
 
 	//CharacterAssetToLoad = DefaultSetting->CharacterAssets[AssetIndex];
 	CharacterAssetToLoad.SetPath(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn'"));
-	auto LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
+	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
 	LSCHECK(nullptr != LSGameInstance);
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSCharacter::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
@@ -944,7 +944,32 @@ void ALSCharacter::InteractCheck()
 
 void ALSCharacter::DropItem()
 {
-	TWeakObjectPtr<ALSAutoLootItem> AutoLootItem = GetWorld()->SpawnActor<ALSAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
+	if(RandomNumber < 0.1f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
+	}
+	else if(RandomNumber < 0.2f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::HP, 100);
+	}
+	else if(RandomNumber < 0.4f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::MP, 100);
+	}
+	else if(RandomNumber < 0.6f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::RIFLEAMMO, 100);
+	}
+	else if(RandomNumber < 0.8f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::SHOTGUNAMMO, 100);
+	}
+	else if(RandomNumber <= 1.f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::PISTOLAMMO, 100);
+	}
+
 }
 
 void ALSCharacter::SetCharacterStateDead()

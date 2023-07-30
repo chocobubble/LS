@@ -39,7 +39,7 @@ ALSSection::ALSSection()
 
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSSection::OnTriggerBeginOverlap);
 
-	EnemySpawnTime = 2.0f;
+	EnemySpawnTime = 5.0f;
 	ItemBoxSpawnTime = 5.0f;
 }
 
@@ -66,7 +66,7 @@ void ALSSection::SetState(ESectionState NewState)
 
 			GetWorld()->GetTimerManager().SetTimer(SpawnNPCTimerHandle,
 				FTimerDelegate::CreateUObject(this, &ALSSection::OnNPCSpawn),
-				EnemySpawnTime, false);
+				EnemySpawnTime, true);
 
 			GetWorld()->GetTimerManager().SetTimer(SpawnItemBoxTimerHandle,
 				FTimerDelegate::CreateLambda([this]() -> void {
@@ -129,7 +129,7 @@ void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 	LSCHECK(nullptr != LSGameMode);
 	LSGameMode->AddScore(LSPlayerController);
 
-	SetState(ESectionState::COMPLETE);
+	//SetState(ESectionState::COMPLETE);
 }
 // Called every frame
 /*
