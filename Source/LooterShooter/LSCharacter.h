@@ -32,6 +32,7 @@ class ULSEquipmentComponent;
 class ULSPopUpWidget;
 class ALSWeaponInstance;
 class ULSGameInstance;
+class ULSInventoryComponent;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -143,6 +144,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;
+
+	UPROPERTY(VisibleAnywhere, Category = Inventory)
+	ULSInventoryComponent* InventoryManager;
 
 	UPROPERTY()
 	ULSGameInstance* LSGameInstance;

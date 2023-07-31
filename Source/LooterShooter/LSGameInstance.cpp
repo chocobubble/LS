@@ -114,14 +114,14 @@ FLSMonsterData* ULSGameInstance::GetLSMonsterData(int32 Level)
     return LSMonsterTable->FindRow<FLSMonsterData>(*FString::FromInt(Level), TEXT(""));
 }
 
-FLSWeaponData* ULSGameInstance::GetLSWeaponData(int32 Level)
+FLSWeaponBaseData* ULSGameInstance::GetLSWeaponData(int32 Level)
 {
     if (LSWeaponTable == nullptr)
     {
         LSLOG_S(Warning);
         return nullptr;
     }
-    return LSWeaponTable->FindRow<FLSWeaponData>(*FString::FromInt(Level), TEXT(""));
+    return LSWeaponTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(Level), TEXT(""));
 }
 
 void ULSGameInstance::SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount)

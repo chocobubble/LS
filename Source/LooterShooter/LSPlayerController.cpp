@@ -22,16 +22,16 @@ ALSPlayerController::ALSPlayerController()
         HUDWidgetClass = UI_HUD_C.Class;
     }
 
-    static ConstructorHelpers::FObjectFinder<UInputMappingContext> LS_CONTEXT(TEXT("/Game/LS/Input/LS_InputMappingContext.LS_InputMappingContext"));
-	if ( LS_CONTEXT.Succeeded())
+    static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_DEFAULT_KBM.IMC_DEFAULT_KBM"));
+	if ( IMC_DEFAULT_KBM.Succeeded())
 	{
-		InputMapping = LS_CONTEXT.Object;
+		InputMapping = IMC_DEFAULT_KBM.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_GAMEPAUSE(TEXT("/Game/LS/Input/Actions/LS_GamePause.LS_GamePause"));
-	if ( LS_GAMEPAUSE.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_GAMEPAUSE(TEXT("/Game/LS/Input/Actions/IA_GamePause.IA_GamePause"));
+	if ( IA_GAMEPAUSE.Succeeded())
 	{
-		GamePause = LS_GAMEPAUSE.Object;
+		GamePause = IA_GAMEPAUSE.Object;
 	}
 
     static ConstructorHelpers::FClassFinder<ULSGameplayWidget> UI_MENU_C(TEXT("/Game/LS/UI/UI_Menu.UI_Menu_C"));

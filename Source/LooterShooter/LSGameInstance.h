@@ -12,6 +12,15 @@
 
 // class UDataTable;
 
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	RIFLE,
+	PISTOL,
+	SHOTGUN
+};
+
+
 USTRUCT(BlueprintType)
 struct FLSPlayerData : public FTableRowBase
 {
@@ -83,7 +92,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FLSWeaponData : public FTableRowBase
+struct FLSWeaponBaseData : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -144,7 +153,7 @@ public:
 	virtual void Init() override;
 	FLSPlayerData* GetLSPlayerData(int32 Level);
 	FLSMonsterData* GetLSMonsterData(int32 Level);
-	FLSWeaponData* GetLSWeaponData(int32 Level);
+	FLSWeaponBaseData* GetLSWeaponData(int32 Level);
 
 	void SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount);
 

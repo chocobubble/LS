@@ -62,3 +62,8 @@ void ULSAnimInstance::SetAimAnim(bool IsAiming)
 {
     bIsAiming = IsAiming;
 }
+
+void ULSAnimInstance::SetReloadAnim(bool IsReloading)
+{
+    bIsReloading = IsReloading;
+}

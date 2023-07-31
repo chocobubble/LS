@@ -7,6 +7,7 @@
 #include "LSWeaponAbilityComponent.generated.h"
 
 class ALSWeaponInstance;
+class ULSWeaponDefinition;
 /*
 USTRUCT(BlueprintType)
 struct FWeaponAbility
@@ -46,7 +47,7 @@ public:
 	// UWeaponAbility(float Stat) : AbilityStat(Stat) {}
 	//FWeaponAbility(FString Name, float Stat) : AbilityName(Name), AbilityStat(Stat) {}
 	//virtual ~UWeaponAbility() = default;
-	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) {}
+	virtual void ApplyAbility(ULSWeaponDefinition* WeaponDefinition) {}
 	virtual void SetAbilityStat(float Stat);
 	// virtual FString GetAbilityText() {return FString();}
 protected:
@@ -66,7 +67,7 @@ public:
 	// UBulletDamageAbility() {}
 	// UBulletDamageAbility(float Stat) : UWeaponAbility(Stat) {}
 
-	virtual void ApplyAbility(ALSWeaponInstance* WeaponInstance) override;
+	virtual void ApplyAbility(ULSWeaponDefinition* WeaponDefinition) override;
 	// virtual FString GetAbilityText() override;
 };
 
@@ -91,7 +92,7 @@ private:
 
 public:	
 
-	void EnhanceWeaponStat(ALSWeaponInstance* WeaponInstance);
+	void EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition);
 
 
 	// Called every frame

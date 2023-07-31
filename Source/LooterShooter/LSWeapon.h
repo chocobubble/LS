@@ -47,7 +47,7 @@ public:
 protected:
 
 private:
-	FLSWeaponData* CurrentWeaponData;
+	FLSWeaponBaseData* CurrentWeaponData;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 Level = 1;

@@ -2,18 +2,18 @@
 
 
 #include "LSWeaponAbilityComponent.h"
-#include "LSWeaponInstance.h"
+#include "LSWeaponDefinition.h"
 
 void UWeaponAbility::SetAbilityStat(float Stat)
 {
 	AbilityStat = Stat;
 }
 
-void UBulletDamageAbility::ApplyAbility(ALSWeaponInstance* WeaponInstance) 
+void UBulletDamageAbility::ApplyAbility(ULSWeaponDefinition* WeaponDefinition) 
 {
-	LSLOG(Warning, TEXT("Bullet Damage before enhanced : %f"), WeaponInstance->GetBulletDamage());
-	WeaponInstance->SetBulletDamage(WeaponInstance->GetBulletDamage() + WeaponInstance->GetBulletDamage() * AbilityStat);
-	LSLOG(Warning, TEXT("Bullet Damage after enhanced : %f"), WeaponInstance->GetBulletDamage());
+	LSLOG(Warning, TEXT("Bullet Damage before enhanced : %f"), WeaponDefinition->GetBulletDamage());
+	WeaponDefinition->SetBulletDamage(WeaponDefinition->GetBulletDamage() + WeaponDefinition->GetBulletDamage() * AbilityStat);
+	LSLOG(Warning, TEXT("Bullet Damage after enhanced : %f"), WeaponDefinition->GetBulletDamage());
 }
 
 /*
@@ -51,12 +51,12 @@ void ULSWeaponAbilityComponent::BeginPlay()
 	
 }
 
-void ULSWeaponAbilityComponent::EnhanceWeaponStat(ALSWeaponInstance* WeaponInstance)
+void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition)
 {
-	// ALSWeaponInstance* WeaponInstance = GetOwner();
+	// ALSWeaponDefinition* WeaponDefinition = GetOwner();
 	for(UWeaponAbility* Ability : AbilityList)
 	{
-		Ability->ApplyAbility(WeaponInstance);
+		Ability->ApplyAbility(WeaponDefinition);
 	}
 }
 

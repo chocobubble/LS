@@ -26,6 +26,8 @@ public:
 	void PlayAttackMontage();
 
 	void SetAimAnim(bool IsAiming);
+	
+	void SetReloadAnim(bool IsReloading);
 
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 
@@ -42,6 +44,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool bIsAiming = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	bool bIsReloading = false;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AttackMontage;

@@ -14,13 +14,6 @@ class ALSCharacter;
 class ULSWeaponAbilityComponent;
 //struct FLSWeaponData;
 
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	RIFLE,
-	PISTOL,
-	SHOTGUN
-};
 
 UCLASS()
 class LOOTERSHOOTER_API ALSWeaponInstance : public AActor
@@ -89,14 +82,14 @@ public:
 	// FOnRoundsChangedDelegate OnRoundsChaged;
 
 private:
-	FLSWeaponData* WeaponBaseData;
+	// FLSWeaponBaseData* WeaponBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	EWeaponType GunType;
-
+/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 Level;
-
+*/
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 MagazineCapacity;
 
@@ -135,6 +128,8 @@ private:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	float HeatPerShot = 0.1f;
+
+///////////////////////////////////////////
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	float CurrentSpreadAngle = 0.1f;

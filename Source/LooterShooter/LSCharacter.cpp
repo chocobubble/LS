@@ -36,6 +36,7 @@
 #include "LSTextPopup.h"
 #include "LSAutoLootItem.h"
 #include "LSWeaponInstance.h"
+#include "LSInventoryComponent.h"
 //#include "Animation/AnimInstance.h"
 
 
@@ -70,7 +71,8 @@ ALSCharacter::ALSCharacter()
 	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
 
 	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
-
+	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
+	
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
@@ -121,88 +123,88 @@ ALSCharacter::ALSCharacter()
 		LSLOG(Warning, TEXT("Rifle anim desn't succeded"));
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> LS_CONTEXT(TEXT("/Game/LS/Input/LS_InputMappingContext.LS_InputMappingContext"));
-	if ( LS_CONTEXT.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_Default_KBM.IMC_Default_KBM"));
+	if ( IMC_DEFAULT_KBM.Succeeded())
 	{
-		InputMapping = LS_CONTEXT.Object;
+		InputMapping = IMC_DEFAULT_KBM.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_MOVE(TEXT("/Game/LS/Input/Actions/LS_Move.LS_Move"));
-	if ( LS_MOVE.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MOVE(TEXT("/Game/LS/Input/Actions/IA_Move.IA_Move"));
+	if ( IA_MOVE.Succeeded())
 	{
-		MoveAction = LS_MOVE.Object;
+		MoveAction = IA_MOVE.Object;
 	}
 	
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_JUMP(TEXT("/Game/LS/Input/Actions/LS_Jump.LS_Jump"));
-	if ( LS_JUMP.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_JUMP(TEXT("/Game/LS/Input/Actions/IA_Jump.IA_Jump"));
+	if ( IA_JUMP.Succeeded())
 	{
-		JumpAction = LS_JUMP.Object;
+		JumpAction = IA_JUMP.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_LOOK(TEXT("/Game/LS/Input/Actions/LS_LOOK.LS_LOOK"));
-	if ( LS_LOOK.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LOOK(TEXT("/Game/LS/Input/Actions/IA_LOOK.IA_LOOK"));
+	if ( IA_LOOK.Succeeded())
 	{
-		LookAction = LS_LOOK.Object;
+		LookAction = IA_LOOK.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_SHOOT(TEXT("/Game/LS/Input/Actions/LS_SHOOT.LS_SHOOT"));
-	if ( LS_SHOOT.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_SHOOT(TEXT("/Game/LS/Input/Actions/IA_SHOOT.IA_SHOOT"));
+	if ( IA_SHOOT.Succeeded())
 	{
-		ShootAction = LS_SHOOT.Object;
+		ShootAction = IA_SHOOT.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_MELEE(TEXT("/Game/LS/Input/Actions/LS_MELEE.LS_MELEE"));
-	if ( LS_MELEE.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MELEE(TEXT("/Game/LS/Input/Actions/IA_MELEE.IA_MELEE"));
+	if ( IA_MELEE.Succeeded())
 	{
-		MeleeAttackAction = LS_MELEE.Object;
+		MeleeAttackAction = IA_MELEE.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_AUTO_RUN(TEXT("/Game/LS/Input/Actions/LS_Auto_Run.LS_Auto_Run"));
-	if ( LS_AUTO_RUN.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_AUTO_RUN(TEXT("/Game/LS/Input/Actions/IA_Auto_Run.IA_Auto_Run"));
+	if ( IA_AUTO_RUN.Succeeded())
 	{
-		AutoRunAction = LS_AUTO_RUN.Object;
+		AutoRunAction = IA_AUTO_RUN.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_AIM(TEXT("/Game/LS/Input/Actions/LS_Aim.LS_Aim"));
-	if ( LS_AIM.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_AIM(TEXT("/Game/LS/Input/Actions/IA_Aim.IA_Aim"));
+	if ( IA_AIM.Succeeded())
 	{
-		AimAction = LS_AIM.Object;
+		AimAction = IA_AIM.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_GRAPPLING_HOOK(TEXT("/Game/LS/Input/Actions/LS_GrapplingHook.LS_GrapplingHook"));
-	if ( LS_GRAPPLING_HOOK.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_GRAPPLING_HOOK(TEXT("/Game/LS/Input/Actions/IA_GrapplingHook.IA_GrapplingHook"));
+	if ( IA_GRAPPLING_HOOK.Succeeded())
 	{
-		GrapplingHookAction = LS_GRAPPLING_HOOK.Object;
+		GrapplingHookAction = IA_GRAPPLING_HOOK.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_RELOAD(TEXT("/Game/LS/Input/Actions/LS_Reload.LS_Reload"));
-	if ( LS_RELOAD.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_RELOAD(TEXT("/Game/LS/Input/Actions/IA_Reload.IA_Reload"));
+	if ( IA_RELOAD.Succeeded())
 	{
-		ReloadAction = LS_RELOAD.Object;
+		ReloadAction = IA_RELOAD.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_FIRST_WEAPON(TEXT("/Game/LS/Input/Actions/LS_FirstWeapon.LS_FirstWeapon"));
-	if ( LS_EQUIP_FIRST_WEAPON.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_EQUIP_FIRST_WEAPON(TEXT("/Game/LS/Input/Actions/IA_FirstWeapon.IA_FirstWeapon"));
+	if ( IA_EQUIP_FIRST_WEAPON.Succeeded())
 	{
-		EquipFirstWeaponAction = LS_EQUIP_FIRST_WEAPON.Object;
+		EquipFirstWeaponAction = IA_EQUIP_FIRST_WEAPON.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_SECOND_WEAPON(TEXT("/Game/LS/Input/Actions/LS_SecondWeapon.LS_SecondWeapon"));
-	if ( LS_EQUIP_SECOND_WEAPON.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_EQUIP_SECOND_WEAPON(TEXT("/Game/LS/Input/Actions/IA_SecondWeapon.IA_SecondWeapon"));
+	if ( IA_EQUIP_SECOND_WEAPON.Succeeded())
 	{
-		EquipSecondWeaponAction = LS_EQUIP_SECOND_WEAPON.Object;
+		EquipSecondWeaponAction = IA_EQUIP_SECOND_WEAPON.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_EQUIP_THIRD_WEAPON(TEXT("/Game/LS/Input/Actions/LS_ThirdWeapon.LS_ThirdWeapon"));
-	if ( LS_EQUIP_THIRD_WEAPON.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_EQUIP_THIRD_WEAPON(TEXT("/Game/LS/Input/Actions/IA_ThirdWeapon.IA_ThirdWeapon"));
+	if ( IA_EQUIP_THIRD_WEAPON.Succeeded())
 	{
-		EquipThirdWeaponAction = LS_EQUIP_THIRD_WEAPON.Object;
+		EquipThirdWeaponAction = IA_EQUIP_THIRD_WEAPON.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LS_INTERACT(TEXT("/Game/LS/Input/Actions/LS_Interact.LS_Interact"));
-	if ( LS_INTERACT.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_INTERACT(TEXT("/Game/LS/Input/Actions/IA_Interact.IA_Interact"));
+	if ( IA_INTERACT.Succeeded())
 	{
-		InteractAction = LS_INTERACT.Object;
+		InteractAction = IA_INTERACT.Object;
 
 		// later move
 		LSCHECK(InteractAction->Triggers.Num() > 0);
@@ -616,12 +618,14 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 	}
 	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance());
 	bIsReloading = true;
+	LSAnim->SetReloadAnim(true);
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			bIsReloading = false;
 			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
 			int32 ReloadRounds = FMath::Clamp(EquipmentManager->GetCurrentWeaponInstance()->GetMagazineCapacity() - CurrentRounds, 0, ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE)); 
 			EquipmentManager->SetRoundsRemaining(EquipmentManager->GetCurrentWeaponInstance()->GetMagazineCapacity());
 			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, -ReloadRounds);
+			LSAnim->SetReloadAnim(false);
 			LSLOG(Warning, TEXT("RELoAd Complete"));
 		}), EquipmentManager->GetCurrentWeaponInstance()->GetReloadTime(), false);
 
