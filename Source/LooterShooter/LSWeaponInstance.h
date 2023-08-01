@@ -12,6 +12,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FTest, FVector);
 
 class ALSCharacter;
 class ULSWeaponAbilityComponent;
+class ULSWeaponDefinition;
 //struct FLSWeaponData;
 
 
@@ -24,8 +25,9 @@ public:
 	// Sets default values for this actor's properties
 	ALSWeaponInstance();
 
-	void SetWeaponData(EWeaponType WeaponType, int32 ItemLevel);
+	void Init();
 	void SetWeaponStats();
+	void SetWeaponSkeletalMesh();
 
 	float GetMaxRange() const
 	{
@@ -61,18 +63,28 @@ public:
 
 	void SetRoundsRemaining(int32 NewRoundsRemaining);
 
+	void SetBaseWeaponDefinition(ULSWeaponDefinition* WeaponDefinition)
+	{
+		BaseWeaponDefinition = WeaponDefinition;
+	}
+
+	ULSWeaponDefinition* GetBaseWeaponDefinition() const
+	{
+		return BaseWeaponDefinition;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	USkeletalMeshComponent* RifleWeapon;
-	
+	USkeletalMeshComponent* WeaponSkeletalMesh;
+
+/*	
 	UPROPERTY(VisibleAnywhere, Category = Ability)
 	ULSWeaponAbilityComponent* WeaponAbilityComponent;
 
-/*
 	UPROPERTY(VisibleAnywhere, Category = Ability)
 	ALSCharacter* Owner;
 */	
@@ -80,6 +92,10 @@ public:
 
 	FTest OnAimDirChange;
 	// FOnRoundsChangedDelegate OnRoundsChaged;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	ULSWeaponDefinition* BaseWeaponDefinition;
 
 private:
 	// FLSWeaponBaseData* WeaponBaseData;

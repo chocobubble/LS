@@ -3,6 +3,8 @@
 
 #include "LSInventoryComponent.h"
 #include "LSWeaponDefinition.h"
+#include "LSEquipmentComponent.h"
+#include "LSGameState.h"
 
 // Sets default values for this component's properties
 ULSInventoryComponent::ULSInventoryComponent()
@@ -21,14 +23,22 @@ void ULSInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 // later delete
-	ULSWeaponDefinition* WeaponDefinition1 = NewObject<ULSWeaponDefinition>();
-	WeaponDefinition1->SetWeaponDefinitionData(EWeaponType::RIFLE, 1);
-	
-	
 
-	WeaponList.Add(WeaponDefinition1); 
+
+
 	// ...
+}
+
+void ULSInventoryComponent::SetDefaultWeapon()
+{
+
+	ULSWeaponDefinition* WeaponDefinition1 = NewObject<ULSWeaponDefinition>(this);
+	WeaponDefinition1->SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
+	ALSWeaponInstance* WeaponInstance1 = WeaponDefinition1->InstantiateWeapon();
+	LSCHECK(EquipmentManager != nullptr);
+	EquipmentManager->EquipWeapon(WeaponInstance1);
 	
+	WeaponList.Add(WeaponDefinition1); 
 }
 
 /*

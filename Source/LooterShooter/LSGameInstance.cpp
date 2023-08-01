@@ -5,6 +5,14 @@
 ULSGameInstance::ULSGameInstance()
 {
     LSLOG_S(Warning);
+/*
+    FString WeaponDataPath = TEXT("/Game/LS/GameData/WeaponBaseData.WeaponBaseData");
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSWEAPON(*WeaponDataPath);
+    // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSCHARACTER(TEXT("/Script/Engine.DataTable'/Game/LS/GameData/LSCD.LSCD'"));
+    LSCHECK(DT_LSWEAPON.Succeeded());
+    LSWeaponTable = DT_LSWEAPON.Object;
+    LSCHECK(LSWeaponTable->GetRowMap().Num() > 0);
+*/
 
     // FString PlayerDataPath = TEXT("/Game/LS/GameData/PlayerBaseData.PlayerBaseData");
     // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSPLAYER(*PlayerDataPath);
@@ -20,12 +28,7 @@ ULSGameInstance::ULSGameInstance()
     LSMonsterTable = DT_LSMONSTER.Object;
     LSCHECK(LSMonsterTable->GetRowMap().Num() > 0);
 
-    FString WeaponDataPath = TEXT("/Game/LS/GameData/WeaponBaseData.WeaponBaseData");
-    static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSWEAPON(*WeaponDataPath);
-    // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSCHARACTER(TEXT("/Script/Engine.DataTable'/Game/LS/GameData/LSCD.LSCD'"));
-    LSCHECK(DT_LSWEAPON.Succeeded());
-    LSWeaponTable = DT_LSWEAPON.Object;
-    LSCHECK(LSWeaponTable->GetRowMap().Num() > 0);
+    
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_LOOTITEM_GOLD(TEXT("/Game/LS/Meshes/SM_LootItem_Gold.SM_LootItem_Gold"));
     if (SM_LOOTITEM_GOLD.Succeeded())
@@ -87,6 +90,16 @@ ULSGameInstance::ULSGameInstance()
     {
         LSLOG_S(Error);
     }
+
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
+	if( SK_RIFLE.Succeeded() )
+	{
+		RifleWeaponMesh = SK_RIFLE.Object;
+	}
+	else
+	{
+		LSLOG_S(Error);
+	}
 }
 
 void ULSGameInstance::Init()
@@ -113,7 +126,7 @@ FLSMonsterData* ULSGameInstance::GetLSMonsterData(int32 Level)
     }
     return LSMonsterTable->FindRow<FLSMonsterData>(*FString::FromInt(Level), TEXT(""));
 }
-
+/*
 FLSWeaponBaseData* ULSGameInstance::GetLSWeaponData(int32 Level)
 {
     if (LSWeaponTable == nullptr)
@@ -123,6 +136,7 @@ FLSWeaponBaseData* ULSGameInstance::GetLSWeaponData(int32 Level)
     }
     return LSWeaponTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(Level), TEXT(""));
 }
+*/
 
 void ULSGameInstance::SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount)
 {

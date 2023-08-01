@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "LSWeaponInstance.h"
 #include "LSGameInstance.h"
+#include "LSGameState.h"
 
 #include "LSWeaponDefinition.generated.h"
 
@@ -22,7 +23,7 @@ private:
 	FLSWeaponBaseData* WeaponBaseData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	EWeaponType GunType;
+	EWeaponType WeaponType;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 MagazineCapacity;
@@ -70,29 +71,73 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Ability)
 	ULSWeaponAbilityComponent* WeaponAbilityComponent;
 
+	UPROPERTY(EditInstanceOnly, Category = Weapon)
+	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
+
 public:
 	ULSWeaponDefinition();
 
 	ALSWeaponInstance* InstantiateWeapon();
-	void SetWeaponDefinitionData(EWeaponType WeaponType, int32 ItemLevel);
+	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 ItemLevel);
 	void SetWeaponDefinitionStats();
 	
-	float GetMaxRange() const
+	EWeaponType GetWeaponType() const
 	{
-		return MaxRange;
-	}
-	float GetBulletDamage() const
-	{
-		return BulletDamage;
-	}
-	float GetReloadTime() const
-	{
-		return ReloadTime;
+		return WeaponType;
 	}
 	float GetMagazineCapacity() const
 	{
 		return MagazineCapacity;
 	}
+	float GetFireRate() const
+	{
+		return FireRate;
+	}
+	float GetMovementSpeed() const
+	{
+		return MovementSpeed;
+	}
+	float GetBulletDamage() const
+	{
+		return BulletDamage;
+	}
+	float GetCriticalHitChance() const
+	{
+		return CriticalHitChance;
+	}
+	float GetCriticalHitMultiplier() const
+	{
+		return CriticalHitMultiplier;
+	}
+	float GetDamageReduceDistance() const
+	{
+		return DamageReduceDistance;
+	}
+	float GetReloadTime() const
+	{
+		return ReloadTime;
+	}
+	int32 GetBulletsPerCatridge() const
+	{
+		return BulletsPerCatridge;
+	}
+	float GetMaxRange() const
+	{
+		return MaxRange;
+	}
+	float GetMaxSpreadAngle() const
+	{
+		return MaxSpreadAngle;
+	}
+	float GetMinSpreadAngle() const
+	{
+		return MinSpreadAngle;
+	}
+	float GetHeatPerShot() const
+	{
+		return HeatPerShot;
+	}
+
 
 	void SetBulletDamage(float Value)
 	{

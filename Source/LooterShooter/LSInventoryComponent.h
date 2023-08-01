@@ -7,6 +7,7 @@
 #include "LSInventoryComponent.generated.h"
 
 class ULSWeaponDefinition;
+class ULSEquipmentComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSInventoryComponent : public UActorComponent
@@ -17,6 +18,12 @@ public:
 	// Sets default values for this component's properties
 	ULSInventoryComponent();
 
+	void SetEquipmentComponent(ULSEquipmentComponent* EquipmentComponent)
+	{
+		EquipmentManager = EquipmentComponent;
+	}
+
+	void SetDefaultWeapon();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -29,5 +36,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TArray<ULSWeaponDefinition*> WeaponList;
+
+	UPROPERTY(VisibleAnywhere, Category = Equipment)
+	ULSEquipmentComponent* EquipmentManager;
 
 };

@@ -213,6 +213,12 @@ ALSCharacter::ALSCharacter()
 		InteractInputTrigger->Interval = 0.1f;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> IA_TEST(TEXT("/Game/LS/Input/Actions/IA_TESTKEY.IA_TESTKEY"));
+	if ( IA_TEST.Succeeded())
+	{
+		TestAction = IA_TEST.Object;
+	}
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
@@ -506,7 +512,8 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(EquipSecondWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipSecondWeapon);
 	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipThirdWeapon);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSCharacter::Interact);
-
+	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &ALSCharacter::TestAct);
+	
 
 }
 
@@ -663,6 +670,10 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 	LSLOG(Warning, TEXT("Interact"));
 }
 
+void ALSCharacter::TestAct(const FInputActionValue& Value)
+{
+	InventoryManager->SetDefaultWeapon();
+}
 
 void ALSCharacter::PostInitializeComponents()
 {
@@ -684,6 +695,7 @@ void ALSCharacter::PostInitializeComponents()
 	LSCHECK(nullptr != AnimInstance);
 	AnimInstance->OnMontageEnded.AddDynamic(this, &ALSCharacter::OnAttackMontageEnded);
 
+	InventoryManager->SetEquipmentComponent(EquipmentManager);
 }
 
 void ALSCharacter::PossessedBy(AController * NewController)
@@ -795,6 +807,8 @@ bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 	}
 
 	//  나중에 weapon 의 magazine ammo로 바꾸기
+	LSCHECK(EquipmentManager->WeaponInstanceList.Num() > 0 &&
+			EquipmentManager->CurrentWeaponInstance != nullptr ,false);
 	if(EquipmentManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));

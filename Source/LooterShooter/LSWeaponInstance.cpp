@@ -4,6 +4,7 @@
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "LSWeaponAbilityComponent.h"
+#include "LSWeaponDefinition.h"
 
 // later delete
 #include "LSCharacter.h"
@@ -14,22 +15,8 @@ ALSWeaponInstance::ALSWeaponInstance()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RifleWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RIFLEWEAPON"));
-	RootComponent = RifleWeapon;
-	WeaponAbilityComponent = CreateDefaultSubobject<ULSWeaponAbilityComponent>(TEXT("WEAPONABILITY"));
-	// root?
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
-	if( SK_RIFLE.Succeeded() )
-	{
-		RifleWeapon->SetSkeletalMesh(SK_RIFLE.Object);
-	}
-	else
-	{
-		LSLOG_S(Error);
-	}
-
-	RifleWeapon->SetCollisionProfileName(TEXT("NoCollision"));
+	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPONMESH"));
+	RootComponent = WeaponSkeletalMesh;
 }
 
 // Called when the game starts or when spawned
@@ -41,36 +28,56 @@ void ALSWeaponInstance::BeginPlay()
 	//LSCHECK(nullptr != Owner);
 }
 
-void ALSWeaponInstance::SetWeaponData(EWeaponType WeaponType, int32 ItemLevel)
+void ALSWeaponInstance::Init()
 {
+	SetWeaponStats();
+	SetWeaponSkeletalMesh();
+	RoundsRemaining = MagazineCapacity;
+
+/*
 	this->GunType = WeaponType;
-	Level = ItemLevel;
-	
-	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	
 	// later switch by weapon type
 	WeaponBaseData = LSGameInstance->GetLSWeaponData(Level);
 	LSCHECK(WeaponBaseData);
-	SetWeaponStats();
-	WeaponAbilityComponent->EnhanceWeaponStat(this);
-	RoundsRemaining = WeaponBaseData->MagazineCapacity;
+*/
 }
 
 void ALSWeaponInstance::SetWeaponStats()
 {
 	// bIsSet 추가?
-	MagazineCapacity = WeaponBaseData->MagazineCapacity + FMath::FRandRange(-10.f, 10.f);
-	FireRate = WeaponBaseData->FireRate + FMath::FRandRange(-200.f, 200.f);
-	MovementSpeed = WeaponBaseData->MovementSpeed;
-	BulletDamage = WeaponBaseData->BulletDamage + FMath::FRandRange(-10.f, 10.f);
-	CriticalHitChance = WeaponBaseData->CriticalHitChance + FMath::FRandRange(-0.01f, 0.05f);
-	CriticalHitMultiplier = WeaponBaseData->CriticalHitMultiplier + FMath::FRandRange(-0.3f, 0.5f);
-	DamageReduceDistance = WeaponBaseData->DamageReduceDistance;
-	ReloadTime = WeaponBaseData->ReloadTime + FMath::FRandRange(-0.5f, 0.5f);
-	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
-	MaxRange = WeaponBaseData->MaxRange;
+	GunType = BaseWeaponDefinition->GetWeaponType();
+	MagazineCapacity = BaseWeaponDefinition->GetMagazineCapacity();
+	FireRate = BaseWeaponDefinition->GetFireRate();
+	MovementSpeed = BaseWeaponDefinition->GetMovementSpeed();
+	BulletDamage = BaseWeaponDefinition->GetBulletDamage();
+	CriticalHitChance = BaseWeaponDefinition->GetCriticalHitChance();
+	CriticalHitMultiplier = BaseWeaponDefinition->GetCriticalHitMultiplier();
+	DamageReduceDistance = BaseWeaponDefinition->GetDamageReduceDistance();
+	ReloadTime = BaseWeaponDefinition->GetReloadTime();
+	BulletsPerCatridge = BaseWeaponDefinition->GetBulletsPerCatridge();
+	MaxRange = BaseWeaponDefinition->GetMaxRange();
 
 }
+
+void ALSWeaponInstance::SetWeaponSkeletalMesh()
+{
+	/*
+	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
+	WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
+	WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	*/
+	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
+	WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
+	WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+}
+
 
 float ALSWeaponInstance::GetFinalDamage() const
 {

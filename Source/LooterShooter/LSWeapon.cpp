@@ -69,11 +69,11 @@ float ALSWeapon::GetMagazineCapacity() const
 void ALSWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
+/*
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	CurrentWeaponData = LSGameInstance->GetLSWeaponData(Level);
-
+*/
 /*
 	AttackDamage = FMath::RandRange(AttackDamageMin, AttackDamageMax);
 	AttackModifier = FMath::RandRange(AttackModifierMin, AttackModifierMax);

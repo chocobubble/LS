@@ -90,7 +90,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int32 DropExp;
 };
-
+/*
 USTRUCT(BlueprintType)
 struct FLSWeaponBaseData : public FTableRowBase
 {
@@ -139,6 +139,9 @@ public:
 	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Attack)
 	float HeatPerShot = 0.1f;
 };
+
+*/
+
 /**
  * 
  */
@@ -153,7 +156,12 @@ public:
 	virtual void Init() override;
 	FLSPlayerData* GetLSPlayerData(int32 Level);
 	FLSMonsterData* GetLSMonsterData(int32 Level);
-	FLSWeaponBaseData* GetLSWeaponData(int32 Level);
+	//FLSWeaponBaseData* GetLSWeaponData(int32 Level);
+
+	USkeletalMesh* GetRifleMesh() const
+	{
+		return RifleWeaponMesh;
+	}
 
 	void SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount);
 
@@ -177,6 +185,8 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Loot)
 	UStaticMesh* PistolAmmoMesh;
 
+	
+
 
 
 private:
@@ -185,7 +195,10 @@ private:
 	
 	UPROPERTY()
 	UDataTable* LSMonsterTable;
-
+/*
 	UPROPERTY()
 	UDataTable* LSWeaponTable;
+*/
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	USkeletalMesh* RifleWeaponMesh;
 };

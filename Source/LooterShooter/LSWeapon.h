@@ -5,6 +5,7 @@
 #include "LooterShooter.h"
 #include "GameFramework/Actor.h"
 #include "LSGameInstance.h"
+#include "LSGameState.h"
 
 
 #include "LSWeapon.generated.h"
