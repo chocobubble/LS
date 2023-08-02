@@ -18,6 +18,7 @@ public class LooterShooter : ModuleRules
 			"UMG",
 			"NavigationSystem",
 			"AIModule",
-			"GameplayTasks" });
+			"GameplayTasks",
+			"CableComponent" });
 	}
 }

@@ -33,6 +33,7 @@ class ULSPopUpWidget;
 class ALSWeaponInstance;
 class ULSGameInstance;
 class ULSInventoryComponent;
+// class UCableComponent;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
@@ -210,6 +211,8 @@ private:
 
 	void SetCharacterStateDead();
 
+	void GrappleBegin();
+
 	// debug line
 	void ShowDebugLine(FVector Dir);
 
@@ -228,6 +231,11 @@ private:
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	bool bIsReloading = false;
 
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsGrappling = false;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsGrapplingCasting = false;
 
 	UPROPERTY()
 	ALSAIController* LSAIController;
@@ -241,7 +249,34 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float TestTimer = 0.1f;
 
-	
+/** Grappling */
+/*
+	UPROPERTY(VisibleAnywhere, Category = Grppling)
+	UCableComponent* Cable;
+*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingHookRange = 5000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingStopRange = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingMovementSpeed = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingJumpHeight = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingHeightCorrection = 150.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingCastingTime = 1.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	FVector GrappleToLocation;
+
+	FTimerHandle GrapplingTimerHandle = { };
+///////////////
 
 	FTimerHandle DeadTimerHandle = { };
 	FTimerHandle ReloadTimerHandle = { };

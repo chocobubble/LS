@@ -39,6 +39,8 @@
 #include "LSInventoryComponent.h"
 //#include "Animation/AnimInstance.h"
 
+// #include "CableComponent.h"
+
 
 // Sets default values
 ALSCharacter::ALSCharacter()
@@ -72,6 +74,7 @@ ALSCharacter::ALSCharacter()
 
 	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
 	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
+	// Cable = CreateDefaultSubobject<ULSCableComponent>(TEXT("CABLE"));
 	
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
@@ -450,6 +453,18 @@ void ALSCharacter::Tick(float DeltaTime)
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
 
 	InteractCheck();
+
+	if (bIsGrappling)
+	{
+		LaunchCharacter(((GrappleToLocation - GetActorLocation()) + GetActorUpVector() * GrapplingHeightCorrection)* GrapplingMovementSpeed, true, true);
+		//LaunchCharacter((GrappleToLocation - GetActorLocation())* GrapplingMovementSpeed, true, true);
+		if ((GrappleToLocation - GetActorLocation()).Size() < GrapplingStopRange)
+		{
+			//LaunchCharacter(GetActorUpVector() * GrapplingHeightCorrection, true, true);
+			bIsGrappling = false;
+		}
+	}
+
 /*
 	FVector2D LookAxisVector(1.f, 1.f);// = Value.Get<FVector2D>();
 
@@ -614,6 +629,62 @@ void ALSCharacter::EndAiming(const FInputActionValue& Value)
 void ALSCharacter::GrapplingHook(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("GrapplingHook"));
+	if(bIsGrapplingCasting||bIsGrappling)
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * GrapplingHookRange)),
+		ECollisionChannel::ECC_GameTraceChannel1,
+		Params
+	);
+
+	#if ENABLE_DRAW_DEBUG
+
+	DrawDebugLine(
+		GetWorld(),
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * GrapplingHookRange)), //AttackRange,
+		bResult ? FColor::Green : FColor::White,
+		false,
+		1.0f,
+		0,
+		1.f
+	);
+
+#endif
+
+	if (bResult)
+	{
+		if (HitResult.HasValidHitObjectHandle())
+		{
+			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+			bIsGrapplingCasting = true;
+			GetWorld()->GetTimerManager().SetTimer(GrapplingTimerHandle, this, &ALSCharacter::GrappleBegin, GrapplingCastingTime);
+	GrappleToLocation = HitResult.Location;
+			// Cable->SetWorldLocation(GrappleToLocation);
+		}
+		else
+		{
+			LSLOG(Warning, TEXT("Actor nullptr"));
+		}
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("Didn't hit"));
+	}
+}
+
+void ALSCharacter::GrappleBegin()
+{
+	LaunchCharacter(GetActorUpVector() * GrapplingJumpHeight, false, false);
+	bIsGrapplingCasting = false;
+	bIsGrappling = true;
 }
 
 void ALSCharacter::Reload(const FInputActionValue& Value)
@@ -741,7 +812,7 @@ void ALSCharacter::AttackCheck()
 	);
 
 #endif
-
+	LSCHECK(EquipmentManager->GetCurrentWeaponInstance());
 	FVector TempVector = EquipmentManager->GetCurrentWeaponInstance()->CalculateRecoil((FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X)), EquipmentManager->GetCurrentWeaponInstance()->GetCurrentSpreadAngle());
 	ShowDebugLine(TempVector);
 
