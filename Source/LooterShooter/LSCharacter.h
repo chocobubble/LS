@@ -180,6 +180,11 @@ public:
 	float GetFinalAttackDamage() const;
 	float GetFinalInteractRange() const;
 
+	void SetIsNearInteractableObject(bool Value)
+	{
+		bIsNearInteractableObject = Value;
+	}
+
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
@@ -231,11 +236,14 @@ private:
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	bool bIsReloading = false;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grapple, meta = (AllowPrivateAccess = "true"))
 	bool bIsGrappling = false;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grapple, meta = (AllowPrivateAccess = "true"))
 	bool bIsGrapplingCasting = false;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsNearInteractableObject = false;
 
 	UPROPERTY()
 	ALSAIController* LSAIController;

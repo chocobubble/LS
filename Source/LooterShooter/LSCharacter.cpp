@@ -154,6 +154,11 @@ ALSCharacter::ALSCharacter()
 	if ( IA_SHOOT.Succeeded())
 	{
 		ShootAction = IA_SHOOT.Object;
+
+		LSCHECK(ShootAction->Triggers.Num() > 0);
+		TObjectPtr<UInputTriggerPulse> ShootInputTrigger = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
+		LSCHECK(nullptr != ShootInputTrigger);
+		ShootInputTrigger->Interval = 0.1f;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MELEE(TEXT("/Game/LS/Input/Actions/IA_MELEE.IA_MELEE"));
@@ -208,12 +213,13 @@ ALSCharacter::ALSCharacter()
 	if ( IA_INTERACT.Succeeded())
 	{
 		InteractAction = IA_INTERACT.Object;
-
+/*
 		// later move
 		LSCHECK(InteractAction->Triggers.Num() > 0);
 		TObjectPtr<UInputTriggerPulse> InteractInputTrigger = Cast<UInputTriggerPulse>(InteractAction->Triggers[0]);
 		LSCHECK(nullptr != InteractInputTrigger);
 		InteractInputTrigger->Interval = 0.1f;
+*/
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_TEST(TEXT("/Game/LS/Input/Actions/IA_TESTKEY.IA_TESTKEY"));
@@ -1018,6 +1024,11 @@ float ALSCharacter::GetFinalAttackDamage() const
 
 void ALSCharacter::InteractCheck()
 {
+	LSLOG_S(Warning);
+	if(!bIsNearInteractableObject)
+	{
+		return;
+	}
 	float FinalInteractRange = GetFinalInteractRange();
 
 	FHitResult HitResult;

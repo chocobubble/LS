@@ -24,7 +24,7 @@ ALSItemBox::ALSItemBox()
 	Box->SetupAttachment(RootComponent);
 	Effect->SetupAttachment(RootComponent);
 
-	Trigger->SetBoxExtent(FVector(40.0f, 42.0f, 30.0f));
+	Trigger->SetBoxExtent(FVector(80.0f, 80.0f, 30.0f));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BOX(TEXT("/Game/InfinityBladeGrassLands/Environments/Breakables/StaticMesh/Box/SM_Env_Breakables_Box1.SM_Env_Breakables_Box1"));
 	if (SM_BOX.Succeeded())
 	{
@@ -60,6 +60,7 @@ void ALSItemBox::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSItemBox::OnCharacterOverlap);
+	Trigger->OnComponentEndOverlap.AddDynamic(this, &ALSItemBox::OnCharacterEndOverlap);
 }
 
 void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp,
@@ -69,7 +70,8 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 
 	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
 	LSCHECK(nullptr != LSCharacter);
-
+	LSCharacter->SetIsNearInteractableObject(true);
+/*
 	if (nullptr != LSCharacter && nullptr != WeaponItemClass)
 	{
 		if (LSCharacter->CanSetWeapon())
@@ -91,9 +93,20 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 	{
 		LSLOG_S(Warning);
 	}
+*/
+}
+
+void ALSItemBox::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
+{
+	LSLOG_S(Warning);
+
+	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
+	LSCHECK(nullptr != LSCharacter);
+	LSCharacter->SetIsNearInteractableObject(false);
 }
 
 void ALSItemBox::OnEffectFinished(UParticleSystemComponent * PSystem)
 {
-	Destroy();
+	// Destroy();
 }

@@ -43,5 +43,11 @@ private:
 		const FHitResult& SweepResult);
 	
 	UFUNCTION()
+	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+	
+	UFUNCTION()
 	void OnEffectFinished(class UParticleSystemComponent* PSystem);
 };
