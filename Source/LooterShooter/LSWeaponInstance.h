@@ -148,7 +148,7 @@ private:
 ///////////////////////////////////////////
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	float CurrentSpreadAngle = 0.1f;
+	float CurrentSpreadAngle = 0.3f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 RoundsRemaining = 0;

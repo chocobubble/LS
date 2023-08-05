@@ -136,7 +136,7 @@ ALSWeaponInstance* ULSEquipmentComponent::GetCurrentWeaponInstance()
 
 ALSWeaponInstance* ULSEquipmentComponent::GetWeaponInstance(int32 Index)
 {
-	LSCHECK(Index >= WeaponInstanceList.Num() , nullptr);
+	LSCHECK(Index < WeaponInstanceList.Num() , nullptr);
 	if(WeaponInstanceList[Index] != nullptr)
 	{
 		return WeaponInstanceList[Index];

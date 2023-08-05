@@ -34,10 +34,10 @@ public:
 
 private:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = Inventory)
 	TArray<ULSWeaponDefinition*> WeaponList;
 
-	UPROPERTY(VisibleAnywhere, Category = Equipment)
+	UPROPERTY(EditAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;
 
 };

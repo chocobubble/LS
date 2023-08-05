@@ -23,6 +23,9 @@ void ULSInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 // later delete
+	LSLOG(Warning, TEXT("Construct default weapon in begin play"));
+	SetDefaultWeapon();
+	SetDefaultWeapon();
 
 
 

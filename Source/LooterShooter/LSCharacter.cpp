@@ -471,6 +471,7 @@ void ALSCharacter::Tick(float DeltaTime)
 		}
 	}
 
+
 /*
 	FVector2D LookAxisVector(1.f, 1.f);// = Value.Get<FVector2D>();
 
@@ -745,6 +746,17 @@ void ALSCharacter::EquipThirdWeapon(const FInputActionValue& Value)
 void ALSCharacter::Interact(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("Interact"));
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * InteractRange)),
+		ECollisionChannel::ECC_GameTraceChannel4,
+		Params
+	);
+
 }
 
 void ALSCharacter::TestAct(const FInputActionValue& Value)
@@ -927,7 +939,7 @@ bool ALSCharacter::CanSetWeapon()
 void ALSCharacter::SetWeapon(ALSWeaponInstance* NewWeapon)
 {
 	LSCHECK(nullptr != NewWeapon);// && nullptr == CurrentWeapon);
-
+	LSLOG_S(Warning);
 	if (nullptr != EquipmentManager->GetCurrentWeaponInstance())
 	{
 		/*
@@ -1024,7 +1036,7 @@ float ALSCharacter::GetFinalAttackDamage() const
 
 void ALSCharacter::InteractCheck()
 {
-	LSLOG_S(Warning);
+	//LSLOG_S(Warning);
 	if(!bIsNearInteractableObject)
 	{
 		return;

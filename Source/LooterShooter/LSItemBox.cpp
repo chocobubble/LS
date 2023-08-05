@@ -38,7 +38,7 @@ ALSItemBox::ALSItemBox()
 	Box->SetRelativeLocation(FVector(0.0f, -3.5f, -30.0f));
 
 	Trigger->SetCollisionProfileName(TEXT("ItemBox"));
-	Box->SetCollisionProfileName(TEXT("NoCollision"));
+	Box->SetCollisionProfileName(TEXT("ItemBox"));
 
 	WeaponItemClass = ALSWeaponInstance::StaticClass();
 
