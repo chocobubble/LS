@@ -24,6 +24,9 @@ public:
 	}
 
 	void SetDefaultWeapon();
+
+	// later, 
+	void AddWeaponToInventory(ULSWeaponDefinition* WeaponDefinition);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -39,5 +42,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;
+
+	UPROPERTY(VisibleAnywhere, Category = Inventory)
+	int32 MaxInventoryCapacity = 60;
+
+	UPROPERTY(VisibleAnywhere, Category = Inventory)
+	int32 CurrentInventoryCapacity = 0;
 
 };

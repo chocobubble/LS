@@ -37,6 +37,8 @@
 #include "LSAutoLootItem.h"
 #include "LSWeaponInstance.h"
 #include "LSInventoryComponent.h"
+#include "LSItemBox.h"
+#include "LSWeaponDefinition.h"
 //#include "Animation/AnimInstance.h"
 
 // #include "CableComponent.h"
@@ -753,9 +755,21 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 		HitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * InteractRange)),
-		ECollisionChannel::ECC_GameTraceChannel4,
+		ECollisionChannel::ECC_GameTraceChannel3,
 		Params
 	);
+
+	if(bResult)
+	{
+		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
+		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
+		LSLOG(Warning, TEXT("Cast Complete"));
+		//ItemBox->SetWeaponItem(this);
+		LSLOG(Warning, TEXT("Set Weapon complete"));
+		ULSWeaponDefinition* WeaponDefinition = ItemBox->GetWeaponItem();
+		LSLOG(Warning, TEXT("WeaponDefinite"));
+		InventoryManager->AddWeaponToInventory(WeaponDefinition);
+	}
 
 }
 

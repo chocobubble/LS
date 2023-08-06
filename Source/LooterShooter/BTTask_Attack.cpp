@@ -26,6 +26,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
     IsAttacking = true;
     LSCharacter->OnAttackEnd.AddLambda([this]() -> void {
         IsAttacking = false;
+        LSLOG(Warning, TEXT("AI Attack End"));
     });
 
     return EBTNodeResult::InProgress;

@@ -21,6 +21,8 @@ ULSInventoryComponent::ULSInventoryComponent()
 void ULSInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	WeaponList.Init(nullptr, MaxInventoryCapacity);
+
 
 // later delete
 	LSLOG(Warning, TEXT("Construct default weapon in begin play"));
@@ -40,8 +42,9 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	ALSWeaponInstance* WeaponInstance1 = WeaponDefinition1->InstantiateWeapon();
 	LSCHECK(EquipmentManager != nullptr);
 	EquipmentManager->EquipWeapon(WeaponInstance1);
-	
-	WeaponList.Add(WeaponDefinition1); 
+	AddWeaponToInventory(WeaponDefinition1);
+
+	// WeaponList.Add(WeaponDefinition1); 
 }
 
 /*
@@ -54,3 +57,25 @@ void ULSInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 }
 */
 
+void ULSInventoryComponent::AddWeaponToInventory(ULSWeaponDefinition* WeaponDefinition)
+{
+	if(CurrentInventoryCapacity == MaxInventoryCapacity)
+	{
+		LSLOG(Warning, TEXT("Inventory is Full"));
+		return;
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("Inventory is not Full"));
+	}
+	for(ULSWeaponDefinition* Weapon : WeaponList)
+	{
+		if(Weapon == nullptr)
+		{
+			Weapon = WeaponDefinition;
+			CurrentInventoryCapacity += 1;
+			LSLOG(Warning, TEXT("Adding Weapon to Weapon List in Inventory success"));
+			break;
+		}
+	}
+}

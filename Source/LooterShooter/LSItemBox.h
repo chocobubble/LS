@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "LSItemBox.generated.h"
 
+class ULSWeaponDefinition;
+class ALSCharacter;
+
 UCLASS()
 class LOOTERSHOOTER_API ALSItemBox : public AActor
 {
@@ -14,6 +17,13 @@ class LOOTERSHOOTER_API ALSItemBox : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ALSItemBox();
+
+	UFUNCTION()
+	void OpenChest();
+
+	ULSWeaponDefinition* GetWeaponItem();
+
+	void SetWeaponItem(ALSCharacter* LSCharacter);
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,7 +41,10 @@ public:
 	class UParticleSystemComponent* Effect;
 
 	UPROPERTY(EditInstanceOnly, Category = Box)
-	TSubclassOf<class ALSWeapon> WeaponItemClass;
+	TSubclassOf<ULSWeaponDefinition> WeaponItemClass;
+
+	UPROPERTY(EditAnywhere, Category = Box)
+	ULSWeaponDefinition* WeaponItem;	
 
 private:
 	UFUNCTION()
@@ -50,4 +63,7 @@ private:
 	
 	UFUNCTION()
 	void OnEffectFinished(class UParticleSystemComponent* PSystem);
+
+	UPROPERTY(VisibleAnywhere, Category = Box)
+	bool bIsDestroying = false;
 };

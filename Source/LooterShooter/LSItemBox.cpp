@@ -6,7 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "LSCharacter.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "LSWeaponInstance.h"
+#include "LSWeaponDefinition.h"
 
 // Sets default values
 ALSItemBox::ALSItemBox()
@@ -38,9 +38,9 @@ ALSItemBox::ALSItemBox()
 	Box->SetRelativeLocation(FVector(0.0f, -3.5f, -30.0f));
 
 	Trigger->SetCollisionProfileName(TEXT("ItemBox"));
-	Box->SetCollisionProfileName(TEXT("ItemBox"));
+	Box->SetCollisionProfileName(TEXT("Interact"));
 
-	WeaponItemClass = ALSWeaponInstance::StaticClass();
+	WeaponItemClass = ULSWeaponDefinition::StaticClass();
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_CHESTOPEN(TEXT("/Game/InfinityBladeGrassLands/Effects/FX_Treasure/Chest/P_TreasureChest_Open_Mesh.P_TreasureChest_Open_Mesh"));
 	if (P_CHESTOPEN.Succeeded())
@@ -48,12 +48,20 @@ ALSItemBox::ALSItemBox()
 		Effect->SetTemplate(P_CHESTOPEN.Object);
 		Effect->bAutoActivate = false;
 	}
+
+	WeaponItem = nullptr;
 }
 // Called when the game starts or when spawned
 void ALSItemBox::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
+	LSCHECK(GetWorld() != nullptr);
+	WeaponItem = NewObject<ULSWeaponDefinition>(Cast<ULSGameInstance>(GetGameInstance()), WeaponItemClass);
+	// NewWeapon-> invisible?
+	WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 8);		
+
 }
 
 void ALSItemBox::PostInitializeComponents()
@@ -71,6 +79,38 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
 	LSCHECK(nullptr != LSCharacter);
 	LSCharacter->SetIsNearInteractableObject(true);
+
+}
+
+void ALSItemBox::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
+{
+	LSLOG_S(Warning);
+
+	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
+	LSCHECK(nullptr != LSCharacter);
+	LSCharacter->SetIsNearInteractableObject(false);
+}
+
+void ALSItemBox::OnEffectFinished(UParticleSystemComponent * PSystem)
+{
+	Destroy();
+}
+
+void ALSItemBox::OpenChest()
+{
+	
+	Effect->Activate(true);
+	Box->SetHiddenInGame(true, true);
+	SetActorEnableCollision(false);
+	if(bIsDestroying)
+	{
+		LSLOG(Error, TEXT("SOmething wrong"));
+		return;
+	}
+	bIsDestroying = true;
+
+	//LSCharacter->SetWeapon(NewWeapon);
 /*
 	if (nullptr != LSCharacter && nullptr != WeaponItemClass)
 	{
@@ -96,17 +136,22 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 */
 }
 
-void ALSItemBox::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex)
-{
-	LSLOG_S(Warning);
 
-	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
-	LSCHECK(nullptr != LSCharacter);
-	LSCharacter->SetIsNearInteractableObject(false);
+ULSWeaponDefinition* ALSItemBox::GetWeaponItem()
+{
+	LSLOG(Warning, TEXT("GetWeaponItemBefore"));
+	LSCHECK(WeaponItem != nullptr, nullptr);
+	LSLOG(Warning, TEXT("GetWeaponItemAfter"));
+	return WeaponItem;
 }
 
-void ALSItemBox::OnEffectFinished(UParticleSystemComponent * PSystem)
+void ALSItemBox::SetWeaponItem(ALSCharacter* LSCharacter)
 {
-	// Destroy();
+	LSLOG(Warning, TEXT("SetWeaponItem start"));
+	// 	LSCHECK(Box->GetWorld() != nullptr);
+	LSCHECK(WeaponItem != nullptr);
+	WeaponItem = NewObject<ULSWeaponDefinition>(LSCharacter);
+	// NewWeapon-> invisible?
+	WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 8);	
 }
+

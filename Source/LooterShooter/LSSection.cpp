@@ -67,14 +67,16 @@ void ALSSection::SetState(ESectionState NewState)
 			GetWorld()->GetTimerManager().SetTimer(SpawnNPCTimerHandle,
 				FTimerDelegate::CreateUObject(this, &ALSSection::OnNPCSpawn),
 				EnemySpawnTime, true);
-/*
+
 			GetWorld()->GetTimerManager().SetTimer(SpawnItemBoxTimerHandle,
 				FTimerDelegate::CreateLambda([this]() -> void {
 					FVector2D RandXY = FMath::RandPointInCircle(600.0f);
 					GetWorld()->SpawnActor<ALSItemBox>(GetActorLocation() +
 						FVector(RandXY, 30.0f), FRotator::ZeroRotator);
-				}), ItemBoxSpawnTime, true);
-*/
+
+					
+				}), ItemBoxSpawnTime, false);
+
 
 			break;
 		}
