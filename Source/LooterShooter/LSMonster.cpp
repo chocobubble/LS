@@ -17,6 +17,7 @@
 #include "LSCharacterStatComponent.h"
 #include "LSCharacterWidget.h"
 #include "LSWeapon.h"
+#include "LSGameMode.h"
 
 // Sets default values
 ALSMonster::ALSMonster()
@@ -26,6 +27,8 @@ ALSMonster::ALSMonster()
 
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
+	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+
 	
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.0f, 0.0f, -88.0f),
@@ -49,7 +52,7 @@ ALSMonster::ALSMonster()
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	// uaniminstace code..
-	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));//(TEXT("/Game/LS/Animations/text.text_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
 	//
 	if (RIFLE_ANIM.Succeeded() )
 	{
@@ -64,8 +67,15 @@ ALSMonster::ALSMonster()
 
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+	}
 
 	AIControllerClass = ALSAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
@@ -179,9 +189,10 @@ void ALSMonster::PostInitializeComponents()
 		LSAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 	});
-
+/*
 	ULSAnimInstance* AnimInstance = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
 	LSCHECK(nullptr != AnimInstance);
+*/
 }
 
 float ALSMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

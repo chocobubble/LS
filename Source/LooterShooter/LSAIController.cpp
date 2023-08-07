@@ -21,12 +21,24 @@ ALSAIController::ALSAIController()
     {
         BBAsset = BBObject.Object;
     }
-
+/*
     static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTObject(TEXT("/Game/LS/AI/BT_LSCharacter.BT_LSCharacter"));
     if (BTObject.Succeeded())
     {
         BTAsset = BTObject.Object;
     }
+*/
+
+    static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTObject(TEXT("/Game/LS/AI/BT_LSRifleman.BT_LSRifleman"));
+    if (BTObject.Succeeded())
+    {
+        BTAsset = BTObject.Object;
+    }
+    else
+    {
+        LSLOG(Error, TEXT("BT Error"));
+    }
+
 }
 
 void ALSAIController::OnPossess(APawn* InPawn)

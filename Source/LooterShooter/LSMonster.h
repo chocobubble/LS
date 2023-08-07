@@ -53,7 +53,7 @@ private:
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	ECharacterState CurrentState;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	ALSAIController* LSAIController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))

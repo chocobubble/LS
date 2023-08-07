@@ -15,8 +15,9 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 {
     EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    auto LSCharacter = Cast<ALSCharacter>(OwnerComp.GetAIOwner()->GetPawn());
-    if (nullptr == LSCharacter)
+    //auto LSCharacter = Cast<ALSCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+    APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+    if (nullptr == ControllingPawn)
     {
         return EBTNodeResult::Failed;
     }
@@ -27,10 +28,10 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
         return EBTNodeResult::Failed;
     }
 
-    FVector LookVector = Target->GetActorLocation() - LSCharacter->GetActorLocation();
+    FVector LookVector = Target->GetActorLocation() - ControllingPawn->GetActorLocation();
     LookVector.Z = 0.0f;
     FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-    LSCharacter->SetActorRotation(FMath::RInterpTo(LSCharacter->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 2.0f));
+    ControllingPawn->SetActorRotation(FMath::RInterpTo(ControllingPawn->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 2.0f));
 
     return EBTNodeResult::Succeeded;
 }

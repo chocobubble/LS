@@ -766,7 +766,8 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 		LSLOG(Warning, TEXT("Cast Complete"));
 		//ItemBox->SetWeaponItem(this);
 		LSLOG(Warning, TEXT("Set Weapon complete"));
-		ULSWeaponDefinition* WeaponDefinition = ItemBox->GetWeaponItem();
+		// ULSWeaponDefinition* WeaponDefinition = ItemBox->GetWeaponItem();
+		WeaponDefinition = ItemBox->GetWeaponItem();
 		LSLOG(Warning, TEXT("WeaponDefinite"));
 		InventoryManager->AddWeaponToInventory(WeaponDefinition);
 	}

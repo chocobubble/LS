@@ -39,7 +39,7 @@ private:
 	float RepeatInterval;
 */
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	class UBehaviorTree* BTAsset;
 
 	UPROPERTY()

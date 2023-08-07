@@ -44,7 +44,7 @@ public:
 	TSubclassOf<ULSWeaponDefinition> WeaponItemClass;
 
 	UPROPERTY(EditAnywhere, Category = Box)
-	ULSWeaponDefinition* WeaponItem;	
+	TObjectPtr<ULSWeaponDefinition> WeaponItem;	
 
 private:
 	UFUNCTION()

@@ -33,6 +33,7 @@ class ULSPopUpWidget;
 class ALSWeaponInstance;
 class ULSGameInstance;
 class ULSInventoryComponent;
+class ULSWeaponDefinition;
 // class UCableComponent;
 
 UCLASS()
@@ -305,5 +306,9 @@ private:
 	FVector ToAimDirection;
 
 	
+/** For Test */
+public:
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	TObjectPtr<ULSWeaponDefinition> WeaponDefinition;
 };
 

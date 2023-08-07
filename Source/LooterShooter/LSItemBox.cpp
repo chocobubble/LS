@@ -48,8 +48,6 @@ ALSItemBox::ALSItemBox()
 		Effect->SetTemplate(P_CHESTOPEN.Object);
 		Effect->bAutoActivate = false;
 	}
-
-	WeaponItem = nullptr;
 }
 // Called when the game starts or when spawned
 void ALSItemBox::BeginPlay()
@@ -57,7 +55,7 @@ void ALSItemBox::BeginPlay()
 	Super::BeginPlay();
 
 
-	LSCHECK(GetWorld() != nullptr);
+	// LSCHECK(GetWorld() != nullptr);
 	WeaponItem = NewObject<ULSWeaponDefinition>(Cast<ULSGameInstance>(GetGameInstance()), WeaponItemClass);
 	// NewWeapon-> invisible?
 	WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 8);		
