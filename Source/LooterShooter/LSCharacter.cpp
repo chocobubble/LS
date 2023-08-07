@@ -763,6 +763,7 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 	{
 		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
 		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
+		LSCHECK(ItemBox != nullptr);
 		LSLOG(Warning, TEXT("Cast Complete"));
 		//ItemBox->SetWeaponItem(this);
 		LSLOG(Warning, TEXT("Set Weapon complete"));

@@ -17,6 +17,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 
     // LSMonster->Attack();
     LSLOG(Warning, TEXT("Monster Shoot"));
+    LSMonster->Attack();
 
     return EBTNodeResult::Succeeded;
     

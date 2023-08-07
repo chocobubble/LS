@@ -28,7 +28,7 @@ public:
 	ECharacterState GetCharacterState() const;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
-	void Attack();
+	
 	void OnAssetLoadCompleted();
 
 	void DropItem();
@@ -38,15 +38,16 @@ public:
 	void ShowDebugLine(FVector Dir);
 	void SetWeapon(ALSWeapon* NewWeapon);
 
-
+// Attack
+	void SetAttackTarget(APawn* TargetPawn);
+	void Attack();
+	FVector CalculateRecoil(FVector AimDir, const float HalfAngle);
+///////
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
-	float AttackRange;
-
 	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
 
@@ -64,6 +65,8 @@ private:
 
 	UPROPERTY()
 	ULSAnimInstance* LSAnim;
+
+	
 
 	FTimerHandle DeadTimerHandle = { };
 public:	
@@ -90,4 +93,16 @@ public:
 	UPROPERTY(VisibleAnywhere, Category=Weapon)
 	ALSWeapon* CurrentWeapon;
 
+private:
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	APawn* AttackTarget;
+
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	float ShotMissRate = 5.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	float AttackRange = 600.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	float AttackDamage = 100.0f;
 };
