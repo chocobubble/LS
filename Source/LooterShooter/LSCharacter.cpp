@@ -365,7 +365,8 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		{
 			DisableInput(LSPlayerController);
 
-			LSPlayerController->GetHUDWidget()->BindCharacterStat(CharacterStat);
+			//LSPlayerController->GetHUDWidget()->BindCharacterStat(CharacterStat);
+			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
 
 			auto LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
 			LSCHECK(nullptr != LSPlayerState);

@@ -8,12 +8,21 @@
 #include "LSPlayerState.h"
 #include "LSEquipmentComponent.h"
 #include "LSResourceManageComponent.h"
+#include "LSDefenseComponent.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
     LSCHECK(nullptr != CharacterStat);
     CurrentCharacterStat = CharacterStat;
     CharacterStat->OnHPChanged.AddUObject(this, &ULSHUDWidget::UpdateCharacterStat);
+}
+
+void ULSHUDWidget::BindDefenseComponent(ULSDefenseComponent* DefenseManager)
+{
+    LSCHECK(nullptr != DefenseManager);
+    CurrentDefenseManager = DefenseManager;
+    DefenseManager->OnHPChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentHP);
+    DefenseManager->OnShieldChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentShield);
 }
 
 void ULSHUDWidget::BindPlayerState(ALSPlayerState* PlayerState)
@@ -42,6 +51,9 @@ void ULSHUDWidget::NativeConstruct()
     Super::NativeConstruct();
     HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbHP")));
     LSCHECK(nullptr != HPBar);
+
+    ShieldBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbShield")));
+    LSCHECK(nullptr != ShieldBar);
 
     ExpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbExp")));
     LSCHECK(nullptr != ExpBar);
@@ -88,6 +100,21 @@ void ULSHUDWidget::UpdateCharacterStat()
 
     HPBar->SetPercent(CurrentCharacterStat->GetHPRatio());
 }
+
+void ULSHUDWidget::UpdateCurrentHP()
+{
+    LSCHECK(CurrentDefenseManager.IsValid());
+    LSLOG_S(Warning);
+    HPBar->SetPercent(CurrentDefenseManager->GetHPRatio());
+}
+
+void ULSHUDWidget::UpdateCurrentShield()
+{
+    LSCHECK(CurrentDefenseManager.IsValid());
+    LSLOG_S(Warning);
+    ShieldBar->SetPercent(CurrentDefenseManager->GetShieldRatio());
+}
+
 
 void ULSHUDWidget::UpdatePlayerState()
 {
