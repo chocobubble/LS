@@ -24,9 +24,14 @@ public:
 	}
 
 	void SetDefaultWeapon();
-
+	bool IsInventoryFull()
+	{
+		return MaxInventoryCapacity == CurrentInventoryCapacity;
+	}
+	int32 GetEmptyIndex();
 	// later, 
-	void AddWeaponToInventory(ULSWeaponDefinition* WeaponDefinition);
+	void AddWeaponToInventory(TObjectPtr<ULSWeaponDefinition> WeaponDefinition);
+	void EquipItem(int32 ItemIndex);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -38,7 +43,7 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere, Category = Inventory)
-	TArray<ULSWeaponDefinition*> WeaponList;
+	TArray<TObjectPtr<ULSWeaponDefinition>> WeaponList;
 
 	UPROPERTY(EditAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;

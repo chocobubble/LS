@@ -3,7 +3,7 @@
 
 #include "LSSection.h"
 #include "Components/BoxComponent.h"
-#include "LSCharacter.h"
+#include "LSMonster.h"
 #include "LSItemBox.h"
 #include "LSPlayerController.h"
 #include "LSGameMode.h"
@@ -108,11 +108,11 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent * OverlappedComponent
 void ALSSection::OnNPCSpawn()
 {
 /*
-	GetWorld()->SpawnActor<ALSCharacter>(GetActorLocation() + FVector::UpVector * 80.0f,
+	GetWorld()->SpawnActor<ALSMonster>(GetActorLocation() + FVector::UpVector * 80.0f,
 										 FRotator::ZeroRotator);
 */
 	GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
-	auto KeyNPC = GetWorld()->SpawnActor<ALSCharacter>(GetActorLocation() + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
+	auto KeyNPC = GetWorld()->SpawnActor<ALSMonster>(GetActorLocation() + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
 	if (nullptr != KeyNPC)
 	{
 		KeyNPC->OnDestroyed.AddDynamic(this, &ALSSection::OnKeyNPCDestroyed);
@@ -121,10 +121,10 @@ void ALSSection::OnNPCSpawn()
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
-	auto LSCharacter = Cast<ALSCharacter>(DestroyedActor);
-	LSCHECK(nullptr != LSCharacter);
+	auto LSMonster = Cast<ALSMonster>(DestroyedActor);
+	LSCHECK(nullptr != LSMonster);
 
-	auto LSPlayerController = Cast<ALSPlayerController>(LSCharacter->LastHitBy);
+	auto LSPlayerController = Cast<ALSPlayerController>(LSMonster->LastHitBy);
 	LSCHECK(nullptr != LSPlayerController);
 
 	auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());

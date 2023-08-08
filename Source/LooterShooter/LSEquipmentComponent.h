@@ -22,13 +22,6 @@ public:
 	// Sets default values for this component's properties
 	ULSEquipmentComponent();
 
-	void EquipWeapon(ALSWeapon* Weapon);
-	void EquipWeapon(ALSWeapon* Weapon, int8 index);
-
-	ALSWeapon* GetCurrentWeapon();
-	ALSWeapon* GetWeapon(int32 Index) const;
-
-
 	////////
 
 	void EquipWeapon(ALSWeaponInstance* Weapon);
@@ -58,16 +51,6 @@ private:
 	
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
-	ALSWeapon* CurrentWeapon;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
-	TArray<ALSWeapon*> WeaponList;
-
-	UPROPERTY(EditInstanceOnly, Category = Equipment)
-	TSubclassOf<ALSWeapon> WeaponClass;
-
-///////////////////////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
 	ALSWeaponInstance* CurrentWeaponInstance;
 

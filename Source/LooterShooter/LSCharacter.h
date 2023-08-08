@@ -99,7 +99,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* TestAction;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	ULSAnimInstance* LSAnim;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))

@@ -58,13 +58,13 @@ private:
 	ALSAIController* LSAIController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
-	float DeadTimer;
+	float DeadTimer = 5.f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	FVector ToAimDirection;
 
-	UPROPERTY()
-	ULSAnimInstance* LSAnim;
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	ULSAnimInstance* LSMonsterAnim;
 
 	
 

@@ -137,9 +137,8 @@ void ALSItemBox::OpenChest()
 
 ULSWeaponDefinition* ALSItemBox::GetWeaponItem()
 {
-	LSLOG(Warning, TEXT("GetWeaponItemBefore"));
-	LSCHECK(WeaponItem != nullptr, nullptr);
-	LSLOG(Warning, TEXT("GetWeaponItemAfter"));
+	LSLOG_S(Warning);
+	Destroy();
 	return WeaponItem;
 }
 

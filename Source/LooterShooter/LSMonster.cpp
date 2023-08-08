@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LSMonster.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
@@ -32,33 +33,27 @@ ALSMonster::ALSMonster()
 		FVector(0.0f, 0.0f, -88.0f),
 		FRotator(0.0f, -90.0f, 0.0f));
 
-	HPBarWidget->SetupAttachment(GetMesh());
-
-	/*
-		static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
-		if ( SKM_QUINN.Succeeded() )
-		{
-			GetMesh()->SetSkeletalMesh( SKM_QUINN.Object );
-		}
-		else
-		{
-			LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
-		}
-	*/
+	HPBarWidget->SetupAttachment(GetMesh());	
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	// uaniminstace code..
-	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
+	static ConstructorHelpers::FClassFinder<ULSAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/MonsterAnimBP.MonsterAnimBP_C"));
 	//
-	if (RIFLE_ANIM.Succeeded())
+	if (MONSTER_ANIM.Succeeded())
 	{
-		GetMesh()->SetAnimInstanceClass(RIFLE_ANIM.Class);
+		LSCHECK(MONSTER_ANIM.Class != nullptr);
+		GetMesh()->SetAnimInstanceClass(MONSTER_ANIM.Class);
+		//LSCHECK(GetMesh()->GetAnimInstance() != nullptr);
 	}
 	else
 	{
-		LSLOG(Warning, TEXT("Rifle anim desn't succeded"));
+		LSLOG(Error, TEXT("Rifle anim desn't succeded"));
 	}
+
+	//LSCHECK(GetMesh()->GetAnimInstance() != nullptr);
+	//LSMonsterAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+	//LSCHECK(nullptr != LSMonsterAnim);
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
@@ -73,6 +68,9 @@ ALSMonster::ALSMonster()
 
 	AIControllerClass = ALSAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	SetActorHiddenInGame(true);
+	SetCanBeDamaged(false);
 }
 
 // Called when the game starts or when spawned
@@ -120,8 +118,9 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 		HPBarWidget->SetHiddenInGame(false);
 		SetCanBeDamaged(true);
 
-		CharacterStat->OnHPIsZero.AddLambda([this]() -> void
-											{ SetCharacterState(ECharacterState::DEAD); });
+		CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
+			SetCharacterState(ECharacterState::DEAD);
+		});
 
 		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 		LSCHECK(nullptr != CharacterWidget);
@@ -129,6 +128,7 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 		CharacterWidget->BindDefenseComponent(DefenseManager);
 
 		// SetControlMode(EControlMode::NPC);
+		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 		LSAIController->RunAI();
 		break;
 	}
@@ -137,16 +137,15 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 		SetActorEnableCollision(false);
 		GetMesh()->SetHiddenInGame(false);
 		HPBarWidget->SetHiddenInGame(true);
-		LSAnim->SetDeadAnim();
+		LSMonsterAnim->SetDeadAnim();
 		SetCanBeDamaged(false);
 
 		LSAIController->StopAI();
 
-		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
-																							 {
+		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
 			DropItem();
 			Destroy(); }),
-											   DeadTimer, false);
+			DeadTimer, false);
 	}
 	}
 }
@@ -173,15 +172,16 @@ void ALSMonster::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	LSLOG_S(Warning);
 
-	LSAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
-	LSCHECK(nullptr != LSAnim);
+	LSCHECK(GetMesh()->GetAnimInstance() != nullptr);
+	LSMonsterAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+	LSCHECK(nullptr != LSMonsterAnim);
 
 	// LSAnim->OnAttackHitCheck.AddUObject(this, &ALSMonster::AttackCheck);
 
 	CharacterStat->OnHPIsZero.AddLambda([this]() -> void
 										{
 		LSLOG(Warning, TEXT("OnHPIsZero"));
-		LSAnim->SetDeadAnim();
+		LSMonsterAnim->SetDeadAnim();
 		SetActorEnableCollision(false); });
 	/*
 		ULSAnimInstance* AnimInstance = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());

@@ -755,12 +755,13 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 		HitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * InteractRange)),
-		ECollisionChannel::ECC_GameTraceChannel3,
+		ECollisionChannel::ECC_GameTraceChannel4,
 		Params
 	);
 
 	if(bResult)
 	{
+		LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
 		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
 		LSCHECK(ItemBox != nullptr);
@@ -877,8 +878,8 @@ void ALSCharacter::AttackCheck()
 			LSCHECK(nullptr != PopUpWidget->GetPopUpTextBlock());
 			PopUpWidget->GetPopUpTextBlock()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
 */
-
-			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(HitResult.ImpactPoint, FRotator::ZeroRotator);
+			FVector PopupPosition = HitResult.ImpactPoint + (GetActorLocation() - HitResult.ImpactPoint).Normalize();
+			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(PopupPosition, FRotator::ZeroRotator);
 			//Text->GetTextRender()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
 			Text->SetPopupText(FinalAttackDamage);
 			Text->SetTextRotation(HitResult.ImpactPoint , HitResult.TraceStart);
@@ -1065,7 +1066,7 @@ void ALSCharacter::InteractCheck()
 		HitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalInteractRange)),
-		ECollisionChannel::ECC_GameTraceChannel4,
+		ECollisionChannel::ECC_GameTraceChannel3,
 		Params
 	);	
 

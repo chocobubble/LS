@@ -15,8 +15,6 @@ ULSEquipmentComponent::ULSEquipmentComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	WeaponClass = ALSWeapon::StaticClass();
-	//
 	WeaponInstanceClass = ALSWeaponInstance::StaticClass();
 	// ...
 }
@@ -63,46 +61,9 @@ void ULSEquipmentComponent::BeginPlay()
 	*/
 
 	CurrentWeaponIndex = 0;
-	LSCHECK(WeaponInstanceList.Num() > 0);
-	CurrentWeaponInstance = WeaponInstanceList[CurrentWeaponIndex];
+	//LSCHECK(WeaponInstanceList.Num() == 0);
+	//CurrentWeaponInstance = WeaponInstanceList[CurrentWeaponIndex];
 }
-
-void ULSEquipmentComponent::EquipWeapon(ALSWeapon* Weapon)
-{
-	if(WeaponList.Num() < 3)
-	{
-		WeaponList.Emplace(Weapon);
-		CurrentWeapon = Weapon;
-		OnEquipmentChanged.Broadcast();
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("Weapon list is full"));
-	}
-}
-
-void ULSEquipmentComponent::EquipWeapon(ALSWeapon* Weapon, int8 index)
-{
-
-}
-
-ALSWeapon* ULSEquipmentComponent::GetCurrentWeapon() 
-{
-	return GetWeapon(CurrentWeaponIndex);
-}
-
-ALSWeapon* ULSEquipmentComponent::GetWeapon(int32 Index) const
-{
-	if(WeaponList[Index] != nullptr)
-	{
-		return WeaponList[Index];
-	}
-	else
-	{
-		LSLOG(Error, TEXT("%d error"), Index);
-		return nullptr;
-	}
-} 
 
 void ULSEquipmentComponent::SetCurrentWeaponIndex(int32 Index)
 {
