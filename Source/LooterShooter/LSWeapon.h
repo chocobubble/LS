@@ -11,16 +11,11 @@
 #include "LSWeapon.generated.h"
 
 
-/*
-enum class GunType
-{
-	RIFLE,
-	PISTOL,
-	SHOTGUN
-};
-*/
 
-
+/**
+ * 이전 버전.
+ * @deprecated 사용하지 않는 클래스
+ */
 
 UCLASS()
 class LOOTERSHOOTER_API ALSWeapon : public AActor

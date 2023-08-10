@@ -16,16 +16,6 @@ void UBulletDamageAbility::ApplyAbility(ULSWeaponDefinition* WeaponDefinition)
 	LSLOG(Warning, TEXT("Bullet Damage after enhanced : %f"), WeaponDefinition->GetBulletDamage());
 }
 
-/*
-FString UBulletDamageAbility::GetAbilityText() 
-{
-	FString AbilityText = FString(TEXT("Muliplies Bullet Damage : +%f"), AbilityStat);
-	return AbilityText;
-}
-*/
-
-
-
 // Sets default values for this component's properties
 ULSWeaponAbilityComponent::ULSWeaponAbilityComponent()
 {

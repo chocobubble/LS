@@ -23,9 +23,6 @@ ALSWeaponInstance::ALSWeaponInstance()
 void ALSWeaponInstance::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//Owner = GetOwner<ALSCharacter>();
-	//LSCHECK(nullptr != Owner);
 }
 
 void ALSWeaponInstance::Init()
@@ -33,21 +30,10 @@ void ALSWeaponInstance::Init()
 	SetWeaponStats();
 	SetWeaponSkeletalMesh();
 	RoundsRemaining = MagazineCapacity;
-
-/*
-	this->GunType = WeaponType;
-
-ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	
-	// later switch by weapon type
-	WeaponBaseData = LSGameInstance->GetLSWeaponData(Level);
-	LSCHECK(WeaponBaseData);
-*/
 }
 
 void ALSWeaponInstance::SetWeaponStats()
 {
-	// bIsSet 추가?
 	GunType = BaseWeaponDefinition->GetWeaponType();
 	MagazineCapacity = BaseWeaponDefinition->GetMagazineCapacity();
 	FireRate = BaseWeaponDefinition->GetFireRate();
@@ -59,20 +45,11 @@ void ALSWeaponInstance::SetWeaponStats()
 	ReloadTime = BaseWeaponDefinition->GetReloadTime();
 	BulletsPerCatridge = BaseWeaponDefinition->GetBulletsPerCatridge();
 	MaxRange = BaseWeaponDefinition->GetMaxRange();
-
 }
 
 void ALSWeaponInstance::SetWeaponSkeletalMesh()
 {
-	/*
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
-	WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
-	WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
-	*/
-	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
 	LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
 	WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
 	WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
@@ -97,13 +74,12 @@ void ALSWeaponInstance::SetBulletDamage(float Value)
 void ALSWeaponInstance::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-/*
-	if(GetOwner() != nullptr && GetOwner<ALSCharacter>() != nullptr && GetOwner<ALSCharacter>()->Camera != nullptr)
-	{
-		CalculateRecoil(FRotationMatrix(GetOwner<ALSCharacter>()->Camera->GetComponentRotation()).GetUnitAxis(EAxis::X), CurrentSpreadAngle);
-	}
-*/
+	
+	/** 
+	 * @TODO:
+	 * 1. 사격 후 시간 경과에 따른 탄착군 크기 감소 구현
+	 * 2. 
+	*/
 }
 
 FVector ALSWeaponInstance::CalculateRecoil(FVector AimDir, const float HalfAngle)
@@ -122,20 +98,21 @@ FVector ALSWeaponInstance::CalculateRecoil(FVector AimDir, const float HalfAngle
 
 		OnAimDirChange.Broadcast(FinalDirectionQuat.RotateVector(FVector::ForwardVector));
 		return FinalDirectionQuat.RotateVector(FVector::ForwardVector);
-		//return FinalDirectionQuat.Rotator();
 	}
 	else
 	{
 		return AimDir.GetSafeNormal();
-		//return FQuat::Identity;
-		//return FRotator::ZeroRotator;
 	}
-
-
 }
 
 void ALSWeaponInstance::SetRoundsRemaining(int32 NewRoundsRemaining)
 {
 	RoundsRemaining = NewRoundsRemaining;
-	// OnRoundsChaged.Broadcast();
+}
+
+
+void ALSWeaponInstance::SetBaseWeaponDefinition(ULSWeaponDefinition* WeaponDefinition)
+{
+	LSCHECK(WeaponDefinition != nullptr);
+	BaseWeaponDefinition = WeaponDefinition;
 }
