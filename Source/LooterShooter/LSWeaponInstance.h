@@ -78,34 +78,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	virtual void Tick(float DeltaTime) override;
+
+	FTest OnAimDirChange; // for test
+private:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	USkeletalMeshComponent* WeaponSkeletalMesh;
 
-/*	
-	UPROPERTY(VisibleAnywhere, Category = Ability)
-	ULSWeaponAbilityComponent* WeaponAbilityComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = Ability)
-	ALSCharacter* Owner;
-*/	
-	virtual void Tick(float DeltaTime) override;
-
-	FTest OnAimDirChange;
-	// FOnRoundsChangedDelegate OnRoundsChaged;
-
-private:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	ULSWeaponDefinition* BaseWeaponDefinition;
 
 private:
-	// FLSWeaponBaseData* WeaponBaseData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	EWeaponType GunType;
-/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	int32 Level;
-*/
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 MagazineCapacity;
 
@@ -146,6 +129,8 @@ private:
 	float HeatPerShot = 0.1f;
 
 ///////////////////////////////////////////
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	EWeaponType GunType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	float CurrentSpreadAngle = 0.3f;

@@ -12,6 +12,7 @@
 #include "LSGameplayResultWidget.h"
 #include "LSGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "LSMonster.h"
 
 
 ALSPlayerController::ALSPlayerController()
@@ -125,7 +126,7 @@ ULSHUDWidget* ALSPlayerController::GetHUDWidget() const
     return HUDWidget;
 }
 
-void ALSPlayerController::NPCKill(ALSCharacter* KilledNPC) const
+void ALSPlayerController::NPCKill(ALSMonster* KilledNPC) const
 {
     LSPlayerState->AddExp(KilledNPC->GetExp());
 }

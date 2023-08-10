@@ -938,12 +938,7 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 	if (CurrentState == ECharacterState::DEAD)
 	{
-		if (EventInstigator->IsPlayerController())
-		{
-			ALSPlayerController* LSPC = Cast<ALSPlayerController>(EventInstigator);
-			LSCHECK(nullptr != LSPC, 0.0f);
-			LSPC->NPCKill(this);
-		}
+		// TODO
 	}
 
 	return FinalDamage;

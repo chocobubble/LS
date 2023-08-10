@@ -15,6 +15,7 @@ class UInputAction;
 class UInputComponent;
 class ULSGameplayWidget;
 class ULSGameplayResultWidget;
+class ALSMonster;
 /**
  * 
  */
@@ -34,7 +35,7 @@ public:
 
 	ULSHUDWidget* GetHUDWidget() const;
 
-	void NPCKill(ALSCharacter* KilledNPC) const;
+	void NPCKill(ALSMonster* KilledNPC) const;
 
 	void AddGameScore() const;
 
