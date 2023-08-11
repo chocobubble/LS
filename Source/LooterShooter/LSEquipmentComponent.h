@@ -6,12 +6,15 @@
 #include "Components/ActorComponent.h"
 #include "LSEquipmentComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnEquipmentChangedDelegate);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnRoundsRemainingChangedDelegate, int32);
-
 class ALSWeapon;
 class ALSWeaponInstance;
 
+DECLARE_MULTICAST_DELEGATE(FOnEquipmentChangedDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnRoundsRemainingChangedDelegate, int32);
+
+/**
+ * 캐릭터에 장착된 장비 아이템을 관리하는 컴포넌트
+ */
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSEquipmentComponent : public UActorComponent
@@ -21,8 +24,6 @@ class LOOTERSHOOTER_API ULSEquipmentComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	ULSEquipmentComponent();
-
-	////////
 
 	void EquipWeapon(ALSWeaponInstance* Weapon);
 	void EquipWeapon(ALSWeaponInstance* Weapon, int8 index);
@@ -40,27 +41,20 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-/*
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-*/
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
 	int32 CurrentWeaponIndex = 0;
-	
 
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
 	ALSWeaponInstance* CurrentWeaponInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
 	TArray<ALSWeaponInstance*> WeaponInstanceList;
 
-	UPROPERTY(EditInstanceOnly, Category = Equipment)
+	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
 
-
+public:
 	FOnEquipmentChangedDelegate OnEquipmentChanged;		
 	FOnRoundsRemainingChangedDelegate OnRoundsRemainingChanged;
 };

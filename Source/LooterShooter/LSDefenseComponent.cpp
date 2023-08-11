@@ -38,31 +38,22 @@ void ULSDefenseComponent::SetShield(float NewShield)
 	if (CurrentShield < KINDA_SMALL_NUMBER)
 	{
 		CurrentShield = 0.0f;
-		// OnShieldIsZero.Broadcast();
 	}
 }
 
 float ULSDefenseComponent::GetHPRatio() const
 {
-	// LSCHECK(nullptr != CurrentStatData, 0.0f);
-
 	return (CurrentHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
 }
 
 float ULSDefenseComponent::GetShieldRatio() const
 {
-	// LSCHECK(nullptr != CurrentStatData, 0.0f);
-
 	return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
 }
 
 void ULSDefenseComponent::SetDamage(float NewDamage)
 {
-	LSLOG_S(Warning);
-
-	// #include "Engine/World.h"
 	LastHitTime = GetWorld()->GetTimeSeconds();
-
 	if (CurrentShield > 0)
 	{
 		CurrentShield = FMath::Clamp<float>(CurrentShield - NewDamage, 0, MaxShield);
@@ -71,16 +62,13 @@ void ULSDefenseComponent::SetDamage(float NewDamage)
 	else
 	{
 		CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0, MaxHP);
-
 		if (CurrentHP <= 0)
 		{
 			OnHPIsZero.Broadcast();
 		}
-
 		SetHP(CurrentHP);
 	}
 }
-
 
 // Called every frame
 void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -96,5 +84,4 @@ void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		SetShield((CurrentShield + ShieldRechargeRate));
 		// LSLOG(Warning, TEXT("Shield Recharging"));
 	}
-	// ...
 }

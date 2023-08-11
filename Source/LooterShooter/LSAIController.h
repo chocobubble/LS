@@ -7,7 +7,7 @@
 #include "LSAIController.generated.h"
 
 /**
- * 
+ * Monster의 베이스 컨트롤러
  */
 UCLASS()
 class LOOTERSHOOTER_API ALSAIController : public AAIController
@@ -19,10 +19,6 @@ public:
 
 	virtual void OnPossess(APawn* InPawn) override;
 
-/*
-	virtual void OnUnPossess() override;
-*/
-
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
@@ -31,18 +27,9 @@ public:
 	void StopAI();
 
 private:
-
-/*
-	void OnRepeatTimer();
-
-	FTimerHandle RepeatTimerHandle;
-	float RepeatInterval;
-*/
-
 	UPROPERTY(VisibleAnywhere)
 	class UBehaviorTree* BTAsset;
 
 	UPROPERTY()
 	class UBlackboardData* BBAsset;
-
 };

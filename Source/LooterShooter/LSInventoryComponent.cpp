@@ -41,27 +41,8 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
 	++CurrentInventoryCapacity;
 	EquipItem(0);
-
-/*
-	TObjectPtr<ULSWeaponDefinition> WeaponDefinition1 = NewObject<ULSWeaponDefinition>(this);
-	WeaponDefinition1->SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
-	ALSWeaponInstance* WeaponInstance1 = WeaponDefinition1->InstantiateWeapon();
-	LSCHECK(EquipmentManager != nullptr);
-	EquipmentManager->EquipWeapon(WeaponInstance1);
-	AddWeaponToInventory(WeaponDefinition1);
-*/
-	// WeaponList.Add(WeaponDefinition1); 
 }
 
-/*
-// Called every frame
-void ULSInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-*/
 int32 ULSInventoryComponent::GetEmptyIndex()
 {
 	for(int32 ItemIndex = 0; ItemIndex < MaxInventoryCapacity; ++ItemIndex)

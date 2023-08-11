@@ -8,19 +8,18 @@
 
 class ULSDefenseComponent;
 class UProgressBar;
+
 /**
- * 
+ * 캐릭터의 Health Bar 구현 클래스
  */
 UCLASS()
 class LOOTERSHOOTER_API ULSCharacterWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	// void BindCharacterStat(class ULSCharacterStatComponent* NewCharacterStat);
 	void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
 
 private:
-	// TWeakObjectPtr<class ULSCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<ULSDefenseComponent> CurrentDefenseManager;
 
 	UPROPERTY()

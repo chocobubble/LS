@@ -9,7 +9,8 @@
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 
 /**
- * 
+ * 애니메이션 블루프린트를 다루는 클래스
+ * 애님 그래프로 데이터를 전달한다
  */
 UCLASS()
 class LOOTERSHOOTER_API ULSAnimInstance : public UAnimInstance
@@ -35,12 +36,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))
 	float CurrentPawnSpeed = 0.0f;
 
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool IsInAir = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
-	bool bIsDead;
+	bool bIsDead = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
 	bool bIsAiming = false;

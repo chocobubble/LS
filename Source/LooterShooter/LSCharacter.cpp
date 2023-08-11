@@ -1,24 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "LSCharacter.h"
-
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
-
 #include "Engine/DamageEvents.h"
-
+/** @deprecated: 지우기 */
 #include "LSWeapon.h"
-
 #include "LSCharacterStatComponent.h"
-
 #include "Components/WidgetComponent.h"
-
 #include "LSCharacterWidget.h"
-
 #include "LSAIController.h"
 #include "LSAnimInstance.h"
 #include "LSPlayerController.h"
@@ -30,7 +23,6 @@
 #include "LSResourceManageComponent.h"
 #include "LSDefenseComponent.h"
 #include "LSEquipmentComponent.h"
-// #include "LSPopUpWidget.h"
 #include "Components/TextBlock.h"
 #include "Blueprint/UserWidget.h"
 #include "LSTextPopup.h"
@@ -39,8 +31,8 @@
 #include "LSInventoryComponent.h"
 #include "LSItemBox.h"
 #include "LSWeaponDefinition.h"
-//#include "Animation/AnimInstance.h"
 
+/** @TODO: 그래플링 훅 */
 // #include "CableComponent.h"
 
 
@@ -50,48 +42,34 @@ ALSCharacter::ALSCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-/*
-	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
-
-	// Configure character movement
-	// #include "GameFramework/CharacterMovementComponent.h"
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
-*/
- 
+	// 카메라, 카메라의 SpringArm 컴포넌트 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	// 캐릭터의 레벨, 경험치 등 저장되어야 하는 스탯 관리 컴포넌트
 	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-
-	//#include "Components/WidgetComponent.h"
-	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
-
-
+	// 탄환 수, 골드량 등의 자원 관리 
 	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
-
+	// HP, Shield, MP, 방어력 등 관리
 	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
-
+	// 장착한 장비 아이템 관리
 	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
+	// 인벤토리 내 아이템 관리 
 	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
+	// 그래플링 훅 구현을 위한 케이블 컴포넌트 
 	// Cable = CreateDefaultSubobject<ULSCableComponent>(TEXT("CABLE"));
 	
+
+	/** @deprecated: 삭제하기 */	
+	//#include "Components/WidgetComponent.h"
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));	
+
 	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
-
+	// Later, Delete
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	// ResourceManager->SetupAttachment(GetMesh());
-
-
-	GetMesh()->SetRelativeLocationAndRotation(
-		FVector(0.0f, 0.0f, -88.0f),
-		FRotator(0.0f, -90.0f, 0.0f)
-	);
-
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 
 	ArmLengthTo = ArmLengthOnIdle;
 	SpringArm->TargetArmLength = ArmLengthTo;  //400.0f;
@@ -111,14 +89,9 @@ ALSCharacter::ALSCharacter()
 		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
 	}
 
-	
-
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-
-	// uaniminstace code..
-	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));//(TEXT("/Game/LS/Animations/text.text_C"));
-	//
+	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
 	if (RIFLE_ANIM.Succeeded() )
 	{
 		GetMesh()->SetAnimInstanceClass(RIFLE_ANIM.Class);
@@ -156,10 +129,10 @@ ALSCharacter::ALSCharacter()
 	if ( IA_SHOOT.Succeeded())
 	{
 		ShootAction = IA_SHOOT.Object;
-
 		LSCHECK(ShootAction->Triggers.Num() > 0);
 		TObjectPtr<UInputTriggerPulse> ShootInputTrigger = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
 		LSCHECK(nullptr != ShootInputTrigger);
+		// fire rate
 		ShootInputTrigger->Interval = 0.1f;
 	}
 
@@ -215,13 +188,6 @@ ALSCharacter::ALSCharacter()
 	if ( IA_INTERACT.Succeeded())
 	{
 		InteractAction = IA_INTERACT.Object;
-/*
-		// later move
-		LSCHECK(InteractAction->Triggers.Num() > 0);
-		TObjectPtr<UInputTriggerPulse> InteractInputTrigger = Cast<UInputTriggerPulse>(InteractAction->Triggers[0]);
-		LSCHECK(nullptr != InteractInputTrigger);
-		InteractInputTrigger->Interval = 0.1f;
-*/
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_TEST(TEXT("/Game/LS/Input/Actions/IA_TESTKEY.IA_TESTKEY"));
@@ -230,12 +196,11 @@ ALSCharacter::ALSCharacter()
 		TestAction = IA_TEST.Object;
 	}
 
-
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
-	AttackRange = 1000.0f;
-
+	// Later, delete
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	// Later, delete
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
 	if (UI_HUD.Succeeded())
@@ -243,75 +208,26 @@ ALSCharacter::ALSCharacter()
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 	}
-/*
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_POPUP(TEXT("/Game/LS/UI/UI_POPUP.UI_POPUP_C"));
-	if (UI_POPUP.Succeeded())
-	{
-		PopUpWidgetClass = UI_POPUP.Class;
-	}
-	else
-	{
-		LSLOG_S(Warning);
-	}
-*/
+	
+	// Later, delete
 	AIControllerClass = ALSAIController::StaticClass();
+	// Later, delete
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	bIsAttacking = false;
 
 	SetActorHiddenInGame(true);
+	// // Later, delete
 	HPBarWidget->SetHiddenInGame(true);
 	SetCanBeDamaged(false);
-
-	DeadTimer = 5.0f;
-
 }
 
 // Called when the game starts or when spawned
 void ALSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-/*
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController == nullptr) 
-	{
-		LSLOG(Warning, TEXT("PlayerController nullptr"));
-		return;
-	}
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	if (Subsystem == nullptr)
-	{
-		LSLOG(Warning, TEXT("Subsystem nullptr"));
-		return;
-	}
-	Subsystem->AddMappingContext(InputMapping, 0);
-*/
-
-/*
-
-	FName WeaponSocket(TEXT("weapon_r_socket"));
-	ALSWeapon* CurWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != CurWeapon)
-	{
-		CurWeapon->AttachToComponent(
-			GetMesh(), 
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
-			WeaponSocket);
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
-	}
-*/
-/*
-	ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-	if (nullptr != CharacterWidget)
-	{
-		CharacterWidget->BindCharacterStat(CharacterStat);
-	}
-*/
+	// 구분하기
 	bIsPlayer = IsPlayerControlled();
 	if (bIsPlayer)
 	{
@@ -323,22 +239,14 @@ void ALSCharacter::BeginPlay()
 		LSAIController = Cast<ALSAIController>(GetController());
 		LSCHECK(nullptr != LSAIController);
 	}
-
-	// auto DefaultSetting = GetDefault<ULSCharacterSetting>();
-
 	if (bIsPlayer)
 	{
-		//AssetIndex = 4;
 		auto LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
 		LSCHECK(nullptr != LSPlayerState);
-		//AssetIndex = LSPlayerState->GetCharacterIndex();
 	}
 	else
 	{
-		//AssetIndex = FMath::RandRange(0, DefaultSetting->CharacterAssets.Num() - 1);
 	}
-
-	//CharacterAssetToLoad = DefaultSetting->CharacterAssets[AssetIndex];
 	CharacterAssetToLoad.SetPath(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn'"));
 	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
 	LSCHECK(nullptr != LSGameInstance);
@@ -346,8 +254,6 @@ void ALSCharacter::BeginPlay()
 	SetCharacterState(ECharacterState::LOADING);
 
 	DefenseManager->OnHPIsZero.AddUObject(this, &ALSCharacter::SetCharacterStateDead);
-
-
 	LSCHECK(Camera != nullptr);
 	ToAimDirection = FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X);
 }
@@ -359,34 +265,32 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 
 	switch (CurrentState)
 	{
+	// 캐릭터 비동기 로딩 상태
 	case ECharacterState::LOADING:
 	{
 		if(bIsPlayer)
 		{
 			DisableInput(LSPlayerController);
-
-			//LSPlayerController->GetHUDWidget()->BindCharacterStat(CharacterStat);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
-
-			auto LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
+			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
 			LSCHECK(nullptr != LSPlayerState);
 			CharacterStat->SetNewLevel(LSPlayerState->GetCharacterLevel());
 		}
 		else
 		{
-			auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
+			ALSGameMode* LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 			LSCHECK(nullptr != LSGameMode);
 			int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
 			int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
 			LSLOG(Warning, TEXT("New NPC Level : %d"), FinalLevel);
 			CharacterStat->SetNewLevel(FinalLevel);
 		}
-
 		SetActorHiddenInGame(true);
 		HPBarWidget->SetHiddenInGame(true);
 		SetCanBeDamaged(false);
 		break;
 	}
+	// 캐릭터 로딩이 완료되어 씬 상에 표현되고 동작 가능한 상태
 	case ECharacterState::READY:
 	{
 		SetActorHiddenInGame(false);
@@ -399,23 +303,21 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		
 		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 		LSCHECK(nullptr != CharacterWidget);
-		// CharacterWidget->BindCharacterStat(CharacterStat);
 		CharacterWidget->BindDefenseComponent(DefenseManager);
 
 		if (bIsPlayer)
 		{
-			//SetControlMode(EControlMode::DIABLO);
 			GetCharacterMovement()->MaxWalkSpeed = 510.0f;
 			EnableInput(LSPlayerController);
 		}
 		else
 		{
-			//SetControlMode(EControlMode::NPC);
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();
 		}
 		break;
 	}
+	// 캐릭터의 HP가 0 이하가 되어 죽은 상태
 	case ECharacterState::DEAD:
 	{
 		SetActorEnableCollision(false);
@@ -436,7 +338,6 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			if (bIsPlayer)
 			{
-				//LSPlayerController->RestartLevel();
 				LSPlayerController->ShowResultUI();
 			}
 			else
@@ -463,38 +364,19 @@ void ALSCharacter::Tick(float DeltaTime)
 
 	InteractCheck();
 
+	// 그래플링 훅 사용한 경우
 	if (bIsGrappling)
 	{
 		LaunchCharacter(((GrappleToLocation - GetActorLocation()) + GetActorUpVector() * GrapplingHeightCorrection)* GrapplingMovementSpeed, true, true);
-		//LaunchCharacter((GrappleToLocation - GetActorLocation())* GrapplingMovementSpeed, true, true);
 		if ((GrappleToLocation - GetActorLocation()).Size() < GrapplingStopRange)
 		{
-			//LaunchCharacter(GetActorUpVector() * GrapplingHeightCorrection, true, true);
 			bIsGrappling = false;
 		}
 	}
 
-
-/*
-	FVector2D LookAxisVector(1.f, 1.f);// = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("PlayerController is nullptr 1"));
-	}
-*/
-}
-
 // Called to bind functionality to input
 void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	//Super::SetupPlayerInputComponent(PlayerInputComponent);
 	APlayerController* PlayerController = GetController<APlayerController>();
 	if (PlayerController == nullptr) 
 	{
@@ -508,12 +390,8 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 		LSLOG(Warning, TEXT("Subsystem nullptr"));
 		return;
 	}
-
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(InputMapping, 0);
-
-	LSLOG_S(Warning);
-
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if(EnhancedInputComponent == nullptr) 
@@ -526,7 +404,6 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALSCharacter::Look);
 	EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ALSCharacter::Shoot);
 	EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &ALSCharacter::MeleeAttack);
-	// EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Triggered, this, &ALSCharacter::AutoRun);
 	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Started, this, &ALSCharacter::OnRunning);
 	EnhancedInputComponent->BindAction(AutoRunAction, ETriggerEvent::Completed, this, &ALSCharacter::EndRunning);
 	EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ALSCharacter::OnAiming);
@@ -538,8 +415,6 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSCharacter::EquipThirdWeapon);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSCharacter::Interact);
 	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &ALSCharacter::TestAct);
-	
-
 }
 
 void ALSCharacter::Move(const FInputActionValue& Value)
@@ -551,7 +426,6 @@ void ALSCharacter::Move(const FInputActionValue& Value)
 	AddMovementInput(ForwardDirection, MovementVector.Y);//이동
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	AddMovementInput(RightDirection, MovementVector.X);//이동
-
 }
 
 void ALSCharacter::JumpAct(const FInputActionValue& Value)
@@ -595,14 +469,6 @@ void ALSCharacter::MeleeAttack(const FInputActionValue& Value)
 	LSAnim->PlayAttackMontage();
 	bIsAttacking = true;
 }
-
-/*
-void ALSCharacter::AutoRun(const FInputActionValue& Value)
-{
-	LSCHECK(nullptr != LSPlayerController);
-	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
-}
-*/
 
 void ALSCharacter::OnRunning(const FInputActionValue& Value)
 {
@@ -677,6 +543,7 @@ void ALSCharacter::GrapplingHook(const FInputActionValue& Value)
 			bIsGrapplingCasting = true;
 			GetWorld()->GetTimerManager().SetTimer(GrapplingTimerHandle, this, &ALSCharacter::GrappleBegin, GrapplingCastingTime);
 	GrappleToLocation = HitResult.Location;
+			// 그래플링 훅 케이블
 			// Cable->SetWorldLocation(GrappleToLocation);
 		}
 		else
@@ -699,7 +566,7 @@ void ALSCharacter::GrappleBegin()
 
 void ALSCharacter::Reload(const FInputActionValue& Value)
 {
-	LSLOG(Warning, TEXT("Reloading"));
+	LSLOG(Warning, TEXT("Reloading Started"));
 	if(bIsReloading)
 	{
 		return;
@@ -707,6 +574,7 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance());
 	bIsReloading = true;
 	LSAnim->SetReloadAnim(true);
+	// 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			bIsReloading = false;
 			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
@@ -714,7 +582,7 @@ void ALSCharacter::Reload(const FInputActionValue& Value)
 			EquipmentManager->SetRoundsRemaining(EquipmentManager->GetCurrentWeaponInstance()->GetMagazineCapacity());
 			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, -ReloadRounds);
 			LSAnim->SetReloadAnim(false);
-			LSLOG(Warning, TEXT("RELoAd Complete"));
+			LSLOG(Warning, TEXT("RELoading Completed"));
 		}), EquipmentManager->GetCurrentWeaponInstance()->GetReloadTime(), false);
 
 }
@@ -835,7 +703,6 @@ void ALSCharacter::AttackCheck()
 
 
 #if ENABLE_DRAW_DEBUG
-
 	DrawDebugLine(
 		GetWorld(),
 		SpringArm->GetComponentLocation(),
@@ -844,21 +711,16 @@ void ALSCharacter::AttackCheck()
 		false,
 		1.0f,
 		0,
-		1.f
-	);
-
+		1.f);
 #endif
+
 	LSCHECK(EquipmentManager->GetCurrentWeaponInstance());
+	// TODO: 가독성 있게 쪼개기
 	FVector TempVector = EquipmentManager->GetCurrentWeaponInstance()->CalculateRecoil((FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X)), EquipmentManager->GetCurrentWeaponInstance()->GetCurrentSpreadAngle());
 	ShowDebugLine(TempVector);
 
-	//ResourceManager->ConsumeAmmo(EAmmoType::RIFLE, -1);
-	// ResourceManager->SetRoundsRemaining(EAmmoType::RIFLE, -1);
-	// EquipmentManager->SetRoundsRemaining( -1);
 	EquipmentManager->DecreaseRoundsRemaining();
 
-	// later ..
-	//GetController()->SetControlRotation(FRotationMatrix((TempVector.Rotation())).GetUnitAxis(EAxis::X));
 	GetController()->SetControlRotation(TempVector.Rotation());
 
 	if (bResult)
@@ -866,30 +728,14 @@ void ALSCharacter::AttackCheck()
 		if (HitResult.HasValidHitObjectHandle())
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-
 			float FinalAttackDamage = GetFinalAttackDamage();
-
-/*
-			LSCHECK(nullptr != PopUpWidgetClass);
-			PopUpWidget = Cast<ULSPopUpWidget>(CreateWidget(GetWorld(), PopUpWidgetClass));
-			LSCHECK(nullptr != PopUpWidget);
-			PopUpWidget->AddToViewport();
-			PopUpWidget->SetRelativeLocation(bResult.ImpactPoint);
-			PopUpWidget->SetWidgetSpace(EWidgetSpace::Screen);
-			LSCHECK(nullptr != PopUpWidget->GetPopUpTextBlock());
-			PopUpWidget->GetPopUpTextBlock()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
-*/
 			FVector PopupPosition = HitResult.ImpactPoint + (GetActorLocation() - HitResult.ImpactPoint).Normalize();
 			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(PopupPosition, FRotator::ZeroRotator);
-			//Text->GetTextRender()->SetText(FText::FromString(FString::FromInt(FinalAttackDamage)));
 			Text->SetPopupText(FinalAttackDamage);
 			Text->SetTextRotation(HitResult.ImpactPoint , HitResult.TraceStart);
-
 			// #include "Engine/DamageEvents.h"
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(FinalAttackDamage, DamageEvent, GetController(), this);
-
-
 		}
 		else
 		{
@@ -900,10 +746,7 @@ void ALSCharacter::AttackCheck()
 	{
 		LSLOG(Warning, TEXT("Didn't hit"));
 	}
-
-
 }
-
 
 bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 {
@@ -912,20 +755,16 @@ bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 		LSLOG(Warning, TEXT("IsReloading"));
 		return false;
 	}
-
-	//  나중에 weapon 의 magazine ammo로 바꾸기
+	//  TODO: weapon 의 magazine ammo로 바꾸기
 	LSCHECK(EquipmentManager->WeaponInstanceList.Num() > 0 &&
 			EquipmentManager->CurrentWeaponInstance != nullptr ,false);
 	if(EquipmentManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));
 	 	return false;
-
 	}
-	
 	return true;
 }
-
 
 float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
@@ -933,8 +772,6 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
 	
 	DefenseManager->SetDamage(FinalDamage);
-	
-	// CharacterStat->SetDamage(FinalDamage);
 
 	if (CurrentState == ECharacterState::DEAD)
 	{
@@ -946,22 +783,18 @@ float ALSCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 bool ALSCharacter::CanSetWeapon()
 {
-	return true; //(nullptr == CurrentWeapon);
+	// TODO: (nullptr == CurrentWeapon);
+	return true; 
 }
 
 void ALSCharacter::SetWeapon(ALSWeaponInstance* NewWeapon)
 {
-	LSCHECK(nullptr != NewWeapon);// && nullptr == CurrentWeapon);
+	LSCHECK(nullptr != NewWeapon);
 	LSLOG_S(Warning);
 	if (nullptr != EquipmentManager->GetCurrentWeaponInstance())
 	{
-		/*
-		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		CurrentWeapon->Destroy();
-		CurrentWeapon = nullptr;
-		*/
+		// TODO: 무기 장착 해제 관련 메서드 호출
 	}
-	
 	
 	FName WeaponSocket(TEXT("weapon_r_socket"));
 	if(nullptr == RootComponent)
@@ -1010,12 +843,6 @@ void ALSCharacter::OnAssetLoadCompleted()
 {
 	USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
 	AssetStreamingHandle.Reset();
-/*
-	if(nullptr != AssetLoaded)
-	{
-		GetMesh()->SetSkeletalMesh(AssetLoaded);
-	}
-*/
 	LSCHECK(nullptr != AssetLoaded);
 	GetMesh()->SetSkeletalMesh(AssetLoaded);
 	SetCharacterState(ECharacterState::READY);
@@ -1023,7 +850,7 @@ void ALSCharacter::OnAssetLoadCompleted()
 
 int32 ALSCharacter::GetExp() const
 {
-	// return CharacterStat->GetDropExp();
+	// TODO: 몬스터 -> GetExp();
 	return 5;
 }
 
@@ -1040,16 +867,12 @@ float ALSCharacter::GetFinalInteractRange() const
 float ALSCharacter::GetFinalAttackDamage() const
 {
 	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance(), -1.f);
-
 	float AttackDamage = EquipmentManager->GetCurrentWeaponInstance()->GetFinalDamage();
-
-	//float AttackModifier = (nullptr != CurrentWeapon) ? CurrentWeapon->GetAttackModifier() : 1.0f;
 	return AttackDamage; // * AttackModifier;
 }
 
 void ALSCharacter::InteractCheck()
 {
-	//LSLOG_S(Warning);
 	if(!bIsNearInteractableObject)
 	{
 		return;
@@ -1099,7 +922,6 @@ void ALSCharacter::DropItem()
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::PISTOLAMMO, 100);
 	}
-
 }
 
 void ALSCharacter::SetCharacterStateDead()

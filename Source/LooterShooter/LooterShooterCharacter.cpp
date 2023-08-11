@@ -11,6 +11,11 @@
 #include "EnhancedInputSubsystems.h"
 
 
+/**
+ * 언리얼엔진의 기본 캐릭터 클래스
+ * @deprecated: 미사용
+*/
+
 //////////////////////////////////////////////////////////////////////////
 // ALooterShooterCharacter
 

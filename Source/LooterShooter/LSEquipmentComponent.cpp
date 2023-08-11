@@ -24,45 +24,7 @@ ULSEquipmentComponent::ULSEquipmentComponent()
 void ULSEquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//WeaponInstanceList.Init(nullptr, 3);
-
-/*
-	for(int32 index = 0; index < 3; ++index)
-	{
-		ALSWeapon* NewWeapon = GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		NewWeapon->SetActorHiddenInGame(true);
-		// NewWeapon->SetOwner(GetOwner<ALSCharacter>());
-		WeaponList.Emplace(NewWeapon);
-		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
-	}
-*/
-/*
-	for(int32 index = 0; index < 3; ++index)
-	{
-		//ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponInstanceClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		ULSWeaponDefinition* NewItem = GetWorld()->SpawnActor<ULSWeaponDefinition>(FVector::ZeroVector, FRotator::ZeroRotator);
-		NewWeapon->SetWeaponData(EWeaponType::RIFLE, 1);
-		NewWeapon->SetActorHiddenInGame(true);
-		NewWeapon->SetOwner(GetOwner());
-		// LSLOG(Warning, TEXT("%s is owner"), *GetOwner<ALSCharacter>()->GetDebugName(GetOwner<ALSCharacter>()));
-		WeaponInstanceList.Emplace(NewWeapon);
-		//WeaponList.Emplace(GetWorld()->SpawnActor<ALSWeapon>(WeaponClass, FVector::ZeroVector, FRotator::ZeroRotator));
-	}
-*/
-/*
-	ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponInstanceClass, FVector::ZeroVector, FRotator::ZeroRotator);
-	NewWeapon->SetWeaponData(EWeaponType::RIFLE, 1);
-	NewWeapon->SetActorHiddenInGame(true);
-	NewWeapon->SetOwner(this);//GetOwner<ALSCharacter>());
-	WeaponInstanceList.Emplace(NewWeapon);
 	CurrentWeaponIndex = 0;
-	// ...
-	*/
-
-	CurrentWeaponIndex = 0;
-	//LSCHECK(WeaponInstanceList.Num() == 0);
-	//CurrentWeaponInstance = WeaponInstanceList[CurrentWeaponIndex];
 }
 
 void ULSEquipmentComponent::SetCurrentWeaponIndex(int32 Index)
@@ -127,14 +89,4 @@ void ULSEquipmentComponent::DecreaseRoundsRemaining()
 	int32 NewRoundsRemaining = CurrentWeaponInstance->GetRoundsRemaining() - 1;
 	SetRoundsRemaining(NewRoundsRemaining);
 }
-
-/*
-// Called every frame
-void ULSEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-*/
 

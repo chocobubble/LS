@@ -2,12 +2,11 @@
 
 #pragma once
 
-// #include "CoreMinimal.h"
 #include "LSLootItem.h"
 #include "LSAutoLootItem.generated.h"
 
 /**
- * 
+ * 캐릭터와 overlap 하면 자동으로 loot 되는 아이템 클래스
  */
 UCLASS()
 class LOOTERSHOOTER_API ALSAutoLootItem : public ALSLootItem
@@ -17,15 +16,16 @@ class LOOTERSHOOTER_API ALSAutoLootItem : public ALSLootItem
 public:
 	ALSAutoLootItem();
 
+	// auto loot item의 type 및 amount 설정
 	void SetAutoLootItem(ELootItemType LootItemType, int32 Amount);
 
 private:
+	/** 드롭되는 아이템의 양 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Loot, meta = (AllowPrivateAccess = "true"))
 	int32 LootingAmount = 0;
-
 	
 public:
-	//UFUNCTION()
+	UFUNCTION()
 	virtual void OnCharacterOverlap(
 		UPrimitiveComponent * OverlappedComp, 
 		AActor * OtherActor, 

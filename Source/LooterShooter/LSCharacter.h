@@ -9,16 +9,11 @@
 #include "InputActionValue.h"
 #include "Components/CapsuleComponent.h"
 #include "LSResourceManageComponent.h"
-
 #include "LSAnimInstance.h"
-
-//#include "LSWeapon.h"
-
-
 #include "LSCharacter.generated.h"
 
+/** 공격 종료 후 호출 델리게이트 */
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
-
 
 class ALSAIController;
 class ALSPlayerController;
@@ -34,8 +29,10 @@ class ALSWeaponInstance;
 class ULSGameInstance;
 class ULSInventoryComponent;
 class ULSWeaponDefinition;
-// class UCableComponent;
 
+/**
+ * 캐릭터, npc(AI) 정의 클래스
+*/
 UCLASS()
 class LOOTERSHOOTER_API ALSCharacter : public ACharacter
 {
@@ -103,19 +100,10 @@ protected:
 	ULSAnimInstance* LSAnim;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
-	float AttackRange;
+	float AttackRange = 1000.0f;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
 	float InteractRange = 800.0f;
-/*
-	UPROPERTY(EditAnywhere, Category = UI)
-	TSubclassOf<UUserWidget> PopUpWidgetClass;
-
-	UPROPERTY()
-	ULSPopUpWidget* PopUpWidget;
-*/
-
-	
 
 public:	
 	// Called every frame
@@ -172,7 +160,7 @@ public:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-
+	// 탄약이 탄창 내 있거나, 장전 중이 아닌 등 사격 가능한 지 여부 리턴
 	bool CanShoot(EAmmoType AmmoType);
 
 	FOnAttackEndDelegate OnAttackEnd;
@@ -192,7 +180,6 @@ private:
 	void Look(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
 	void MeleeAttack(const FInputActionValue& Value);
-	// void AutoRun(const FInputActionValue& Value);
 	void OnRunning(const FInputActionValue& Value);
 	void EndRunning(const FInputActionValue& Value);
 	void OnAiming(const FInputActionValue& Value);
@@ -202,21 +189,18 @@ private:
 	void EquipFirstWeapon(const FInputActionValue& Value);
 	void EquipSecondWeapon(const FInputActionValue& Value);
 	void EquipThirdWeapon(const FInputActionValue& Value);
-	
 	void Interact(const FInputActionValue& Value);
 
+	/** enhanced input 시스템 테스트 용 */
 	void TestAct(const FInputActionValue& Value);
 
 	void AttackCheck();
-
 	void InteractCheck();
 
 	void OnAssetLoadCompleted();
-
+	/** @deprecated: 삭제하기 */
 	void DropItem();
-
 	void SetCharacterStateDead();
-
 	void GrappleBegin();
 
 	// debug line
@@ -253,12 +237,12 @@ private:
 	ALSPlayerController* LSPlayerController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
-	float DeadTimer;
+	float DeadTimer = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float TestTimer = 0.1f;
 
-/** Grappling */
+/** @TODO: 그래플링 훅 로프 구현하기 */
 /*
 	UPROPERTY(VisibleAnywhere, Category = Grppling)
 	UCableComponent* Cable;

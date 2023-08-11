@@ -13,6 +13,7 @@ enum class ECharacterState : uint8
     DEAD
 };
 
+/** 디버깅용 로그 매크로 */
 DECLARE_LOG_CATEGORY_EXTERN(LooterShooter, Log, All);
 #define LSLOG_CALLINFO (FString(__FUNCTION__) + TEXT("(") + FString::FromInt(__LINE__) + TEXT(")"))
 #define LSLOG_S(Verbosity) UE_LOG(LooterShooter, Verbosity, TEXT("%s"), *LSLOG_CALLINFO)

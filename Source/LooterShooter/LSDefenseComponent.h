@@ -10,6 +10,9 @@ DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnShieldChangedDelegate);
 
+/**
+ * 캐릭터의 HP, Shield, MP, Defense 관리 컴포넌트
+*/
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSDefenseComponent : public UActorComponent
 {
@@ -24,39 +27,27 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// void SetNewLevel(int32 NewLevel);
-
 	void SetDamage(float NewDamage);
-	
-	//float GetAttack();
-
-
 	void SetHP(float NewHP);
 	void SetShield(float NewShield);
 	float GetHPRatio() const;
 	float GetShieldRatio() const;
-
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
 	FOnShieldChangedDelegate OnShieldChanged;
-
-	
-
 private:
-	// struct FLSCharacterData* CurrentStatData = nullptr;
+	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	float MaxHP = 1000.f;
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float MaxHP = 1000;
-
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float CurrentHP = 1000;
+	float CurrentHP = 1000.f;
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float MaxMP;
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float CurrentMP;
+	float CurrentMP = 0.f;
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float MaxShield = 100.0f;
@@ -72,10 +63,10 @@ private:
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float LastHitTime = 0.0f;
-
-	
 public:	
-	// Called every frame
+	/** 
+	 * 마지막 데미지 입은 시점으로 부터 ShieldRechargeDelay만큼의 시간이 지나면
+	 * Shield가 충전되기 시작
+	*/
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 };
