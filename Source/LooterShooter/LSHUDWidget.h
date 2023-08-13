@@ -10,11 +10,11 @@ class ULSCharacterStatComponent;
 class ALSPlayerState;
 class UProgressBar;
 class UTextBlock;
-
+class UVerticalBox;
 class ULSResourceManageComponent;
 class ULSDefenseComponent;
 class ULSEquipmentComponent;
-
+class ALSPlayer;
 class ULSDefenseComponent;
 
 /**
@@ -31,6 +31,7 @@ public:
 	void BindPlayerState(ALSPlayerState* PlayerState);
 	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManager);
 	void BindEquipmentComponent(ULSEquipmentComponent* EquipmentComponent);
+	void BindPlayer(ALSPlayer* LSPlayer);
 	// void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
 
 protected:
@@ -39,16 +40,17 @@ protected:
 	void UpdateCurrentHP();
 	void UpdateCurrentShield();
 	void UpdatePlayerState();
-
 	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
 	void UpdateCurrentAmmo();
+	void UpdateInteractProgress(float ElapsedRatio);
+	void ShowOrHideInteractPopup(bool Value);
 
 private:
 	TWeakObjectPtr<ULSCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<ULSDefenseComponent> CurrentDefenseManager;
 	TWeakObjectPtr<ALSPlayerState> CurrentPlayerState;
 	TWeakObjectPtr<ULSEquipmentComponent> CurrentEquipmentComponent;
-	
+	TWeakObjectPtr<ALSPlayer> CurrentLSPlayer;
 	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManager;
 	// TWeakObjectPtr<ULSDefenseComponent> DefenseManager;
 
@@ -60,6 +62,12 @@ private:
 
 	UPROPERTY()
 	UProgressBar* ShieldBar;
+
+	UPROPERTY()
+	UProgressBar* InteractionProgressBar;
+
+	UPROPERTY()
+	UVerticalBox* InteractBox;
 
 	UPROPERTY()
 	UTextBlock* PlayerName;

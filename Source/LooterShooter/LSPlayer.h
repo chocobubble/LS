@@ -24,9 +24,14 @@ class ALSPlayerController;
 class ALSWeaponInstance;
 class UInputTriggerPulse;
 struct FInputActionValue;
+struct FInputActionInstance;
 
 /** 공격 종료 후 호출 델리게이트 */
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
+/** 상호작용 progress */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractProgressDelegate, float);
+/** 상호작용 물체와 오버랩 */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnableToInteractDelegate, bool);
 
 
 /**
@@ -76,10 +81,7 @@ public:
 	}
 
 	void SetShootInputInterval(float InputInterval);
-	void SetIsNearInteractableObject(bool Value)
-	{
-		bIsNearInteractableObject = Value;
-	}
+	void SetIsNearInteractableObject(bool Value);
 	void SetCharacterStateDead();
 
 public:
@@ -87,7 +89,8 @@ public:
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	FOnAttackEndDelegate OnAttackEnd;
-
+	FOnInteractProgressDelegate OnInteractProgress;
+	FOnEnableToInteractDelegate OnEnableToInteract;
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);
@@ -103,7 +106,9 @@ private:
 	void EquipFirstWeapon(const FInputActionValue& Value);
 	void EquipSecondWeapon(const FInputActionValue& Value);
 	void EquipThirdWeapon(const FInputActionValue& Value);
+	void InteractProgress(const FInputActionInstance& ActionInstance);
 	void Interact(const FInputActionValue& Value);
+	void InteractEnd(const FInputActionValue& Value);
 
 	/** enhanced input 시스템 테스트 용 */
 	void TestAct(const FInputActionValue& Value);
@@ -113,7 +118,11 @@ private:
 	void AttackCheck();
 	void InteractCheck();
 	void GrappleBegin();
-
+	void SetInteractionElapsedTime(float ElapsedTime);
+	float GetInteractionElapsedRatio() const
+	{
+		return  InteractionElapsedTime / InteractionCompleteTime;
+	}
 	void OnAssetLoadCompleted();
 
 	/** For Test */
@@ -268,6 +277,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	float WalkSpeedOnAiming = 240.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float InteractionElapsedTime = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float InteractionCompleteTime = 1.0f;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	FVector ToAimDirection;

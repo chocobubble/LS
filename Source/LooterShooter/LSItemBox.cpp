@@ -4,7 +4,7 @@
 #include "LSItemBox.h"
 #include "LSWeapon.h"
 #include "Components/BoxComponent.h"
-#include "LSCharacter.h"
+#include "LSPlayer.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "LSWeaponDefinition.h"
 
@@ -74,9 +74,9 @@ void ALSItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 {
 	LSLOG_S(Warning);
 
-	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
-	LSCHECK(nullptr != LSCharacter);
-	LSCharacter->SetIsNearInteractableObject(true);
+	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
+	LSCHECK(nullptr != LSPlayer);
+	LSPlayer->SetIsNearInteractableObject(true);
 
 }
 
@@ -85,9 +85,9 @@ void ALSItemBox::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	LSLOG_S(Warning);
 
-	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
-	LSCHECK(nullptr != LSCharacter);
-	LSCharacter->SetIsNearInteractableObject(false);
+	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
+	LSCHECK(nullptr != LSPlayer);
+	LSPlayer->SetIsNearInteractableObject(false);
 }
 
 void ALSItemBox::OnEffectFinished(UParticleSystemComponent * PSystem)
@@ -108,14 +108,14 @@ void ALSItemBox::OpenChest()
 	}
 	bIsDestroying = true;
 
-	//LSCharacter->SetWeapon(NewWeapon);
+	//LSPlayer->SetWeapon(NewWeapon);
 /*
-	if (nullptr != LSCharacter && nullptr != WeaponItemClass)
+	if (nullptr != LSPlayer && nullptr != WeaponItemClass)
 	{
-		if (LSCharacter->CanSetWeapon())
+		if (LSPlayer->CanSetWeapon())
 		{
 			ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(WeaponItemClass, FVector::ZeroVector, FRotator::ZeroRotator);
-			LSCharacter->SetWeapon(NewWeapon);
+			LSPlayer->SetWeapon(NewWeapon);
 
 			Effect->Activate(true);
 			Box->SetHiddenInGame(true, true);
@@ -142,12 +142,12 @@ ULSWeaponDefinition* ALSItemBox::GetWeaponItem()
 	return WeaponItem;
 }
 
-void ALSItemBox::SetWeaponItem(ALSCharacter* LSCharacter)
+void ALSItemBox::SetWeaponItem(ALSPlayer* LSPlayer)
 {
 	LSLOG(Warning, TEXT("SetWeaponItem start"));
 	// 	LSCHECK(Box->GetWorld() != nullptr);
 	LSCHECK(WeaponItem != nullptr);
-	WeaponItem = NewObject<ULSWeaponDefinition>(LSCharacter);
+	WeaponItem = NewObject<ULSWeaponDefinition>(LSPlayer);
 	// NewWeapon-> invisible?
 	WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 8);	
 }

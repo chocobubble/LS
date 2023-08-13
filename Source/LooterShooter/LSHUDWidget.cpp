@@ -4,12 +4,14 @@
 #include "LSHUDWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 #include "LSCharacterStatComponent.h"
 #include "LSPlayerState.h"
 #include "LSEquipmentComponent.h"
 #include "LSResourceManageComponent.h"
 #include "LSDefenseComponent.h"
 #include "LSWeaponInstance.h"
+#include "LSPlayer.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -47,6 +49,14 @@ void ULSHUDWidget::BindEquipmentComponent(ULSEquipmentComponent* EquipmentCompon
     CurrentEquipmentComponent->OnRoundsRemainingChanged.AddUObject(this, &ULSHUDWidget::UpdateRoundsRemaining);
 }
 
+void ULSHUDWidget::BindPlayer(ALSPlayer* LSPlayer)
+{
+    LSCHECK(nullptr != LSPlayer);
+    CurrentLSPlayer = LSPlayer;
+    CurrentLSPlayer->OnInteractProgress.AddUObject(this, &ULSHUDWidget::UpdateInteractProgress);
+    CurrentLSPlayer->OnEnableToInteract.AddUObject(this, &ULSHUDWidget::ShowOrHideInteractPopup);
+}
+
 void ULSHUDWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -58,6 +68,12 @@ void ULSHUDWidget::NativeConstruct()
 
     ExpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbExp")));
     LSCHECK(nullptr != ExpBar);
+
+    InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
+    LSCHECK(nullptr != InteractionProgressBar);
+
+    InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
+    LSCHECK(nullptr != InteractBox);
 
     PlayerLevel = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
     LSCHECK(nullptr != PlayerLevel);
@@ -213,5 +229,24 @@ void ULSHUDWidget::UpdateCurrentAmmo()
             ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
             break;
         }
+    }
+}
+
+void ULSHUDWidget::UpdateInteractProgress(float ElapsedRatio)
+{
+    InteractionProgressBar->SetPercent(ElapsedRatio);
+}
+
+void ULSHUDWidget::ShowOrHideInteractPopup(bool Value)
+{
+    if(Value == true)
+    {
+        LSLOG(Warning, TEXT("Show interact popup.."));
+        InteractBox->SetVisibility(ESlateVisibility::Visible);
+    }
+    else
+    {
+        LSLOG(Warning, TEXT("hide interact popup.."));
+        InteractBox->SetVisibility(ESlateVisibility::Hidden);
     }
 }

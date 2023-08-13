@@ -7,7 +7,7 @@
 #include "LSItemBox.generated.h"
 
 class ULSWeaponDefinition;
-class ALSCharacter;
+class ALSPlayer;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSItemBox : public AActor
@@ -23,7 +23,7 @@ public:
 
 	ULSWeaponDefinition* GetWeaponItem();
 
-	void SetWeaponItem(ALSCharacter* LSCharacter);
+	void SetWeaponItem(ALSPlayer* LSPlayer);
 
 protected:
 	// Called when the game starts or when spawned

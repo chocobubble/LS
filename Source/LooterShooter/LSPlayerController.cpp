@@ -112,6 +112,7 @@ void ALSPlayerController::BeginPlay()
     LSCHECK(nullptr != LSPlayer);
     HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
     HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
+    HUDWidget->BindPlayer(LSPlayer);
 /*
     ALSCharacter* LSCharacter =  Cast<ALSCharacter>(GetCharacter());
     LSCHECK(nullptr != LSCharacter);

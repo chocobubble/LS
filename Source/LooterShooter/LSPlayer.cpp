@@ -320,7 +320,9 @@ void ALSPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 	EnhancedInputComponent->BindAction(EquipFirstWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipFirstWeapon);
 	EnhancedInputComponent->BindAction(EquipSecondWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipSecondWeapon);
 	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipThirdWeapon);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Ongoing, this, &ALSPlayer::InteractProgress);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSPlayer::Interact);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ALSPlayer::InteractEnd);
 	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &ALSPlayer::TestAct);
 }
 
@@ -405,6 +407,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 
 void ALSPlayer::MeleeAttack(const FInputActionValue& Value)
 {
+	LSLOG(Warning, TEXT("Melee Attack time : %f"), Value.Get<float>());
 	if (bIsMeleeAttacking) return;
 	// LSPlayerAnim->PlayAttackMontage();
 	bIsMeleeAttacking = true;
@@ -574,7 +577,27 @@ void ALSPlayer::Interact(const FInputActionValue& Value)
 		LSLOG(Warning, TEXT("WeaponDefinite"));
 		InventoryManager->AddWeaponToInventory(WeaponDefinition);
 	}
+}
 
+void ALSPlayer::InteractProgress(const FInputActionInstance& ActionInstance)
+{
+	if(!bIsNearInteractableObject)
+	{
+		return;
+	}
+	SetInteractionElapsedTime(ActionInstance.GetElapsedTime());
+}
+
+void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
+{
+	InteractionElapsedTime = ElapsedTime;
+	LSLOG(Warning, TEXT("Progress Elpased Time : %f"),GetInteractionElapsedRatio( ));
+	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
+}
+
+void ALSPlayer::InteractEnd(const FInputActionValue& Value)
+{
+	LSLOG(Warning, TEXT("InteractEnd"));
 }
 
 void ALSPlayer::TestAct(const FInputActionValue& Value)
@@ -726,7 +749,7 @@ void ALSPlayer::InteractCheck()
 
 	if(bResult)
 	{
-		LSLOG(Warning, TEXT("HIT Box"));
+		
 	}
 }
 
@@ -742,4 +765,12 @@ void ALSPlayer::ShowDebugLine(FVector Dir)
 		0,
 		1.f
 	);	
+}
+
+void ALSPlayer::SetIsNearInteractableObject(bool Value)
+{
+	LSLOG(Warning, TEXT("Player is overlapping with interactable object"));
+	// TODO: 두 개 이상의 상호작용 물체와 겹치고 있는 경우 고려하기
+	bIsNearInteractableObject = Value;
+	OnEnableToInteract.Broadcast(bIsNearInteractableObject);
 }
