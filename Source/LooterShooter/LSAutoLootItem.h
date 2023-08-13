@@ -25,7 +25,6 @@ private:
 	int32 LootingAmount = 0;
 	
 public:
-	UFUNCTION()
 	virtual void OnCharacterOverlap(
 		UPrimitiveComponent * OverlappedComp, 
 		AActor * OtherActor, 

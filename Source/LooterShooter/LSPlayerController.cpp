@@ -4,7 +4,8 @@
 #include "LSPlayerController.h"
 #include "LSHUDWidget.h"
 #include "LSPlayerState.h"
-#include "LSCharacter.h"
+//#include "LSCharacter.h"
+#include "LSPlayer.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -107,10 +108,10 @@ void ALSPlayerController::BeginPlay()
     LSPlayerState->OnPlayerStateChanged.Broadcast();  
 
 
-    ALSCharacter* LSCharacter =  Cast<ALSCharacter>(GetCharacter());
-    LSCHECK(nullptr != LSCharacter);
-    HUDWidget->BindResourceManageComponent(LSCharacter->ResourceManager);
-    HUDWidget->BindEquipmentComponent(LSCharacter->EquipmentManager);
+    ALSPlayer* LSPlayer =  Cast<ALSPlayer>(GetCharacter());
+    LSCHECK(nullptr != LSPlayer);
+    HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
+    HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
 /*
     ALSCharacter* LSCharacter =  Cast<ALSCharacter>(GetCharacter());
     LSCHECK(nullptr != LSCharacter);

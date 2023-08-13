@@ -41,7 +41,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-private:
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
 	int32 CurrentWeaponIndex = 0;
 
@@ -50,7 +50,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
 	TArray<ALSWeaponInstance*> WeaponInstanceList;
-
+private:
 	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
 

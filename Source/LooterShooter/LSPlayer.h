@@ -4,6 +4,7 @@
 
 #include "LooterShooter.h"
 #include "GameFramework/Character.h"
+#include "LSResourceManageComponent.h"
 #include "LSPlayer.generated.h"
 
 class USpringArmComponent;
@@ -17,10 +18,19 @@ class ULSGameInstance;
 class ULSInventoryComponent;
 class ULSWeaponDefinition;
 class UCameraComponent;
-class ULSResourceManageComponent;
 class UWidgetComponent;
+class ULSCharacterStatComponent;
+class ALSPlayerController;
+class ALSWeaponInstance;
+struct FInputActionValue;
+
+/** 공격 종료 후 호출 델리게이트 */
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 
 
+/**
+ * 플레이어 캐릭터 정의 클래스
+*/
 UCLASS()
 class LOOTERSHOOTER_API ALSPlayer : public ACharacter
 {
@@ -28,24 +38,89 @@ class LOOTERSHOOTER_API ALSPlayer : public ACharacter
 
 public:
 	ALSPlayer();
-/*
+
 	void SetCharacterState(ECharacterState NewState);
 	ECharacterState GetCharacterState() const;
-*/
+
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-	// virtual void PossessedBy(AController* NewController) override;
-
+	virtual void PostInitializeComponents() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public:
-	// virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser);
+	// not override?
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override; 
+	bool CanSetWeapon();
+	void SetWeapon(ALSWeaponInstance* NewWeapon);
 
+	// 탄약이 탄창 내 있거나, 장전 중이 아닌 등 사격 가능한 지 여부 리턴
+	bool CanShoot(EAmmoType AmmoType);
+
+	// debug line
+	void ShowDebugLine(FVector Dir);
+
+	float GetFinalAttackRange() const;
+	float GetFinalAttackDamage() const;
+	float GetFinalInteractRange() const;
+	ULSResourceManageComponent* GetResourceManager() const
+	{
+		return ResourceManager;
+	}
+	ULSEquipmentComponent* GetEquipmentManager() const
+	{
+		return EquipmentManager;
+	}
+
+	void SetIsNearInteractableObject(bool Value)
+	{
+		bIsNearInteractableObject = Value;
+	}
+	void SetCharacterStateDead();
+
+public:
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	FOnAttackEndDelegate OnAttackEnd;
 
 private:
+	void JumpAct(const FInputActionValue& Value);
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Shoot(const FInputActionValue& Value);
+	void MeleeAttack(const FInputActionValue& Value);
+	void OnRunning(const FInputActionValue& Value);
+	void EndRunning(const FInputActionValue& Value);
+	void OnAiming(const FInputActionValue& Value);
+	void EndAiming(const FInputActionValue& Value);
+	void GrapplingHook(const FInputActionValue& Value);
+	void Reload(const FInputActionValue& Value);
+	void EquipFirstWeapon(const FInputActionValue& Value);
+	void EquipSecondWeapon(const FInputActionValue& Value);
+	void EquipThirdWeapon(const FInputActionValue& Value);
+	void Interact(const FInputActionValue& Value);
+
+	/** enhanced input 시스템 테스트 용 */
+	void TestAct(const FInputActionValue& Value);
+
+	/** @TODO: modify to melee attack */
+	void Attack();
+	void AttackCheck();
+	void InteractCheck();
+	void GrappleBegin();
+
+	void OnAssetLoadCompleted();
+
+	/** For Test */
+public:
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	TObjectPtr<ULSWeaponDefinition> WeaponDefinition;
+
+private:
+	/// @brief Enhanced Input ///
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMapping;
 
@@ -90,36 +165,140 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* TestAction;
+////////////////////////////////
 
-	UPROPERTY()
-	ULSAnimInstance* LSAnim;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
-	float InteractRange = 800.0f;
-
-private:
+///////////////////
+/** components */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
 
-	// #include "Camera/CameraComponent.h"
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 
+	/** 탄환 수, 골드량 등의 자원 관리  */
 	UPROPERTY(VisibleAnywhere, Category = Resource)
 	ULSResourceManageComponent* ResourceManager;
 
+	/** HP, Shield, MP, 방어력 등 관리 */
 	UPROPERTY(VisibleAnywhere, Category = Defense)
 	ULSDefenseComponent* DefenseManager;
 
-	UPROPERTY(VisibleAnywhere, Category = UI)
-	UWidgetComponent* HPBarWidget;
-
+	/** 장착한 장비 아이템 관리 */
 	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	ULSEquipmentComponent* EquipmentManager;
 
+	/** 인벤토리 내 아이템 관리 */
 	UPROPERTY(VisibleAnywhere, Category = Inventory)
 	ULSInventoryComponent* InventoryManager;
 
+	/** 캐릭터의 레벨, 경험치 등 저장되어야 하는 스탯 관리 컴포넌트 */
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	ULSCharacterStatComponent* CharacterStat;
+/////////////////////
+
+    UPROPERTY()
+	ALSPlayerController* LSPlayerController;
+
 	UPROPERTY()
 	ULSGameInstance* LSGameInstance;
+
+	UPROPERTY(VisibleAnywhere, Category=Weapon)
+	ALSWeaponInstance* CurrentWeapon;
+
+	UPROPERTY(VisibleAnywhere, Category=Animation)
+	ULSAnimInstance* LSAnim;
+	
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	ECharacterState CurrentState;
+
+private:
+	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
+
+	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	bool bIsMeleeAttacking = false;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsReloading = false;
+
+	/** 그래플링 훅 도달 지점으로 이동 중 여부 */
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grapple, meta = (AllowPrivateAccess = "true"))
+	bool bIsGrappling = false;
+
+	/** 그래플링 훅 발동 캐스팅 중인지 여부 */
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grapple, meta = (AllowPrivateAccess = "true"))
+	bool bIsGrapplingCasting = false;
+
+	/** Interact 가능한 물체와 overlap 하고 있는 지 */
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsNearInteractableObject = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float DeadTimer = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float TestTimer = 0.1f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthTo = 0.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthOnAiming = 200.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthOnIdle = 450.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float ArmLengthChangingSpeed = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
+	float InteractRange = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float JumpHeight = 450.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float DefaultWalkSpeed = 510.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	float WalkSpeedOnAiming = 240.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	FVector ToAimDirection;
+
+	FTimerHandle DeadTimerHandle = { };
+	FTimerHandle ReloadTimerHandle = { };
+	
+/////////// 
+	/** 그래플링 훅 관련 */
+
+	/** @TODO: 그래플링 훅 로프 구현하기 */
+/*
+	UPROPERTY(VisibleAnywhere, Category = Grppling)
+	UCableComponent* Cable;
+*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingHookRange = 5000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingStopRange = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingMovementSpeed = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingJumpHeight = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingHeightCorrection = 150.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	float GrapplingCastingTime = 1.0f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
+	FVector GrappleToLocation;
+
+	FTimerHandle GrapplingTimerHandle = { };
+///////////////
 };

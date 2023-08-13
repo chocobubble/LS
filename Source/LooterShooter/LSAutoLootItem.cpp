@@ -74,7 +74,7 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 		}
 		case ELootItemType::MP:
 		{
-			LSCharacter->ResourceManager->SetHP(LSCharacter->CharacterStat->GetCurrentMP() + LootingAmount);
+			//LSCharacter->ResourceManager->SetHP(LSCharacter->CharacterStat->GetCurrentMP() + LootingAmount);
 			break;
 		}
 		case ELootItemType::RIFLEAMMO:

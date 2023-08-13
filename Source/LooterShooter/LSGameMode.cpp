@@ -6,11 +6,13 @@
 #include "LSPlayerController.h"
 #include "LSPlayerState.h"
 #include "LSGameState.h"
+#include "LSPlayer.h"
 #include "Engine/PawnIterator.h"
 
 ALSGameMode::ALSGameMode()
 {
-    DefaultPawnClass = ALSCharacter::StaticClass();
+    //DefaultPawnClass = ALSCharacter::StaticClass();
+    DefaultPawnClass = ALSPlayer::StaticClass();
     PlayerControllerClass = ALSPlayerController::StaticClass();
     PlayerStateClass = ALSPlayerState::StaticClass();
     GameStateClass = ALSGameState::StaticClass();

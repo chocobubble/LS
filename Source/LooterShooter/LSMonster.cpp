@@ -34,15 +34,21 @@ ALSMonster::ALSMonster()
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_CharM_Ram(TEXT("/Game/LS/Meshes/SK_CharM_Ram.SK_CharM_Ram"));
+	if ( SKM_CharM_Ram.Succeeded() )
+	{
+		GetMesh()->SetSkeletalMesh( SKM_CharM_Ram.Object );
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
+	}
+
 	static ConstructorHelpers::FClassFinder<UAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/MonsterAnimBP.MonsterAnimBP_C"));
 	if (MONSTER_ANIM.Succeeded())
 	{
 		LSCHECK(MONSTER_ANIM.Class != nullptr);
 		GetMesh()->SetAnimInstanceClass(MONSTER_ANIM.Class);
-	}
-	else
-	{
-		LSLOG(Error, TEXT("Rifle anim desn't succeded"));
 	}
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));

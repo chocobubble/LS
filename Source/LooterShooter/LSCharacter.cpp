@@ -78,7 +78,7 @@ ALSCharacter::ALSCharacter()
 
 	// max jump height
 	GetCharacterMovement()->JumpZVelocity = 450.0f;
-
+/*
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
 	if ( SKM_QUINN.Succeeded() )
 	{
@@ -100,7 +100,7 @@ ALSCharacter::ALSCharacter()
 	{
 		LSLOG(Warning, TEXT("Rifle anim desn't succeded"));
 	}
-
+*/
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_Default_KBM.IMC_Default_KBM"));
 	if ( IMC_DEFAULT_KBM.Succeeded())
 	{
@@ -373,7 +373,7 @@ void ALSCharacter::Tick(float DeltaTime)
 			bIsGrappling = false;
 		}
 	}
-
+}
 // Called to bind functionality to input
 void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -708,7 +708,7 @@ void ALSCharacter::AttackCheck()
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)), //AttackRange,
 		bResult ? FColor::Green : FColor::White,
-		false,
+		true,
 		1.0f,
 		0,
 		1.f);
