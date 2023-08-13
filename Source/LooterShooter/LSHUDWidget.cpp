@@ -9,6 +9,7 @@
 #include "LSEquipmentComponent.h"
 #include "LSResourceManageComponent.h"
 #include "LSDefenseComponent.h"
+#include "LSWeaponInstance.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -189,12 +190,28 @@ void ULSHUDWidget::UpdateRoundsRemaining(int32 CurrentWeaponIndex)
     RoundsRemainingTextList[CurrentWeaponIndex]->SetText(FText::FromString(FString::FromInt(CurrentEquipmentComponent->GetRoundsRemaining())));
 }
 
-
 void ULSHUDWidget::UpdateCurrentAmmo()
 {
     LSCHECK(CurrentResourceManager.IsValid());
-    FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
-    SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
-    ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(EAmmoType::RIFLE))));
-    LSLOG_S(Warning);
+    switch(CurrentEquipmentComponent->GetCurrentWeaponIndex())
+    {
+        case 0 :
+        {
+            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(0)->GetAmmoType();
+            FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            break;
+        }
+        case 1 :
+        {
+            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(1)->GetAmmoType();
+            SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            break;
+        }
+        case 2 :
+        {
+            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(2)->GetAmmoType();
+            ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            break;
+        }
+    }
 }

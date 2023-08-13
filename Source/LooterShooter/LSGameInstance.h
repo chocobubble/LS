@@ -20,6 +20,60 @@ enum class EWeaponType : uint8
 	SHOTGUN
 };
 
+USTRUCT(BlueprintType)
+struct FLSWeaponBaseData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FLSWeaponBaseData() : Level(1), MagazineCapacity(20), FireRate(500.0f),
+		MovementSpeed(510.0f), BulletDamage(50.0f), CriticalHitChance(0.03f), 
+		CriticalHitMultiplier(1.5f), DamageReduceDistance(1000.0f), ReloadTime(2.0f),
+		BulletsPerCatridge(1), MaxRange(10000.0f), MaxSpreadAngle(1.0f),
+		MinSpreadAngle(0.0f), HeatPerShot(0.1f) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 Level = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 MagazineCapacity = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float FireRate = 500.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float MovementSpeed = 510.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float BulletDamage = 50.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitChance = 0.03f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float CriticalHitMultiplier = 1.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float DamageReduceDistance = 1000.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Weapon)
+	float ReloadTime = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	int32 BulletsPerCatridge = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float MaxRange = 10000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	float MaxSpreadAngle  = 1.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Attack)
+	float MinSpreadAngle = 1.f;
+
+	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category = Attack)
+	float HeatPerShot = 0.1f;
+};
 
 USTRUCT(BlueprintType)
 struct FLSPlayerData : public FTableRowBase
@@ -156,11 +210,25 @@ public:
 	virtual void Init() override;
 	FLSPlayerData* GetLSPlayerData(int32 Level);
 	FLSMonsterData* GetLSMonsterData(int32 Level);
-	//FLSWeaponBaseData* GetLSWeaponData(int32 Level);
-
+	FLSWeaponBaseData* GetWeaponData(EWeaponType WeaponType, int32 ItemLevel);
+/*
+	FLSWeaponBaseData* GetLSRifleData(int32 ItemLevel);
+	FLSWeaponBaseData* GetLSShotgunData(int32 ItemLevel);
+	FLSWeaponBaseData* GetLSPistolData(int32 ItemLevel);
+*/
 	USkeletalMesh* GetRifleMesh() const
 	{
 		return RifleWeaponMesh;
+	}
+
+	USkeletalMesh* GetShotgunMesh() const
+	{
+		return ShotgunWeaponMesh;
+	}
+
+	USkeletalMesh* GetPistolMesh() const
+	{
+		return PistolWeaponMesh;
 	}
 
 	void SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount);
@@ -185,20 +253,28 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Loot)
 	UStaticMesh* PistolAmmoMesh;
 
-	
-
-
-
 private:
 	UPROPERTY()
 	UDataTable* LSPlayerTable;
 	
 	UPROPERTY()
 	UDataTable* LSMonsterTable;
-/*
+
 	UPROPERTY()
-	UDataTable* LSWeaponTable;
-*/
+	UDataTable* LSRifleDataTable;
+
+	UPROPERTY()
+	UDataTable* LSShotgunDataTable;
+
+	UPROPERTY()
+	UDataTable* LSPistolDataTable;
+
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	USkeletalMesh* RifleWeaponMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	USkeletalMesh* ShotgunWeaponMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	USkeletalMesh* PistolWeaponMesh;
 };

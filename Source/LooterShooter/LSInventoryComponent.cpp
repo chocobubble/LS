@@ -5,6 +5,7 @@
 #include "LSWeaponDefinition.h"
 #include "LSEquipmentComponent.h"
 #include "LSGameState.h"
+// #include "LSPlayerAnimInstance.h"
 
 // Sets default values for this component's properties
 ULSInventoryComponent::ULSInventoryComponent()
@@ -39,8 +40,18 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
 	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
+	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
-	EquipItem(0);
+	TempNum = GetEmptyIndex();
+	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
+	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::SHOTGUN, 3);
+	EquipItem(TempNum);
+	++CurrentInventoryCapacity;
+	TempNum = GetEmptyIndex();
+	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
+	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::PISTOL, 3);
+	EquipItem(TempNum);
+	++CurrentInventoryCapacity;
 }
 
 int32 ULSInventoryComponent::GetEmptyIndex()
@@ -73,6 +84,8 @@ void ULSInventoryComponent::AddWeaponToInventory(TObjectPtr<ULSWeaponDefinition>
 void ULSInventoryComponent::EquipItem(int32 ItemIndex)
 {
 	LSCHECK(EquipmentManager != nullptr);
-	ALSWeaponInstance* WeaponInstance1 = WeaponList[ItemIndex]->InstantiateWeapon();
-	EquipmentManager->EquipWeapon(WeaponInstance1);
+	ALSWeaponInstance* WeaponInstance = WeaponList[ItemIndex]->InstantiateWeapon();
+	EquipmentManager->EquipWeapon(WeaponInstance);
+	//ULSPlayerAnimInstance* LSPlayerAnim = Cast<ULSPlayerAnimInstance>(Cast<ACharacter>(GetOwner())->GetMesh()->GetAnimInstance());
+	//LSPlayerAnim->SetWeaponType(WeaponList[ItemIndex]->GetWeaponType());
 }

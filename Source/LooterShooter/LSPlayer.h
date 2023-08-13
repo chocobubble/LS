@@ -10,7 +10,7 @@
 class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
-class ULSAnimInstance;
+class ULSPlayerAnimInstance;
 class ULSDefenseComponent;
 class ULSEquipmentComponent;
 class ULSPopUpWidget;
@@ -22,6 +22,7 @@ class UWidgetComponent;
 class ULSCharacterStatComponent;
 class ALSPlayerController;
 class ALSWeaponInstance;
+class UInputTriggerPulse;
 struct FInputActionValue;
 
 /** 공격 종료 후 호출 델리게이트 */
@@ -74,6 +75,7 @@ public:
 		return EquipmentManager;
 	}
 
+	void SetShootInputInterval(float InputInterval);
 	void SetIsNearInteractableObject(bool Value)
 	{
 		bIsNearInteractableObject = Value;
@@ -165,6 +167,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* TestAction;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
+	UInputTriggerPulse* ShootInputTriggerPulse;
 ////////////////////////////////
 
 ///////////////////
@@ -206,7 +211,7 @@ private:
 	ALSWeaponInstance* CurrentWeapon;
 
 	UPROPERTY(VisibleAnywhere, Category=Animation)
-	ULSAnimInstance* LSAnim;
+	ULSPlayerAnimInstance* LSPlayerAnim;
 	
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	ECharacterState CurrentState;

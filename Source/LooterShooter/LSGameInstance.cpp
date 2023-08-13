@@ -5,14 +5,21 @@
 ULSGameInstance::ULSGameInstance()
 {
     LSLOG_S(Warning);
-/*
-    FString WeaponDataPath = TEXT("/Game/LS/GameData/WeaponBaseData.WeaponBaseData");
-    static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSWEAPON(*WeaponDataPath);
-    // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSCHARACTER(TEXT("/Script/Engine.DataTable'/Game/LS/GameData/LSCD.LSCD'"));
-    LSCHECK(DT_LSWEAPON.Succeeded());
-    LSWeaponTable = DT_LSWEAPON.Object;
-    LSCHECK(LSWeaponTable->GetRowMap().Num() > 0);
-*/
+    FString RifleDataPath = TEXT("/Game/LS/GameData/RifleBaseData.RifleBaseData");
+    FString ShotgunDataPath = TEXT("/Game/LS/GameData/ShotgunBaseData.ShotgunBaseData");
+    FString PistolDataPath = TEXT("/Game/LS/GameData/PistolBaseData.PistolBaseData");
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_RIFLE(*RifleDataPath);
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_SHOTGUN(*ShotgunDataPath);
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_PISTOL(*PistolDataPath);
+    LSCHECK(DT_RIFLE.Succeeded());
+    LSRifleDataTable = DT_RIFLE.Object;
+    LSCHECK(LSRifleDataTable->GetRowMap().Num() > 0);
+    LSCHECK(DT_SHOTGUN.Succeeded());
+    LSShotgunDataTable = DT_SHOTGUN.Object;
+    LSCHECK(LSShotgunDataTable->GetRowMap().Num() > 0);
+    LSCHECK(DT_PISTOL.Succeeded());
+    LSPistolDataTable = DT_PISTOL.Object;
+    LSCHECK(LSPistolDataTable->GetRowMap().Num() > 0);
 
     // FString PlayerDataPath = TEXT("/Game/LS/GameData/PlayerBaseData.PlayerBaseData");
     // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSPLAYER(*PlayerDataPath);
@@ -91,10 +98,30 @@ ULSGameInstance::ULSGameInstance()
         LSLOG_S(Error);
     }
 
-    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/LS/Meshes/Assault_Rifle.Assault_Rifle"));
 	if( SK_RIFLE.Succeeded() )
 	{
 		RifleWeaponMesh = SK_RIFLE.Object;
+	}
+	else
+	{
+		LSLOG_S(Error);
+	}
+
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_SHOTGUN(TEXT("/Game/LS/Meshes/Shotgun.Shotgun"));
+	if( SK_SHOTGUN.Succeeded() )
+	{
+		ShotgunWeaponMesh = SK_SHOTGUN.Object;
+	}
+	else
+	{
+		LSLOG_S(Error);
+	}
+
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_PISTOL(TEXT("/Game/LS/Meshes/Pistols.Pistols"));
+	if( SK_PISTOL.Succeeded() )
+	{
+		PistolWeaponMesh = SK_PISTOL.Object;
 	}
 	else
 	{
@@ -126,17 +153,28 @@ FLSMonsterData* ULSGameInstance::GetLSMonsterData(int32 Level)
     }
     return LSMonsterTable->FindRow<FLSMonsterData>(*FString::FromInt(Level), TEXT(""));
 }
-/*
-FLSWeaponBaseData* ULSGameInstance::GetLSWeaponData(int32 Level)
+
+FLSWeaponBaseData* ULSGameInstance::GetWeaponData(EWeaponType WeaponType, int32 ItemLevel)
 {
-    if (LSWeaponTable == nullptr)
+    switch(WeaponType)
     {
-        LSLOG_S(Warning);
-        return nullptr;
+        case EWeaponType::RIFLE :
+            LSCHECK(LSRifleDataTable != nullptr, nullptr);
+            return LSRifleDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
+            break;
+        case EWeaponType::SHOTGUN :
+            LSCHECK(LSShotgunDataTable != nullptr, nullptr);
+            return LSShotgunDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
+            break;
+        case EWeaponType::PISTOL :
+            LSCHECK(LSPistolDataTable != nullptr, nullptr);
+            return LSPistolDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
+            break;
     }
-    return LSWeaponTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(Level), TEXT(""));
+    LSLOG(Error, TEXT("Cannot find Weapon data"));
+    return nullptr;
 }
-*/
+
 
 void ULSGameInstance::SpawnAutoLootItem(FVector SpawnLocation, ELootItemType LootedItemType, int32 Amount)
 {

@@ -5,7 +5,6 @@
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "LSWeaponAbilityComponent.h"
-#include "LSGameState.h"
 
 ULSWeaponDefinition::ULSWeaponDefinition()
 {
@@ -28,9 +27,8 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 	WeaponItemLevel = ItemLevel;
 	
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	
-	WeaponBaseData = LSGameState->GetLSWeaponData(WeaponItemLevel);
+	WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
 	LSCHECK(WeaponBaseData);
 	SetWeaponDefinitionStats();
 	WeaponAbilityComponent->EnhanceWeaponStat(this);

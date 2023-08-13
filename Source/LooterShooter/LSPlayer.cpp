@@ -12,7 +12,7 @@
 #include "LSCharacterStatComponent.h"
 // #include "Components/WidgetComponent.h"
 // #include "LSCharacterWidget.h"
-#include "LSAnimInstance.h"
+#include "LSPlayerAnimInstance.h"
 #include "LSPlayerController.h"
 #include "LSPlayerState.h"
 #include "LSGameInstance.h"
@@ -50,15 +50,15 @@ ALSPlayer::ALSPlayer()
 	ArmLengthTo = ArmLengthOnIdle; // 450.0f
 	SpringArm->TargetArmLength = ArmLengthTo;
 	SpringArm->bUsePawnControlRotation = true;
-	SpringArm->SetRelativeLocation(FVector(0.0f, 90.0f, 90.0f));
+	SpringArm->SetRelativeLocation(FVector(0.0f, 45.0f, 90.0f));
 
 	// max jump height
 	GetCharacterMovement()->JumpZVelocity = JumpHeight; // 450.0f
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
-	if ( SKM_QUINN.Succeeded() )
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_MANNY(TEXT("/Game/LS/Meshes/SKM_Player.SKM_Player"));
+	if ( SKM_MANNY.Succeeded() )
 	{
-		GetMesh()->SetSkeletalMesh( SKM_QUINN.Object );
+		GetMesh()->SetSkeletalMesh( SKM_MANNY.Object );
 	}
 	else
 	{
@@ -66,10 +66,10 @@ ALSPlayer::ALSPlayer()
 	}
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
-	if (RIFLE_ANIM.Succeeded())
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ANIM_PLAYER(TEXT("/Game/LS/Animations/PlayerAnimBlueprint.PlayerAnimBlueprint_C"));
+	if (ANIM_PLAYER.Succeeded())
 	{
-		GetMesh()->SetAnimInstanceClass(RIFLE_ANIM.Class);
+		GetMesh()->SetAnimInstanceClass(ANIM_PLAYER.Class);
 	}
 
 	///////////////////////// Input ///////////////////////////////
@@ -102,10 +102,12 @@ ALSPlayer::ALSPlayer()
 	{
 		ShootAction = IA_SHOOT.Object;
 		LSCHECK(ShootAction->Triggers.Num() > 0);
-		TObjectPtr<UInputTriggerPulse> ShootInputTrigger = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
-		LSCHECK(nullptr != ShootInputTrigger);
+		//TObjectPtr<UInputTriggerPulse> ShootInputTrigger = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
+		ShootInputTriggerPulse = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
+		LSCHECK(nullptr != ShootInputTriggerPulse);
 		// fire rate
-		ShootInputTrigger->Interval = 0.1f;
+		//ShootInputTriggerPulse->Interval = 0.1f;
+		SetShootInputInterval(1.f); // default for debug
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MELEE(TEXT("/Game/LS/Input/Actions/IA_MELEE.IA_MELEE"));
@@ -174,6 +176,13 @@ ALSPlayer::ALSPlayer()
 	SetCanBeDamaged(false);
 }
 
+void ALSPlayer::SetShootInputInterval(float InputInterval)
+{
+	LSCHECK(ShootInputTriggerPulse != nullptr);
+	ShootInputTriggerPulse->Interval = InputInterval;
+	LSLOG(Warning, TEXT("Shoot Input Interval : %f"), ShootInputTriggerPulse->Interval);
+}
+
 // Called when the game starts or when spawned
 void ALSPlayer::BeginPlay()
 {
@@ -187,7 +196,7 @@ void ALSPlayer::BeginPlay()
 	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
 	LSCHECK(nullptr != LSGameInstance);
 
-	CharacterAssetToLoad.SetPath(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
+	CharacterAssetToLoad.SetPath(TEXT("/Game/LS/Meshes/SKM_Player.SKM_Player"));
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSPlayer::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
 
@@ -232,7 +241,7 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 	{
 		SetActorEnableCollision(false);
 		GetMesh()->SetHiddenInGame(false);
-		LSAnim->SetDeadAnim();
+		LSPlayerAnim->SetDeadAnim();
 		SetCanBeDamaged(false);
 		DisableInput(LSPlayerController);
 
@@ -397,7 +406,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 void ALSPlayer::MeleeAttack(const FInputActionValue& Value)
 {
 	if (bIsMeleeAttacking) return;
-	LSAnim->PlayAttackMontage();
+	// LSPlayerAnim->PlayAttackMontage();
 	bIsMeleeAttacking = true;
 }
 
@@ -419,7 +428,7 @@ void ALSPlayer::OnAiming(const FInputActionValue& Value)
 {
 	LSCHECK(nullptr != SpringArm);
 	ArmLengthTo = ArmLengthOnAiming;
-	LSAnim->SetAimAnim(true);
+	LSPlayerAnim->SetAimAnim(true);
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedOnAiming; //240.f;
 }
 
@@ -427,7 +436,7 @@ void ALSPlayer::EndAiming(const FInputActionValue& Value)
 {
 	LSCHECK(nullptr != SpringArm);
 	ArmLengthTo = ArmLengthOnIdle;
-	LSAnim->SetAimAnim(false);
+	LSPlayerAnim->SetAimAnim(false);
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed; //510.f;
 }
 
@@ -492,15 +501,21 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 	}
 	LSCHECK(nullptr != CurrentWeapon);
 	bIsReloading = true;
-	LSAnim->SetReloadAnim(true);
+	LSPlayerAnim->SetReloadAnim(true);
 	// TODO: 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			bIsReloading = false;
+			EAmmoType CurrentAmmoType = CurrentWeapon->GetAmmoType();
+			int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(CurrentAmmoType);
 			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
-			int32 ReloadRounds = FMath::Clamp(CurrentWeapon->GetMagazineCapacity() - CurrentRounds, 0, ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE)); 
+			int32 ReloadRounds = FMath::Clamp(
+				CurrentWeapon->GetMagazineCapacity() - CurrentRounds,
+				0,
+				CurrentAmmo); 
+			CurrentAmmo = CurrentAmmo - ReloadRounds;
 			EquipmentManager->SetRoundsRemaining(CurrentWeapon->GetMagazineCapacity());
-			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, -ReloadRounds);
-			LSAnim->SetReloadAnim(false);
+			ResourceManager->SetCurrentAmmo(CurrentAmmoType, CurrentAmmo);
+			LSPlayerAnim->SetReloadAnim(false);
 			LSLOG(Warning, TEXT("RELoading Completed"));
 		}), CurrentWeapon->GetReloadTime(), false);
 }
@@ -511,7 +526,6 @@ void ALSPlayer::EquipFirstWeapon(const FInputActionValue& Value)
 	LSCHECK(nullptr != EquipmentManager->GetWeaponInstance(0));
 	SetWeapon(EquipmentManager->GetWeaponInstance(0));
 	EquipmentManager->SetCurrentWeaponIndex(0);
-
 	// for test later
 	EquipmentManager->GetWeaponInstance(0)->OnAimDirChange.AddUObject(this, &ALSPlayer::ShowDebugLine);
 }
@@ -573,17 +587,17 @@ void ALSPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	InventoryManager->SetEquipmentComponent(EquipmentManager);
 
-	LSAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
-	LSCHECK(nullptr != LSAnim);
+	LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	LSCHECK(nullptr != LSPlayerAnim);
 
 	CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
 		LSLOG(Warning, TEXT("OnHPIsZero"));
-		LSAnim->SetDeadAnim();
+		LSPlayerAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 	});
 
-	// LSAnim->OnAttackHitCheck.AddUObject(this, &ALSPlayer::AttackCheck);
-	LSAnim->OnMontageEnded.AddDynamic(this, &ALSPlayer::OnAttackMontageEnded);
+	// LSPlayerAnim->OnAttackHitCheck.AddUObject(this, &ALSPlayer::AttackCheck);
+	LSPlayerAnim->OnMontageEnded.AddDynamic(this, &ALSPlayer::OnAttackMontageEnded);
 }
 
 bool ALSPlayer::CanShoot(EAmmoType AmmoType)
@@ -631,6 +645,7 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 	if (nullptr != CurrentWeapon)
 	{
 		// TODO: 무기 장착 해제 관련 메서드 호출
+		CurrentWeapon->SetActorHiddenInGame(true);
 	}
 	
 	FName WeaponSocket(TEXT("weapon_r_socket"));
@@ -646,6 +661,11 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 			WeaponSocket);
 		NewWeapon->SetOwner(this);
 		CurrentWeapon = NewWeapon;
+
+		LSLOG(Warning, TEXT("Fire rate : %f "), CurrentWeapon->GetFireRate());
+		SetShootInputInterval(0.2f);//(CurrentWeapon->GetFireRate() / 1800.f);
+		
+		LSPlayerAnim->SetWeaponType(CurrentWeapon->GetBaseWeaponDefinition()->GetWeaponType());
 	}
 }
 

@@ -32,7 +32,7 @@ public:
 	ALSWeaponInstance* GetWeaponInstance(int32 Index);
 
 	void SetCurrentWeaponIndex(int32 Index);
-
+	int32 GetCurrentWeaponIndex() const;
 	void SetRoundsRemaining(int32 NewRoundsRemaining);
 	int32 GetRoundsRemaining() const;
 

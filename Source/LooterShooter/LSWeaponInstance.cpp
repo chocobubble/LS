@@ -50,9 +50,24 @@ void ALSWeaponInstance::SetWeaponStats()
 void ALSWeaponInstance::SetWeaponSkeletalMesh()
 {
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
-	WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
-	WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	switch(GunType) 
+	{
+		case EWeaponType::RIFLE :
+			LSCHECK(LSGameInstance->GetRifleMesh() != nullptr);
+			WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetRifleMesh());
+			WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+			break;
+		case EWeaponType::SHOTGUN :
+			LSCHECK(LSGameInstance->GetShotgunMesh() != nullptr);
+			WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetShotgunMesh());
+			WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+			break;
+		case EWeaponType::PISTOL :
+			LSCHECK(LSGameInstance->GetPistolMesh() != nullptr);
+			WeaponSkeletalMesh->SetSkeletalMesh(LSGameInstance->GetPistolMesh());
+			WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
+			break;
+	}
 }
 
 
@@ -110,9 +125,25 @@ void ALSWeaponInstance::SetRoundsRemaining(int32 NewRoundsRemaining)
 	RoundsRemaining = NewRoundsRemaining;
 }
 
-
 void ALSWeaponInstance::SetBaseWeaponDefinition(ULSWeaponDefinition* WeaponDefinition)
 {
 	LSCHECK(WeaponDefinition != nullptr);
 	BaseWeaponDefinition = WeaponDefinition;
+}
+
+// AMMOTYPE 나중에 바꾸기
+// Resource component로 옮기는 거 고려해보기
+EAmmoType ALSWeaponInstance::GetAmmoType()
+{
+	switch(GunType)
+	{
+		case EWeaponType::RIFLE :
+			return EAmmoType::RIFLE;
+		case EWeaponType::SHOTGUN :
+			return EAmmoType::SHOTGUN;
+		case EWeaponType::PISTOL :
+			return EAmmoType::PISTOL; 
+	}
+	LSLOG(Error, TEXT("wrong ammo type"));
+	return EAmmoType::RIFLE;
 }

@@ -44,23 +44,19 @@ void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount
 	{
 		case EAmmoType::RIFLE:
 		{
-			//ResourceData->CurrentRifleAmmo += Amount;
-			SetCurrentRifleAmmo(Amount);
+			CurrentRifleAmmo = Amount;
 			break;
 		}
-		/*
 		case EAmmoType::PISTOL:
 		{
-			//ResourceData->CurrentPistolAmmo += Amount;
-			SetCurrentRifleAmmo -= Amount
+			CurrentPistolAmmo = Amount;
 			break;
 		}
 		case EAmmoType::SHOTGUN:
 		{
-			ResourceData->CurrentShotgunAmmo += Amount;
+			CurrentShotgunAmmo = Amount;
 			break;
 		}
-		*/
 	}	
 	LSLOG_S(Warning);
 	OnResourceChanged.Broadcast();
@@ -71,18 +67,16 @@ int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
 	{
 		case EAmmoType::RIFLE:
 		{
-			return GetCurrentRifleAmmo();
+			return CurrentRifleAmmo;
 		}
-		/*
 		case EAmmoType::PISTOL:
 		{
-			return ResourceData->CurrentPistolAmmo;
+			return CurrentPistolAmmo;
 		}
 		case EAmmoType::SHOTGUN:
 		{
-			return ResourceData->CurrentShotgunAmmo;
+			return CurrentShotgunAmmo;
 		}
-		*/
 	}
 	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
@@ -123,19 +117,19 @@ int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 	{
 		case EAmmoType::RIFLE:
 		{
-			return GetMaxRifleAmmo();
+			return MaxRifleAmmo;
 			break;
 		}
-		/*
 		case EAmmoType::PISTOL:
 		{
-			return ResourceData->MaxPistolAmmo;
+			return MaxPistolAmmo;
+			break;
 		}
 		case EAmmoType::SHOTGUN:
 		{
-			return ResourceData->MaxShotgunAmmo;
+			return MaxShotgunAmmo;
+			break;
 		}
-		*/
 	}
 	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
@@ -152,5 +146,5 @@ void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)
 
 void ULSResourceManageComponent::SetGoldAmount(int32 Amount)
 {
-	GoldAmount += Amount;
+	GoldAmount = Amount;
 }

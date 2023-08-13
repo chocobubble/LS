@@ -61,33 +61,12 @@ public:
 	ULSResourceManageComponent();
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
-//	void SetRoundsRemaining(EAmmoType AmmoType, int32 Amount);
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
 	
 	void SetGoldAmount(int32 Amount) ;
 	
 	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount);
 
-	int32 GetMaxRifleAmmo() const
-	{
-		return MaxRifleAmmo;
-	}
-
-	void SetCurrentRifleAmmo(int32 AmmoAmount)
-	{
-		CurrentRifleAmmo = FMath::Clamp(CurrentRifleAmmo + AmmoAmount, 0, MaxRifleAmmo);
-	}
-
-	int32 GetCurrentRifleAmmo() const
-	{
-		return CurrentRifleAmmo;
-	}
-/*
-	int32 GetRoundsRemaining() const
-	{
-		return RoundsRemaining;
-	}
-*/
 	int32 GetGoldAmount() const
 	{
 		return GoldAmount;
@@ -102,22 +81,22 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 MaxRifleAmmo = 1000;
+	int32 MaxRifleAmmo = 500;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 MaxPistolAmmo = 0;
+	int32 MaxPistolAmmo = 250;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 MaxShotgunAmmo = 0;
+	int32 MaxShotgunAmmo = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 CurrentRifleAmmo = 1000;
+	int32 CurrentRifleAmmo = 250;  // default
+ 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
+	int32 CurrentPistolAmmo = 125; // default
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 CurrentPistolAmmo = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 CurrentShotgunAmmo = 0;
+	int32 CurrentShotgunAmmo = 50; // default
 
 /*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))

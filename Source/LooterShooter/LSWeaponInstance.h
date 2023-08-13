@@ -5,6 +5,7 @@
 #include "LooterShooter.h"
 #include "GameFramework/Actor.h"
 #include "LSGameInstance.h"
+#include "LSResourceManageComponent.h"
 #include "LSWeaponInstance.generated.h"
 
 /** 테스트용 델리게이트 */
@@ -52,6 +53,10 @@ public:
 	{
 		return MagazineCapacity;
 	}
+	float GetFireRate() const
+	{
+		return FireRate;
+	}
 	/** 탄착군의 크기 */
 	float GetCurrentSpreadAngle() const
 	{
@@ -82,6 +87,9 @@ public:
 
 	/** 사격에 따른 탄착군 계산 */
 	FVector CalculateRecoil(FVector AimDir, const float HalfAngle);
+
+	/** 무기의 ammo type 반환 */
+	EAmmoType GetAmmoType();
 
 protected:
 	// Called when the game starts or when spawned
