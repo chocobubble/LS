@@ -107,7 +107,7 @@ ALSPlayer::ALSPlayer()
 		LSCHECK(nullptr != ShootInputTriggerPulse);
 		// fire rate
 		//ShootInputTriggerPulse->Interval = 0.1f;
-		SetShootInputInterval(1.f); // default for debug
+		SetShootInputInterval(0.2f); // default for debug
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MELEE(TEXT("/Game/LS/Input/Actions/IA_MELEE.IA_MELEE"));
@@ -289,6 +289,19 @@ void ALSPlayer::Tick(float DeltaTime)
 			bIsGrappling = false;
 		}
 	}
+
+	/// test
+	if (!(CurrentRemainElapsedTime < KINDA_SMALL_NUMBER))
+	{
+		float temp = FMath::FInterpTo(0, CurrentRecoilTest, DeltaTime, InterpolateSpeed);
+		AddControllerPitchInput(temp);
+		CurrentRemainElapsedTime -= DeltaTime;
+		if(CurrentRemainElapsedTime < 0.3f)
+		{
+			CurrentRecoilTest = -RecoilTest;
+			InterpolateSpeed = Acceleration / 2;
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -387,7 +400,20 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	
 	EquipmentManager->DecreaseRoundsRemaining();
 	// 반동에 따른 조준점 이동
-	GetController()->SetControlRotation(TempVector.Rotation());
+	// GetController()->SetControlRotation(TempVector.Rotation());
+	////////////Test/////////
+	if(CurrentWeapon->GetGunType() == EWeaponType::SHOTGUN)
+	{
+		CurrentRemainElapsedTime = RemainElapsedTime;
+		CurrentRecoilTest = RecoilTest;
+		InterpolateSpeed = Acceleration;
+	}
+	else
+	{
+		GetController()->SetControlRotation(TempVector.Rotation());
+	}
+	/////////////////////////
+
 	// 사격 히트
 	if (bResult)
 	{

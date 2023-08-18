@@ -289,6 +289,27 @@ private:
 
 	FTimerHandle DeadTimerHandle = { };
 	FTimerHandle ReloadTimerHandle = { };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float CurrentRecoilTest = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float RecoilTest = -2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float InterpolateTime = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float CurrentRemainElapsedTime = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float RemainElapsedTime = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float Acceleration = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	float InterpolateSpeed = 5.f;
 	
 /////////// 
 	/** 그래플링 훅 관련 */

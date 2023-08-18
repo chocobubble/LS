@@ -16,6 +16,7 @@ class UInputComponent;
 class ULSGameplayWidget;
 class ULSGameplayResultWidget;
 class ALSMonster;
+class ULSInventoryWidget;
 /**
  * 
  */
@@ -41,10 +42,12 @@ public:
 
 	
 	void OnGamePause(const FInputActionValue& Value);
+	void OnInventoryOpen(const FInputActionValue& Value);
 
 	void ChangeInputMode(bool bGameMode = true);
 
 	void ShowResultUI();
+	void ShowInventoryUI();
 
 	bool GetIsAutoRunning() const;
 
@@ -63,11 +66,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* GamePause;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenInventory;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
 	TSubclassOf<ULSGameplayWidget> MenuWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<ULSGameplayResultWidget> ResultWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<ULSInventoryWidget> InventoryWidgetClass;
 
 private:
 	UPROPERTY()
@@ -81,6 +90,10 @@ private:
 
 	UPROPERTY()
 	ULSGameplayResultWidget* ResultWidget;
+
+	UPROPERTY()
+	ULSInventoryWidget* InventoryWidget;
+
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;

@@ -14,6 +14,7 @@
 #include "LSGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "LSMonster.h"
+#include "LSInventoryWidget.h"
 
 
 ALSPlayerController::ALSPlayerController()
@@ -36,6 +37,12 @@ ALSPlayerController::ALSPlayerController()
 		GamePause = IA_GAMEPAUSE.Object;
 	}
 
+    static ConstructorHelpers::FObjectFinder<UInputAction> IA_INVENTORY(TEXT("/Game/LS/Input/Actions/IA_Inventory.IA_Inventory"));
+	if ( IA_INVENTORY.Succeeded())
+	{
+		OpenInventory = IA_INVENTORY.Object;
+	}
+
     static ConstructorHelpers::FClassFinder<ULSGameplayWidget> UI_MENU_C(TEXT("/Game/LS/UI/UI_Menu.UI_Menu_C"));
     if (UI_MENU_C.Succeeded())
     {
@@ -46,6 +53,16 @@ ALSPlayerController::ALSPlayerController()
     if (UI_RESULT_C.Succeeded())
     {
         ResultWidgetClass = UI_RESULT_C.Class;
+    }
+
+    static ConstructorHelpers::FClassFinder<ULSInventoryWidget> UI_INVENTORY_C(TEXT("/Game/LS/UI/UI_Inventory.UI_Inventory_C"));
+    if (UI_INVENTORY_C.Succeeded())
+    {
+        InventoryWidgetClass = UI_INVENTORY_C.Class;
+    }
+    else
+    {
+        LSLOG_S(Error);
     }
 }
 
@@ -96,6 +113,9 @@ void ALSPlayerController::BeginPlay()
 
     ResultWidget = CreateWidget<ULSGameplayResultWidget>(this, ResultWidgetClass);
     LSCHECK(nullptr != ResultWidget);
+    
+    InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
+    LSCHECK(nullptr != InventoryWidget);
 
 /*
     HUDWidget->AddToViewport(1);
@@ -168,6 +188,8 @@ void ALSPlayerController::SetupInputComponent()
 		return;
 	}
 	EnhancedInputComponent->BindAction(GamePause, ETriggerEvent::Triggered, this, &ALSPlayerController::OnGamePause);
+	EnhancedInputComponent->BindAction(OpenInventory, ETriggerEvent::Triggered, this, &ALSPlayerController::OnInventoryOpen);
+
 }
 
 void ALSPlayerController::OnGamePause(const FInputActionValue& Value)
@@ -177,6 +199,14 @@ void ALSPlayerController::OnGamePause(const FInputActionValue& Value)
     LSCHECK(nullptr != MenuWidget);
     MenuWidget->AddToViewport(3);
 
+    SetPause(true);
+    ChangeInputMode(false);
+}
+
+void ALSPlayerController::OnInventoryOpen(const FInputActionValue& Value)
+{
+    LSLOG(Warning, TEXT("Inventory Open"));
+    ShowInventoryUI();
     SetPause(true);
     ChangeInputMode(false);
 }
@@ -203,6 +233,21 @@ void ALSPlayerController::ShowResultUI()
     ResultWidget->BindGameState(LSGameState);
 
     ResultWidget->AddToViewport();
+    ChangeInputMode(false);
+}
+
+void ALSPlayerController::ShowInventoryUI()
+{
+    /*
+    // #include "Kismet/GameplayStatics.h"
+    ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
+    LSCHECK(nullptr != LSGameState);
+    ResultWidget->BindGameState(LSGameState);
+*/
+    InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
+    LSCHECK(nullptr != InventoryWidget);
+    
+    InventoryWidget->AddToViewport();
     ChangeInputMode(false);
 }
 

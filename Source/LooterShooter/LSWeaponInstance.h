@@ -91,6 +91,11 @@ public:
 	/** 무기의 ammo type 반환 */
 	EAmmoType GetAmmoType();
 
+	EWeaponType GetGunType() const
+	{
+		return GunType;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
