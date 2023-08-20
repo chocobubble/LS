@@ -4,6 +4,7 @@
 
 #include "LooterShooter.h"
 #include "Blueprint/UserWidget.h"
+#include "Math/Color.h"
 #include "LSInventoryWidget.generated.h"
 
 
@@ -23,8 +24,23 @@ class LOOTERSHOOTER_API ULSInventoryWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void OnInventoryItemClicked();
+
+	UFUNCTION()
 	void OnResumeClicked();
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<UImage*> GunImages;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UImage*> EquippedGunImages;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UButton*> EquippedGunButtons;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UButton*> InventoryItemButtons;
 
 	UPROPERTY()
 	UImage* GunImage1;
@@ -36,9 +52,13 @@ public:
 	UImage* GunImage3;
 
 	UPROPERTY()
-	UButton* ItempButton1;
+	UButton* ItemClickedButton;
 
 	UPROPERTY()
 	UButton* ResumeButton;
 
+/*
+	struct FSlateColor* Yel;
+    struct FSlateBrush tempBrush;
+*/
 };

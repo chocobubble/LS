@@ -13,7 +13,11 @@
 		"typescript.tsc.autoDetect": "off",
 		"files.associations": {
 			"*.rh": "cpp",
-			"*.ipp": "cpp"
+			"*.ipp": "cpp",
+			"regex": "cpp",
+			"sstream": "cpp",
+			"strstream": "cpp",
+			"xiosbase": "cpp"
 		}
 	},
 	"extensions": {
