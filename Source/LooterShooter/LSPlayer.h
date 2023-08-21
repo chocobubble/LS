@@ -79,6 +79,10 @@ public:
 	{
 		return EquipmentManager;
 	}
+	ULSInventoryComponent* GetInventoryManager() const
+	{
+		return InventoryManager;
+	}
 
 	void SetShootInputInterval(float InputInterval);
 	void SetIsNearInteractableObject(bool Value);

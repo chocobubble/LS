@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "LSInventoryComponent.generated.h"
 
+// DECLARE_MULTICAST_DELEGATE(FOn)
+
 class ULSWeaponDefinition;
 class ULSEquipmentComponent;
 
@@ -32,6 +34,7 @@ public:
 	// later, 
 	void AddWeaponToInventory(TObjectPtr<ULSWeaponDefinition> WeaponDefinition);
 	void EquipItem(int32 ItemIndex);
+	TObjectPtr<ULSWeaponDefinition> GetWeaponDefinitionInList(int32 Index) const;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

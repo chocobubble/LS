@@ -7,6 +7,8 @@
 #include "LSInventoryItemButton.generated.h"
 
 class ULSInventoryWidget;
+class ULSWeaponDefinition;
+struct FButtonStyle;
 
 /**
  * 
@@ -16,22 +18,30 @@ class LOOTERSHOOTER_API ULSInventoryItemButton : public UButton
 {
 	GENERATED_BODY()
 
-	
+	ULSInventoryItemButton();
 public:
-	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void Selected();
 
-	void Init(ULSInventoryWidget* Widget);
+	void Init(const ULSInventoryWidget* Widget, ULSWeaponDefinition* WeaponDefinition);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Button")
-	bool bIsSelected;
+	bool bIsSelected = true;
 
 	UPROPERTY(VisibleAnywhere)
-	UButton* DefaultSelectedButton;
-/*
+	UButton* DefaultSelectedButton = nullptr;
+	
+	UPROPERTY(VisibleAnywhere)
+	const ULSInventoryWidget* InventoryWidget;
+
+	UPROPERTY(VisibleAnywhere)
+	ULSWeaponDefinition* Weapon;
+	//UPROPERTY(VisibleAnywhere)
+	//FButtonStyle SelectedButtonStyle;
+
+	/*
 	UPROPERTY(VisibleAnywhere)
 	ULSInventoryWidget* InventoryWidget;
 */

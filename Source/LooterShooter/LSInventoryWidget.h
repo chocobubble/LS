@@ -10,8 +10,8 @@
 
 class UImage;
 class UButton;
-class UInventoryComponent;
-
+class ULSInventoryComponent;
+class ULSInventoryItemButton;
 
 /**
  * 
@@ -23,6 +23,8 @@ class LOOTERSHOOTER_API ULSInventoryWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+
+	void Init(ULSInventoryComponent* InventoryComponent);
 
 	UFUNCTION()
 	void OnInventoryItemClicked();
@@ -42,6 +44,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<UButton*> InventoryItemButtons;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<ULSInventoryItemButton*> LSInventoryItemButtons;
+
 	UPROPERTY()
 	UImage* GunImage1;
 
@@ -56,6 +61,9 @@ public:
 
 	UPROPERTY()
 	UButton* ResumeButton;
+
+	UPROPERTY(VisibleAnywhere)
+	ULSInventoryComponent* Inventory;
 
 /*
 	struct FSlateColor* Yel;

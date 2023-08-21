@@ -89,3 +89,8 @@ void ULSInventoryComponent::EquipItem(int32 ItemIndex)
 	//ULSPlayerAnimInstance* LSPlayerAnim = Cast<ULSPlayerAnimInstance>(Cast<ACharacter>(GetOwner())->GetMesh()->GetAnimInstance());
 	//LSPlayerAnim->SetWeaponType(WeaponList[ItemIndex]->GetWeaponType());
 }
+
+TObjectPtr<ULSWeaponDefinition> ULSInventoryComponent::GetWeaponDefinitionInList(int32 Index) const
+{
+	return WeaponList[Index];
+}

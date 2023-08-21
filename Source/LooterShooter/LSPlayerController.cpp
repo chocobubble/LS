@@ -246,7 +246,7 @@ void ALSPlayerController::ShowInventoryUI()
 */
     InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
     LSCHECK(nullptr != InventoryWidget);
-    
+    InventoryWidget->Init(Cast<ALSPlayer>(GetPawn())->GetInventoryManager());
     InventoryWidget->AddToViewport();
     ChangeInputMode(false);
 }

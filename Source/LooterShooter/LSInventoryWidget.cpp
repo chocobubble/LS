@@ -10,11 +10,27 @@
 #include "Styling/SlateTypes.h"
 #include "Styling/SlateColor.h"
 #include "Math/Color.h"
+#include "LSInventoryItemButton.h"
+#include "LSInventoryComponent.h"
 
- void ULSInventoryWidget::NativeConstruct()
+void ULSInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+/*
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_MANNY(TEXT("/Game/LS/Meshes/SKM_Player.SKM_Player"));
+	if ( SKM_MANNY.Succeeded() )
+	{
+		
+	}
+*/
+    ResumeButton = Cast<UButton>(GetWidgetFromName(TEXT("btnResume")));
+    LSCHECK(nullptr != ResumeButton );
+    ResumeButton->OnClicked.AddDynamic(this, &ULSInventoryWidget::OnResumeClicked);
+}
 
+void ULSInventoryWidget::Init(ULSInventoryComponent* InventoryComponent)
+{
+    Inventory = InventoryComponent;
     for(int32 Idx = 0; Idx < 3; ++Idx) 
     {
         FString InventoryItemName = "imgGun_" + FString::FromInt(Idx);
@@ -24,6 +40,11 @@
         InventoryItemButtons.Add(Cast<UButton>(GetWidgetFromName(*InventoryItemName)));
         LSCHECK(nullptr != InventoryItemButtons[Idx]);
         InventoryItemButtons[Idx]->OnClicked.AddDynamic(this, &ULSInventoryWidget::OnInventoryItemClicked);
+
+        InventoryItemName = "btnItem_" + FString::FromInt(Idx+3);
+        LSInventoryItemButtons.Add(Cast<ULSInventoryItemButton>(GetWidgetFromName(*InventoryItemName)));
+        LSCHECK(nullptr != LSInventoryItemButtons[Idx]);
+        LSInventoryItemButtons[Idx]->Init(this, InventoryComponent->GetWeaponDefinitionInList(Idx));
     }
 
     for(int32 Idx = 0; Idx < 3; ++Idx) 
@@ -65,11 +86,6 @@
     FLinearColor LC(FColor::Yellow);
     EquippedGunButtons[2]->SetColorAndOpacity(LC);
     InventoryItemButtons[2]->SetStyle(ItemClickedButton->GetStyle());
-
-    ResumeButton = Cast<UButton>(GetWidgetFromName(TEXT("btnResume")));
-    LSCHECK(nullptr != ResumeButton );
-    ResumeButton->OnClicked.AddDynamic(this, &ULSInventoryWidget::OnResumeClicked);
-
 }
 
 void ULSInventoryWidget::OnResumeClicked()
