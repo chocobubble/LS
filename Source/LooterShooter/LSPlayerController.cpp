@@ -15,6 +15,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "LSMonster.h"
 #include "LSInventoryWidget.h"
+#include "LSRoundProgressbar.h"
+
+//test
+#include "Materials/MaterialInterface.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 
 ALSPlayerController::ALSPlayerController()
@@ -59,6 +64,27 @@ ALSPlayerController::ALSPlayerController()
     if (UI_INVENTORY_C.Succeeded())
     {
         InventoryWidgetClass = UI_INVENTORY_C.Class;
+    }
+    else
+    {
+        LSLOG_S(Error);
+    }
+
+    static ConstructorHelpers::FClassFinder<ULSRoundProgressbar> UI_ROUNDPB_C(TEXT("/Game/LS/UI/WB_RadialPB.WB_RadialPB_C"));
+    if (UI_ROUNDPB_C.Succeeded())
+    {
+        RoundPBWidgetClass = UI_ROUNDPB_C.Class;
+    }
+    else
+    {
+        LSLOG_S(Error);
+    }
+
+///// test
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> UI_MI(TEXT("/Game/LS/Materials/M_RoundProgressbar_Inst.M_RoundProgressbar_Inst"));
+    if (UI_MI.Succeeded())
+    {
+        MI = UI_MI.Class;
     }
     else
     {
@@ -116,6 +142,10 @@ void ALSPlayerController::BeginPlay()
     
     InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
     LSCHECK(nullptr != InventoryWidget);
+
+    RoundPBWidget = CreateWidget<ULSRoundProgressbar>(this, RoundPBWidgetClass);
+    LSCHECK(nullptr != RoundPBWidget);
+    RoundPBWidget->AddToViewport(0);
 
 /*
     HUDWidget->AddToViewport(1);

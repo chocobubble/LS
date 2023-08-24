@@ -17,6 +17,10 @@ class ULSGameplayWidget;
 class ULSGameplayResultWidget;
 class ALSMonster;
 class ULSInventoryWidget;
+class ULSRoundProgressbar;
+
+///tset
+class UMaterialInstance;
 /**
  * 
  */
@@ -53,6 +57,12 @@ public:
 
 	void SetIsAutoRunning(const bool bEnabled);
 
+//////////////test///////
+public:
+	UPROPERTY(VisibleAnywhere, Category = TEST)
+	UMaterialInstance* MI;
+/////////////////////////
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -78,6 +88,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<ULSInventoryWidget> InventoryWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<ULSRoundProgressbar> RoundPBWidgetClass;
+
 private:
 	UPROPERTY()
 	ULSHUDWidget* HUDWidget;
@@ -93,6 +106,9 @@ private:
 
 	UPROPERTY()
 	ULSInventoryWidget* InventoryWidget;
+
+	UPROPERTY()
+	ULSRoundProgressbar* RoundPBWidget;
 
 
 	FInputModeGameOnly GameInputMode;

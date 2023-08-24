@@ -101,6 +101,7 @@ private:
 	UTextBlock* ThirdWeaponRoundsRemaining;
 
 
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
 	TArray<UTextBlock*> RoundsRemainingTextList;
