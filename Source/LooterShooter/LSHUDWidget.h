@@ -11,11 +11,13 @@ class ALSPlayerState;
 class UProgressBar;
 class UTextBlock;
 class UVerticalBox;
+class USizeBox;
 class ULSResourceManageComponent;
 class ULSDefenseComponent;
 class ULSEquipmentComponent;
 class ALSPlayer;
 class ULSDefenseComponent;
+class ULSRoundProgressbar;
 
 /**
  * 
@@ -44,6 +46,7 @@ protected:
 	void UpdateCurrentAmmo();
 	void UpdateInteractProgress(float ElapsedRatio);
 	void ShowOrHideInteractPopup(bool Value);
+	void ShowReloadProgressbar(float ReloadTime);
 
 private:
 	TWeakObjectPtr<ULSCharacterStatComponent> CurrentCharacterStat;
@@ -67,7 +70,13 @@ private:
 	UProgressBar* InteractionProgressBar;
 
 	UPROPERTY()
+	ULSRoundProgressbar* ReloadProgressbar;
+
+	UPROPERTY()
 	UVerticalBox* InteractBox;
+
+	UPROPERTY()
+	USizeBox* ReloadBox;
 
 	UPROPERTY()
 	UTextBlock* PlayerName;

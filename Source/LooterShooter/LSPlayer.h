@@ -32,6 +32,8 @@ DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractProgressDelegate, float);
 /** 상호작용 물체와 오버랩 */
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnableToInteractDelegate, bool);
+/** 재장전 progress */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnReloadProgressDelegate, float);
 
 
 /**
@@ -95,6 +97,7 @@ public:
 	FOnAttackEndDelegate OnAttackEnd;
 	FOnInteractProgressDelegate OnInteractProgress;
 	FOnEnableToInteractDelegate OnEnableToInteract;
+	FOnReloadProgressDelegate OnReloadProgress;
 private:
 	void JumpAct(const FInputActionValue& Value);
 	void Move(const FInputActionValue& Value);

@@ -5,6 +5,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "Components/SizeBox.h"
 #include "LSCharacterStatComponent.h"
 #include "LSPlayerState.h"
 #include "LSEquipmentComponent.h"
@@ -12,6 +13,7 @@
 #include "LSDefenseComponent.h"
 #include "LSWeaponInstance.h"
 #include "LSPlayer.h"
+#include "LSRoundProgressbar.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -55,6 +57,7 @@ void ULSHUDWidget::BindPlayer(ALSPlayer* LSPlayer)
     CurrentLSPlayer = LSPlayer;
     CurrentLSPlayer->OnInteractProgress.AddUObject(this, &ULSHUDWidget::UpdateInteractProgress);
     CurrentLSPlayer->OnEnableToInteract.AddUObject(this, &ULSHUDWidget::ShowOrHideInteractPopup);
+    CurrentLSPlayer->OnReloadProgress.AddUObject(this, &ULSHUDWidget::ShowReloadProgressbar);
 }
 
 void ULSHUDWidget::NativeConstruct()
@@ -72,8 +75,14 @@ void ULSHUDWidget::NativeConstruct()
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
     LSCHECK(nullptr != InteractionProgressBar);
 
+    ReloadProgressbar = Cast<ULSRoundProgressbar>(GetWidgetFromName(TEXT("WB_RoundProgressbar")));
+    LSCHECK(nullptr != ReloadProgressbar);
+
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     LSCHECK(nullptr != InteractBox);
+
+    ReloadBox = Cast<USizeBox>(GetWidgetFromName(TEXT("boxReload")));
+    LSCHECK(nullptr != ReloadBox);
 
     PlayerLevel = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
     LSCHECK(nullptr != PlayerLevel);
@@ -249,4 +258,10 @@ void ULSHUDWidget::ShowOrHideInteractPopup(bool Value)
         LSLOG(Warning, TEXT("hide interact popup.."));
         InteractBox->SetVisibility(ESlateVisibility::Hidden);
     }
+}
+
+
+void ULSHUDWidget::ShowReloadProgressbar(float ReloadTime)
+{
+    ReloadProgressbar->StartReload(ReloadTime);
 }

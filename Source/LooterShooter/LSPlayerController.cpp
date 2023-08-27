@@ -79,17 +79,6 @@ ALSPlayerController::ALSPlayerController()
     {
         LSLOG_S(Error);
     }
-
-///// test
-    static ConstructorHelpers::FObjectFinder<UMaterialInstance> UI_MI(TEXT("/Game/LS/Materials/M_RoundProgressbar_Inst.M_RoundProgressbar_Inst"));
-    if (UI_MI.Succeeded())
-    {
-        MI = UI_MI.Class;
-    }
-    else
-    {
-        LSLOG_S(Error);
-    }
 }
 
 

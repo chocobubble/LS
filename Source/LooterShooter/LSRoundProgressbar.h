@@ -2,11 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "LooterShooter.h"
 #include "Blueprint/UserWidget.h"
 #include "LSRoundProgressbar.generated.h"
 
 class UMaterialInstanceDynamic;
+class UImage;
 
 /**
  * 
@@ -18,6 +19,7 @@ class LOOTERSHOOTER_API ULSRoundProgressbar : public UUserWidget
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
 ////////Test////////
@@ -25,7 +27,19 @@ public:
 	float RoundPBPercent;
 
 	UFUNCTION(BlueprintCallable)
-	void SetPercentPB(float Percent) { RoundPBPercent = Percent; }
+	void SetPercentPB(float Percent); // { RoundPBPercent = Percent; }
+
+	UFUNCTION()
+	void StartReload(float GunReloadTime);
+
+	UPROPERTY()
+	float ReloadTime = 0.0f;
+
+	UPROPERTY()
+	float ElapsedTime = 0.0f;
+
+	UPROPERTY()
+	UImage* RoundPBImg;
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* RoundPBInst;

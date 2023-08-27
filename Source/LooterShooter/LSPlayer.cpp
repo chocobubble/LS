@@ -547,6 +547,8 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 			LSPlayerAnim->SetReloadAnim(false);
 			LSLOG(Warning, TEXT("RELoading Completed"));
 		}), CurrentWeapon->GetReloadTime(), false);
+
+	OnReloadProgress.Broadcast(CurrentWeapon->GetReloadTime());
 }
 
 void ALSPlayer::EquipFirstWeapon(const FInputActionValue& Value)
