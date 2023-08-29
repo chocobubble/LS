@@ -420,6 +420,15 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		if (HitResult.HasValidHitObjectHandle())
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+			if(HitResult.BoneName == TEXT("head"))// || HitResult.BoneName == FName(*(TEXT("head").ToString())));
+			{
+				LSLOG(Warning, TEXT("Hit head"));
+			}
+			if(HitResult.BoneName == TEXT("root"))
+			{
+				LSLOG(Warning, TEXT("Hit root"));
+			}
+			LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
 			float FinalAttackDamage = GetFinalAttackDamage();
 			FVector PopupPosition = HitResult.ImpactPoint + (GetActorLocation() - HitResult.ImpactPoint).Normalize();
 			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(PopupPosition, FRotator::ZeroRotator);

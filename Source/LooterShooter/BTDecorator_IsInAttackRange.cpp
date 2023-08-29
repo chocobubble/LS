@@ -3,7 +3,7 @@
 
 #include "BTDecorator_IsInAttackRange.h"
 #include "LSAIController.h"
-#include "LSCharacter.h"
+#include "LSPlayer.h"
 #include "LSMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -17,7 +17,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
     bool bResult = Super::CalculateRawConditionValue(OwnerComp, NodeMemory);
 
     //auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-    //ALSCharacter* ControllingPawn = Cast<ALSCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+    //ALSPlayer* ControllingPawn = Cast<ALSPlayer>(OwnerComp.GetAIOwner()->GetPawn());
 
     //ALSMonster* ControllingPawn = Cast<ALSMonster>(OwnerComp.GetAIOwner()->GetPawn());
     APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
@@ -26,7 +26,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
         return false;
     }
 
-    ALSCharacter* Target = Cast<ALSCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
+    ALSPlayer* Target = Cast<ALSPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
     if (nullptr == Target)
     {
         return false;

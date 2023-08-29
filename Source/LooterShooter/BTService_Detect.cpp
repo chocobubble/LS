@@ -3,7 +3,7 @@
 
 #include "BTService_Detect.h"
 #include "LSAIController.h"
-#include "LSCharacter.h"
+#include "LSPlayer.h"
 #include "LSMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
@@ -40,13 +40,13 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
     {
         for (auto const& OverlapResult : OverlapResults)
         {
-            ALSCharacter* LSCharacter = Cast<ALSCharacter>(OverlapResult.GetActor());
-            if (LSCharacter && LSCharacter->GetController()->IsPlayerController())
+            ALSPlayer* LSPlayer = Cast<ALSPlayer>(OverlapResult.GetActor());
+            if (LSPlayer && LSPlayer->GetController()->IsPlayerController())
             {
-                OwnerComp.GetBlackboardComponent()->SetValueAsObject(ALSAIController::TargetKey, LSCharacter);
+                OwnerComp.GetBlackboardComponent()->SetValueAsObject(ALSAIController::TargetKey, LSPlayer);
                 DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
-                DrawDebugPoint(World, LSCharacter->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
-                DrawDebugLine(World, ControllingPawn->GetActorLocation(), LSCharacter->GetActorLocation(), FColor::Blue, false, 0.2f);
+                DrawDebugPoint(World, LSPlayer->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
+                DrawDebugLine(World, ControllingPawn->GetActorLocation(), LSPlayer->GetActorLocation(), FColor::Blue, false, 0.2f);
 
                 ALSMonster* LSMonster = Cast<ALSMonster>(ControllingPawn);
                 LSMonster->SetAttackTarget(Cast<APawn>(OverlapResult.GetActor()));

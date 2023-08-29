@@ -2,7 +2,7 @@
 
 
 #include "BTTask_TurnToTarget.h"
-#include "LSCharacter.h"
+#include "LSPlayer.h"
 #include "LSAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -15,14 +15,14 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 {
     EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    //auto LSCharacter = Cast<ALSCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+    //auto LSPlayer = Cast<ALSPlayer>(OwnerComp.GetAIOwner()->GetPawn());
     APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
     if (nullptr == ControllingPawn)
     {
         return EBTNodeResult::Failed;
     }
 
-    auto Target = Cast<ALSCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
+    auto Target = Cast<ALSPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
     if(nullptr == Target)
     {
         return EBTNodeResult::Failed;

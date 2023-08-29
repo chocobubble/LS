@@ -18,6 +18,7 @@ class ULSEquipmentComponent;
 class ALSPlayer;
 class ULSDefenseComponent;
 class ULSRoundProgressbar;
+class ULSInventoryItemSlot;
 
 /**
  * 
@@ -108,6 +109,10 @@ private:
 
 	UPROPERTY()
 	UTextBlock* ThirdWeaponRoundsRemaining;
+
+
+	UPROPERTY()
+	ULSInventoryItemSlot* ItemSlot;
 
 
 

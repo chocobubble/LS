@@ -14,6 +14,7 @@
 #include "LSWeaponInstance.h"
 #include "LSPlayer.h"
 #include "LSRoundProgressbar.h"
+#include "LSInventoryItemSlot.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -112,6 +113,10 @@ void ULSHUDWidget::NativeConstruct()
     ThirdWeaponRoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_2")));
     LSCHECK(nullptr != ThirdWeaponRoundsRemaining);
 
+    ItemSlot = Cast<ULSInventoryItemSlot>(GetWidgetFromName(TEXT("UI_InventoryItemSlot")));
+    LSCHECK(nullptr != ItemSlot);
+    ItemSlot->Init();
+
     LSLOG_S(Warning);
 
     RoundsRemainingTextList.Add(FirstWeaponRoundsRemaining);
@@ -130,14 +135,14 @@ void ULSHUDWidget::UpdateCharacterStat()
 void ULSHUDWidget::UpdateCurrentHP()
 {
     LSCHECK(CurrentDefenseManager.IsValid());
-    LSLOG_S(Warning);
+    // LSLOG_S(Warning);
     HPBar->SetPercent(CurrentDefenseManager->GetHPRatio());
 }
 
 void ULSHUDWidget::UpdateCurrentShield()
 {
     LSCHECK(CurrentDefenseManager.IsValid());
-    LSLOG_S(Warning);
+    // LSLOG_S(Warning);
     ShieldBar->SetPercent(CurrentDefenseManager->GetShieldRatio());
 }
 
