@@ -21,6 +21,19 @@ ULSGameInstance::ULSGameInstance()
     LSPistolDataTable = DT_PISTOL.Object;
     LSCHECK(LSPistolDataTable->GetRowMap().Num() > 0);
 
+    FString MIRifleDataPath = TEXT("/Game/LS/Meshes/MI_UI_Icon_ElimFeed_Rifle.MI_UI_Icon_ElimFeed_Rifle");
+    FString MIShotgunDataPath = TEXT("/Game/LS/Meshes/MI_UI_Icon_ElimFeed_Shotgun.MI_UI_Icon_ElimFeed_Shotgun");
+    FString MIPistolDataPath = TEXT("/Game/LS/Meshes/MI_UI_Icon_ElimFeed_Pistol.MI_UI_Icon_ElimFeed_Pistol");
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MI_RIFLE(*MIRifleDataPath);
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MI_SHOTGUN(*MIShotgunDataPath);
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MI_PISTOL(*MIPistolDataPath);
+    LSCHECK(MI_RIFLE.Succeeded());
+    MI_Rifle = MI_RIFLE.Object;
+    LSCHECK(MI_SHOTGUN.Succeeded());
+    MI_Shotgun = MI_SHOTGUN.Object;
+    LSCHECK(MI_PISTOL.Succeeded());
+    MI_Pistol = MI_PISTOL.Object;
+    
     // FString PlayerDataPath = TEXT("/Game/LS/GameData/PlayerBaseData.PlayerBaseData");
     // static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSPLAYER(*PlayerDataPath);
     static ConstructorHelpers::FObjectFinder<UDataTable> DT_LSPLAYER(TEXT("/Game/LS/GameData/PlayerBaseData.PlayerBaseData"));

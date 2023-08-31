@@ -253,6 +253,15 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Loot)
 	UStaticMesh* PistolAmmoMesh;
 
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Rifle;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Shotgun;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Pistol;
+
 private:
 	UPROPERTY()
 	UDataTable* LSPlayerTable;
@@ -277,4 +286,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	USkeletalMesh* PistolWeaponMesh;
+
+	
 };

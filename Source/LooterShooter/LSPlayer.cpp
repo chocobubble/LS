@@ -164,6 +164,12 @@ ALSPlayer::ALSPlayer()
 		InteractAction = IA_INTERACT.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UCurveVector> CURVE_RECOIL(TEXT("/Game/LS/AK47_RecoilCurve.AK47_RecoilCurve"));
+	if (CURVE_RECOIL.Succeeded())
+	{
+		RecoilCurve = CURVE_RECOIL.Object;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_TEST(TEXT("/Game/LS/Input/Actions/IA_TESTKEY.IA_TESTKEY"));
 	if (IA_TEST.Succeeded())
 	{
@@ -302,6 +308,9 @@ void ALSPlayer::Tick(float DeltaTime)
 			InterpolateSpeed = Acceleration / 2;
 		}
 	}
+
+	//recoil
+	RecoilTick(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -640,6 +649,7 @@ void ALSPlayer::InteractEnd(const FInputActionValue& Value)
 void ALSPlayer::TestAct(const FInputActionValue& Value)
 {
 	InventoryManager->SetDefaultWeapon();
+	RecoilStart();
 }
 
 void ALSPlayer::PostInitializeComponents()
@@ -810,4 +820,105 @@ void ALSPlayer::SetIsNearInteractableObject(bool Value)
 	// TODO: 두 개 이상의 상호작용 물체와 겹치고 있는 경우 고려하기
 	bIsNearInteractableObject = Value;
 	OnEnableToInteract.Broadcast(bIsNearInteractableObject);
+}
+
+
+void ALSPlayer::RecoilStart()
+{
+	LSCHECK(RecoilCurve);
+	//Setting all rotators to default values
+	PlayerDeltaRot = FRotator(0.0f, 0.0f, 0.0f);
+	RecoilDeltaRot = FRotator(0.0f, 0.0f, 0.0f);
+	Del = FRotator(0.0f, 0.0f, 0.0f);
+	RecoilStartRot = LSPlayerController->GetControlRotation();
+
+	bIsFiring = true;
+
+	//Timer for the recoil: I have set it to 10s but dependeding how long it takes to empty the gun mag, you can increase the time.
+			
+	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ALSPlayer::RecoilTimerFunction, 10.0f, false);
+			
+	bRecoil = true;
+	bRecoilRecovery = false;
+}
+
+  //Called when firing stops
+void ALSPlayer::RecoilStop()
+{
+	bIsFiring = false;
+	// GetWorld()->GetTimerManager().SetTimer(RecoveryTimer, this, &ALSPlayer::RecoveryTimerFunction, 1.0f, false);
+}
+
+ //This function is automatically called, no need to call this. It is inside the Tick function
+void ALSPlayer::RecoveryStart()
+{
+ 	if (LSPlayerController->GetControlRotation().Pitch > RecoilStartRot.Pitch)
+	{
+		bRecoilRecovery = true;
+		GetWorld()->GetTimerManager().SetTimer(RecoveryTimer, this, &ALSPlayer::RecoveryTimerFunction, RecoveryTime, false);
+    }
+}
+
+  //This function too is automatically called from the recovery start function.
+void ALSPlayer::RecoveryTimerFunction()
+{
+		bRecoilRecovery = false;
+
+}
+
+
+  //Automatically called in RecoilStart(), no need to call this explicitly
+void ALSPlayer::RecoilTimerFunction()
+{
+	bRecoil = false;
+	GetWorld()->GetTimerManager().PauseTimer(FireTimer);
+}
+
+  //Needs to be called on event tick to update the control rotation.
+void ALSPlayer::RecoilTick(float DeltaTime)
+	{
+		//float Recoiltime;
+		FVector RecoilVec;
+		if (bRecoil)
+		{
+
+		  //Calculation of control rotation to update 
+
+			Recoiltime = GetWorld()->GetTimerManager().GetTimerElapsed(FireTimer);
+			RecoilVec = RecoilCurve->GetVectorValue(Recoiltime);
+			Del.Roll = 0;
+			Del.Pitch = (RecoilVec.Y);
+			Del.Yaw = (RecoilVec.Z);
+			PlayerDeltaRot = LSPlayerController->GetControlRotation() - RecoilStartRot - RecoilDeltaRot;
+			LSPlayerController->SetControlRotation(RecoilStartRot + PlayerDeltaRot + Del);
+			RecoilDeltaRot = Del;
+
+		//Conditionally start resetting the recoil
+
+			if(bIsFiring)// (!bIsFiring)
+			{
+				if (Recoiltime > FireRate)
+				{
+					GetWorld()->GetTimerManager().ClearTimer(FireTimer);
+					RecoilStop();
+					bRecoil = false;
+					RecoveryStart();
+
+				}
+			}
+		}
+		else if (bRecoilRecovery)
+		{
+		  //Recoil resetting
+			FRotator tmprot = LSPlayerController->GetControlRotation();
+		if (tmprot.Pitch >= RecoilStartRot.Pitch)
+		{
+			LSPlayerController->SetControlRotation(UKismetMathLibrary::RInterpTo(GetControlRotation(), GetControlRotation() - RecoilDeltaRot, DeltaTime, 10.0f));
+			RecoilDeltaRot = RecoilDeltaRot + (GetControlRotation() - tmprot);
+		}
+		else
+		{
+			RecoveryTimer.Invalidate();
+		}
+	}
 }

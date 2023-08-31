@@ -8,6 +8,8 @@
 
 class UBorder;
 class UButton;
+class ULSWeaponDefinition;
+class UImage;
 /**
  * 
  */
@@ -20,8 +22,9 @@ public:
 	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void TurnOn();
+	UFUNCTION()
 	void Print();
-	void Init();
+	void Init(ULSWeaponDefinition* WeaponDefinition);
 
 private:
 	UPROPERTY()
@@ -29,4 +32,19 @@ private:
 
 	UPROPERTY()
 	UButton* SlotButton;
+
+	UPROPERTY()
+	UImage* GunImage;
+
+	UPROPERTY()
+	bool bIsTurnedOn = false;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Rifle;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Shotgun;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UMaterialInstance* MI_Pistol;
 };

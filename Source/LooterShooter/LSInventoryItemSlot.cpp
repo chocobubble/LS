@@ -4,14 +4,20 @@
 #include "LSInventoryItemSlot.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
+#include "LSWeaponDefinition.h"
+#include "LSGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 void ULSInventoryItemSlot::NativeConstruct()
 {
     Super::NativeConstruct();
     SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("border")));
     LSCHECK(nullptr != SlotBorder);
+    GunImage = Cast<UImage>(GetWidgetFromName(TEXT("imgGun")));
+    LSCHECK(nullptr != GunImage);
 
-    //FLinearColor YellowColor(FColor::Yellow)
+    //FLinearColor YellowColor(FColor::Yellow)`
     //SlotBorder->SetBrushColor(FColor::Yellow);
     SlotBorder->SetVisibility(ESlateVisibility::Hidden);
 
@@ -20,19 +26,43 @@ void ULSInventoryItemSlot::NativeConstruct()
     LSCHECK(nullptr != SlotButton);
     SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::TurnOn);
     SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::Print);
+
+    //later, delete
+    ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    LSCHECK(LSGameInstance != nullptr); 
+    LSCHECK(GunImage != nullptr);
+    GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
 }
 
-void ULSInventoryItemSlot::Init()
+
+void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
 {
-    LSCHECK(nullptr != SlotButton);
-    SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::TurnOn);
-    SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::Print);
+    LSCHECK(WeaponDefinition != nullptr);
+    ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if(WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
+    {
+        LSCHECK(GunImage != nullptr);
+        GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
+    }
+
+    // later delete
+    LSCHECK(GunImage != nullptr);
+    GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
 }
+
 
 void ULSInventoryItemSlot::TurnOn()
 {
     LSLOG(Warning, TEXT("Item Slot Clicked"));
-    SlotBorder->SetVisibility(ESlateVisibility::Visible);
+    if(bIsTurnedOn)
+    {
+        SlotBorder->SetVisibility(ESlateVisibility::Hidden);
+    }
+    else
+    {
+        SlotBorder->SetVisibility(ESlateVisibility::Visible);
+    }
+    bIsTurnedOn = !bIsTurnedOn;
 }
 
 void ULSInventoryItemSlot::Print()

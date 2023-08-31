@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "LSGameInstance.h"
 #include "LSResourceManageComponent.h"
+
+
+#include "Curves/CurveVector.h"// for recoil
+
 #include "LSWeaponInstance.generated.h"
 
 /** 테스트용 델리게이트 */

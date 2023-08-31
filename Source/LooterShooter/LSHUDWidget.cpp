@@ -115,7 +115,7 @@ void ULSHUDWidget::NativeConstruct()
 
     ItemSlot = Cast<ULSInventoryItemSlot>(GetWidgetFromName(TEXT("UI_InventoryItemSlot")));
     LSCHECK(nullptr != ItemSlot);
-    ItemSlot->Init();
+    // ItemSlot->Init();
 
     LSLOG_S(Warning);
 

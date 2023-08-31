@@ -5,6 +5,14 @@
 #include "LooterShooter.h"
 #include "GameFramework/Character.h"
 #include "LSResourceManageComponent.h"
+
+//////// recoil
+#include "Curves/CurveVector.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/Controller.h"
+//////// end recoil
+
 #include "LSPlayer.generated.h"
 
 class USpringArmComponent;
@@ -349,4 +357,62 @@ private:
 
 	FTimerHandle GrapplingTimerHandle = { };
 ///////////////
+
+
+///////////// recoil
+public:
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+UCurveVector* RecoilCurve;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+bool bIsFiring=false;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+float FireRate=0.1f;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+float Recoiltime;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+bool bRecoil;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+bool bRecoilRecovery;
+
+UPROPERTY()
+FTimerHandle FireTimer;
+
+UPROPERTY()
+FTimerHandle RecoveryTimer;
+
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+FRotator RecoilStartRot;
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+  FRotator RecoilDeltaRot;
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+  FRotator PlayerDeltaRot;
+UPROPERTY(VisibleAnywhere, Category = "Recoil")
+ FRotator Del;
+
+UPROPERTY(BlueprintReadWrite)
+float RecoveryTime = 1.0f;
+UPROPERTY(BlueprintReadWrite)
+float RecoverySpeed =10.0f;
+ UFUNCTION(BlueprintCallable)
+  void RecoilStart();
+ UFUNCTION(BlueprintCallable)
+  void RecoilStop();
+ UFUNCTION()
+  void RecoveryStart();
+ UFUNCTION()
+  void RecoveryTimerFunction();
+ UFUNCTION()
+  void RecoilTimerFunction();
+UFUNCTION(BlueprintCallable)
+void RecoilTick(float DeltaTime);
+/*
+ UPROPERTY(BlueprintReadWrite,Replicated)
+  ACPP_MainGameWeapon* CPPWeaponRef;
+*/
+///////////// end recoil
 };
