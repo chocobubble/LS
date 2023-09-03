@@ -20,14 +20,13 @@ class LOOTERSHOOTER_API ALSPlayerState : public APlayerState
 public:
 	ALSPlayerState();
 
-	int32 GetGameScore() const;
 	int32 GetCharacterLevel() const;
-	int32 GetGameHighScore() const;
 	FString SaveSlotName;
 
+	int32 GetCurrentExp() const;
+	int32 GetNextExp() const;
 	float GetExpRatio() const;
 	bool AddExp(int32 IncomeExp);
-	void AddGameScore();
 
 	void InitPlayerData();
 	void SavePlayerData();
@@ -42,10 +41,7 @@ protected:
 	int32 CharacterLevel;
 
 	UPROPERTY(Transient)
-	int32 Exp;
-
-	UPROPERTY(Transient)
-	int32 GameHighScore;
+	int32 CurrentExp;
 
 private:
 	void SetCharacterLevel(int32 NewCharacterLevel);

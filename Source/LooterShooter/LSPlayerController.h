@@ -40,11 +40,7 @@ public:
 
 	ULSHUDWidget* GetHUDWidget() const;
 
-	void NPCKill(ALSMonster* KilledNPC) const;
-
-	void AddGameScore() const;
-
-	
+	void MonsterKill(ALSMonster* KilledMonster) const;	
 	void OnGamePause(const FInputActionValue& Value);
 	void OnInventoryOpen(const FInputActionValue& Value);
 
@@ -68,7 +64,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<ULSHUDWidget> HUDWidgetClass;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputMappingContext* InputMapping;

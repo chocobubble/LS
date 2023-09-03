@@ -2,8 +2,8 @@
 
 
 #include "LSAutoLootItem.h"
-#include "LSCharacter.h"
-#include "LSCharacterStatComponent.h"
+#include "LSPlayer.h"
+#include "LSPlayerStatComponent.h"
 
 ALSAutoLootItem::ALSAutoLootItem()
 {	
@@ -13,6 +13,8 @@ ALSAutoLootItem::ALSAutoLootItem()
 void ALSAutoLootItem::SetAutoLootItem(ELootItemType LootedItemType, int32 Amount)
 {
 	LootingAmount = Amount;
+	LootItemType = LootedItemType;
+	/*
 	switch(LootedItemType)
 	{
 		case ELootItemType::GOLD:
@@ -46,6 +48,7 @@ void ALSAutoLootItem::SetAutoLootItem(ELootItemType LootedItemType, int32 Amount
 			break;
 		}
 	}
+	*/
 }
 
 
@@ -54,32 +57,32 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 {
 	LSLOG_S(Warning);
 
-	ALSCharacter* LSCharacter = Cast<ALSCharacter>(OtherActor);
-	LSCHECK(nullptr != LSCharacter);
+	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
+	LSCHECK(nullptr != LSPlayer);
 
-	if (nullptr != LSCharacter)// && nullptr != WeaponItemClass)
+	if (nullptr != LSPlayer)// && nullptr != WeaponItemClass)
 	{
 		LSLOG(Warning, TEXT("OnCharacterOverlap"));
 		switch(LootItemType)
 	{
 		case ELootItemType::GOLD:
 		{
-			LSCharacter->ResourceManager->SetGoldAmount(LootingAmount);
+			LSPlayer->ResourceManager->SetGoldAmount(LootingAmount);
 			break;
 		}
 		case ELootItemType::HP:
 		{
-			LSCharacter->CharacterStat->SetHP(LSCharacter->CharacterStat->GetCurrentHP() + LootingAmount);
+			LSPlayer->CharacterStat->SetHP(LSPlayer->CharacterStat->GetCurrentHP() + LootingAmount);
 			break;
 		}
 		case ELootItemType::MP:
 		{
-			//LSCharacter->ResourceManager->SetHP(LSCharacter->CharacterStat->GetCurrentMP() + LootingAmount);
+			//LSPlayer->ResourceManager->SetHP(LSPlayer->CharacterStat->GetCurrentMP() + LootingAmount);
 			break;
 		}
 		case ELootItemType::RIFLEAMMO:
 		{
-			LSCharacter->ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, LootingAmount);
+			LSPlayer->ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, LootingAmount);
 			break;
 		}
 		case ELootItemType::SHOTGUNAMMO:
@@ -99,6 +102,6 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 	}
 	else
 	{
-		LSLOG(Warning, TEXT("LSCharacter is nullptr when CharacterOverlap"));
+		LSLOG(Warning, TEXT("LSPlayer is nullptr when CharacterOverlap"));
 	}
 }

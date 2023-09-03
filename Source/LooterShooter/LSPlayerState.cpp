@@ -9,18 +9,8 @@
 ALSPlayerState::ALSPlayerState()
 {
     CharacterLevel = 1;
-    GameScore = 0;
-    Exp = 0;
-    GameHighScore = 0;
-    SaveSlotName = TEXT("Player1");
-/*
-    CharacterIndex = 0;
-*/
-}
-
-int32 ALSPlayerState::GetGameScore() const
-{
-    return GameScore;
+    CurrentExp = 0;
+    SaveSlotName = TEXT("Player");
 }
 
 int32 ALSPlayerState::GetCharacterLevel() const
@@ -40,14 +30,9 @@ void ALSPlayerState::InitPlayerData()
     }
     SetPlayerName(LSSaveGame->PlayerName);
     SetCharacterLevel(LSSaveGame->Level);
-    GameScore = 0;
-    GameHighScore = LSSaveGame->HighScore;
-    Exp = LSSaveGame->Exp;
-/*
-    CharacterIndex = LSSaveGame->CharacterIndex;
-*/
-    SavePlayerData();
+    CurrentExp = LSSaveGame->Exp;
 
+    SavePlayerData();
 }
 
 void ALSPlayerState::SavePlayerData()
@@ -55,28 +40,36 @@ void ALSPlayerState::SavePlayerData()
     ULSSaveGame* NewPlayerData = NewObject<ULSSaveGame>();
     NewPlayerData->PlayerName = GetPlayerName();
     NewPlayerData->Level = CharacterLevel;
-    NewPlayerData->Exp = Exp;
-    NewPlayerData->HighScore = GameHighScore;
-    // NewPlayerData->CharacterIndex = CharacterIndex;
+    NewPlayerData->Exp = CurrentExp;
 
     if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
     {
-        LSLOG(Error, TEXT("SaveGame Error!"));
+        LSLOG_S(Error);
     }
+}
+
+
+int32 ALSPlayerState::GetCurrentExp() const
+{
+    return CurrentExp;
+}
+int32 ALSPlayerState::GetNextExp() const
+{
+    LSCHECK(CurrentStatData != nullptr, -1);
+    return CurrentStatData->NextExp;
 }
 
 float ALSPlayerState::GetExpRatio() const
 {
     LSCHECK(nullptr != CurrentStatData, 0.0f);
-    //LSCHECK(nullptr != CurrentStatData->NextExp, 0,0f);
 
     if (CurrentStatData->NextExp <= KINDA_SMALL_NUMBER)
     {
         return 0.0f;
     }
 
-    float Result = (float) Exp / (float)CurrentStatData->NextExp;
-    LSLOG(Warning, TEXT("Ratio : %f, Current : %d, Next : %d"), Result, Exp, CurrentStatData->NextExp);
+    float Result = (float) CurrentExp / (float)CurrentStatData->NextExp;
+    LSLOG(Warning, TEXT("Ratio : %f, Current : %d, Next : %d"), Result, CurrentExp, CurrentStatData->NextExp);
     return Result;
 }
 
@@ -86,10 +79,10 @@ bool ALSPlayerState::AddExp(int32 IncomeExp)
         return false;
 
     bool DidLevelUp = false;
-    Exp = Exp + IncomeExp;
-    if (Exp >= CurrentStatData->NextExp)
+    CurrentExp = CurrentExp + IncomeExp;
+    if (CurrentExp >= CurrentStatData->NextExp)
     {
-        Exp -= CurrentStatData->NextExp;
+        CurrentExp -= CurrentStatData->NextExp;
         SetCharacterLevel(CharacterLevel + 1);
         DidLevelUp = true;
     }
@@ -117,20 +110,4 @@ void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)
         LSLOG(Warning, TEXT("CurrentStatData->Level : %d"), CurrentStatData->Level);
     }
     CharacterLevel = NewCharacterLevel;
-}
-
-void ALSPlayerState::AddGameScore()
-{
-    GameScore++;
-    if (GameScore >= GameHighScore)
-    {
-        GameHighScore = GameScore;
-    }
-    OnPlayerStateChanged.Broadcast();
-    SavePlayerData();
-}
-
-int32 ALSPlayerState::GetGameHighScore() const
-{
-    return GameHighScore;
 }

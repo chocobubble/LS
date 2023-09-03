@@ -76,9 +76,6 @@ void ULSHUDWidget::NativeConstruct()
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
     LSCHECK(nullptr != InteractionProgressBar);
 
-    ReloadProgressbar = Cast<ULSRoundProgressbar>(GetWidgetFromName(TEXT("WB_RoundProgressbar")));
-    LSCHECK(nullptr != ReloadProgressbar);
-
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     LSCHECK(nullptr != InteractBox);
 
@@ -88,12 +85,11 @@ void ULSHUDWidget::NativeConstruct()
     PlayerLevel = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
     LSCHECK(nullptr != PlayerLevel);
 
-    CurrentScore = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentScore")));
-    LSCHECK(nullptr != CurrentScore);
+    CurrentExp = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentExp")));
+    LSCHECK(nullptr != CurrentExp);
 
-    HighScore = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtHighScore")));
-    LSCHECK(nullptr != HighScore);
-
+    NextExp = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtNextExp")));
+    LSCHECK(nullptr != NextExp);
 
     FirstWeaponCurrentAmmo = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo")));
     LSCHECK(nullptr != FirstWeaponCurrentAmmo);
@@ -113,8 +109,7 @@ void ULSHUDWidget::NativeConstruct()
     ThirdWeaponRoundsRemaining = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_2")));
     LSCHECK(nullptr != ThirdWeaponRoundsRemaining);
 
-    ItemSlot = Cast<ULSInventoryItemSlot>(GetWidgetFromName(TEXT("UI_InventoryItemSlot")));
-    LSCHECK(nullptr != ItemSlot);
+    
     // ItemSlot->Init();
 
     LSLOG_S(Warning);
@@ -122,6 +117,12 @@ void ULSHUDWidget::NativeConstruct()
     RoundsRemainingTextList.Add(FirstWeaponRoundsRemaining);
     RoundsRemainingTextList.Add(SecondWeaponRoundsRemaining);
     RoundsRemainingTextList.Add(ThirdWeaponRoundsRemaining);
+
+    ReloadProgressbar = Cast<ULSRoundProgressbar>(GetWidgetFromName(TEXT("WB_RoundProgressbar")));
+    LSCHECK(nullptr != ReloadProgressbar);
+
+    ItemSlot = Cast<ULSInventoryItemSlot>(GetWidgetFromName(TEXT("UI_InventoryItemSlot")));
+    LSCHECK(nullptr != ItemSlot);
 }
 
 //Error: ULSHUDWidget::UpdateCharacterStat(45) ASSERTION : 'CurrentCharacterStat.IsValid()'
@@ -166,9 +167,9 @@ void ULSHUDWidget::UpdatePlayerState()
     }
 */
     PlayerLevel->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetCharacterLevel())));
-    CurrentScore->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetGameScore())));
+    CurrentExp->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetCurrentExp())));
     
-    HighScore->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetGameHighScore())));
+    NextExp->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetNextExp())));
 }
 
 /*

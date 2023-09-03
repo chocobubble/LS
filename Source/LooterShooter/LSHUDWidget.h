@@ -86,10 +86,10 @@ private:
 	UTextBlock* PlayerLevel;
 
 	UPROPERTY()
-	UTextBlock* CurrentScore;
+	UTextBlock* CurrentExp;
 
 	UPROPERTY()
-	UTextBlock* HighScore;
+	UTextBlock* NextExp;
 
 
 	UPROPERTY()

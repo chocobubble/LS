@@ -236,8 +236,10 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 	{
 		SetActorHiddenInGame(false);
 		SetCanBeDamaged(true);
+		/*
 		CharacterStat->OnHPIsZero.AddLambda([this]() -> void { 
 			SetCharacterState(ECharacterState::DEAD); });
+		*/
 		GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 		EnableInput(LSPlayerController);
 		break;
@@ -378,6 +380,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		LSLOG(Warning, TEXT("CANNOT Shoot"));
 		return;
 	}
+	LSLOG(Warning, TEXT("Shoot"));
 
 	float FinalAttackRange = GetFinalAttackRange();
 	FHitResult HitResult;
@@ -407,6 +410,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		CurrentWeapon->GetCurrentSpreadAngle());
 	ShowDebugLine(TempVector);
 	
+	LSLOG(Warning, TEXT("DecreaseRounmdsRemaining"));
 	EquipmentManager->DecreaseRoundsRemaining();
 	// 반동에 따른 조준점 이동
 	// GetController()->SetControlRotation(TempVector.Rotation());
@@ -423,6 +427,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	}
 	/////////////////////////
 
+	LSLOG(Warning, TEXT("if hit result"));
 	// 사격 히트
 	if (bResult)
 	{
@@ -475,6 +480,7 @@ void ALSPlayer::OnAiming(const FInputActionValue& Value)
 {
 	LSCHECK(nullptr != SpringArm);
 	ArmLengthTo = ArmLengthOnAiming;
+	LSCHECK(LSPlayerAnim != nullptr);
 	LSPlayerAnim->SetAimAnim(true);
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedOnAiming; //240.f;
 }
@@ -483,6 +489,7 @@ void ALSPlayer::EndAiming(const FInputActionValue& Value)
 {
 	LSCHECK(nullptr != SpringArm);
 	ArmLengthTo = ArmLengthOnIdle;
+	LSCHECK(LSPlayerAnim != nullptr);
 	LSPlayerAnim->SetAimAnim(false);
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed; //510.f;
 }
@@ -551,6 +558,7 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 	LSPlayerAnim->SetReloadAnim(true);
 	// TODO: 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+			LSCHECK(CurrentWeapon != nullptr);
 			bIsReloading = false;
 			EAmmoType CurrentAmmoType = CurrentWeapon->GetAmmoType();
 			int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(CurrentAmmoType);

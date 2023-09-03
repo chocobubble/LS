@@ -9,6 +9,7 @@
 
 class ALSPlayerController;
 class ALSGameState;
+class ALSPlayerState;
 /**
  * 
  */
@@ -21,12 +22,15 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	void AddScore(ALSPlayerController* ScoredPlayer);
-	int32 GetScore() const;
+	int32 GetPlayerLevel() const;
+	//void AddScore(ALSPlayerController* ScoredPlayer);
+	//int32 GetScore() const;
 private:
 	UPROPERTY()
 	ALSGameState* LSGameState;
 
 	UPROPERTY()
-	int32 ScoreToClear;
+	ALSPlayerState* LSPlayerState;
+//	UPROPERTY()
+//	int32 ScoreToClear;
 };

@@ -90,7 +90,7 @@ void ALSMonster::BeginPlay()
 
 void ALSMonster::SetCharacterState(ECharacterState NewState)
 {
-	LSCHECK(CurrentState != NewState);
+	// LSCHECK(CurrentState != NewState);
 	CurrentState = NewState;
 
 	switch (CurrentState)
@@ -100,10 +100,11 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 
 		auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 		LSCHECK(nullptr != LSGameMode);
-		int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
-		int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
-		LSLOG(Warning, TEXT("New NPC Level : %d"), FinalLevel);
-		CharacterStat->SetNewLevel(FinalLevel);
+		//int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
+		//int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
+		int32 CurrentPlayerLevel = LSGameMode->GetPlayerLevel();
+		LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
+		CharacterStat->SetNewLevel(CurrentPlayerLevel);
 
 		SetActorHiddenInGame(true);
 		HPBarWidget->SetHiddenInGame(true);
@@ -194,7 +195,7 @@ float ALSMonster::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent
 			LSLOG_S(Warning);
 			ALSPlayerController* LSPC = Cast<ALSPlayerController>(EventInstigator);
 			LSCHECK(nullptr != LSPC, 0.0f);
-			LSPC->NPCKill(this);
+			LSPC->MonsterKill(this);
 		}
 	}
 	return FinalDamage;

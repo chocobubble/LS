@@ -129,7 +129,7 @@ void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 
 	auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 	LSCHECK(nullptr != LSGameMode);
-	LSGameMode->AddScore(LSPlayerController);
+	//LSGameMode->AddScore(LSPlayerController);
 
 	//SetState(ESectionState::COMPLETE);
 }

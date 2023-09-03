@@ -140,8 +140,6 @@ void ALSPlayerController::BeginPlay()
     HUDWidget->AddToViewport(1);
 */
     LSPlayerState = Cast<ALSPlayerState>(PlayerState);
-    // ALSPlayerState*  LSPlayerState = Cast<ALSPlayerState>(PlayerState);
-    //auto LSPlayerState = Cast<ALSPlayerState>(PlayerState);
     LSCHECK(nullptr != LSPlayerState);
     HUDWidget->BindPlayerState(LSPlayerState);
     LSPlayerState->OnPlayerStateChanged.Broadcast();  
@@ -167,14 +165,9 @@ ULSHUDWidget* ALSPlayerController::GetHUDWidget() const
     return HUDWidget;
 }
 
-void ALSPlayerController::NPCKill(ALSMonster* KilledNPC) const
+void ALSPlayerController::MonsterKill(ALSMonster* KilledMonster) const
 {
-    LSPlayerState->AddExp(KilledNPC->GetExp());
-}
-
-void ALSPlayerController::AddGameScore() const
-{
-    LSPlayerState->AddGameScore();
+    LSPlayerState->AddExp(KilledMonster->GetExp());
 }
 
 void ALSPlayerController::SetupInputComponent()

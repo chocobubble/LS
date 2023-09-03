@@ -17,7 +17,7 @@ ALSGameMode::ALSGameMode()
     PlayerStateClass = ALSPlayerState::StaticClass();
     GameStateClass = ALSGameState::StaticClass();
 
-    ScoreToClear = 2;
+    // ScoreToClear = 2;
 } 
 
 void ALSGameMode::PostLogin(APlayerController * NewPlayer)
@@ -26,7 +26,7 @@ void ALSGameMode::PostLogin(APlayerController * NewPlayer)
     Super::PostLogin(NewPlayer);
     LSLOG(Warning, TEXT("PostLogin End"));
 
-    ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(NewPlayer->PlayerState);
+    LSPlayerState = Cast<ALSPlayerState>(NewPlayer->PlayerState);
     LSCHECK(nullptr != LSPlayerState);
     
     LSPlayerState->InitPlayerData();
@@ -38,6 +38,12 @@ void ALSGameMode::PostInitializeComponents()
     LSGameState = Cast<ALSGameState>(GameState);
 }
 
+int32 ALSGameMode::GetPlayerLevel() const
+{
+    return LSPlayerState->GetCharacterLevel();
+}
+
+/*
 void ALSGameMode::AddScore(ALSPlayerController* ScoredPlayer)
 {
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
@@ -77,3 +83,4 @@ int32 ALSGameMode::GetScore() const
 {
     return LSGameState->GetTotalGameScore();
 }
+*/

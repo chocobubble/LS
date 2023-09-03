@@ -81,16 +81,19 @@ void ULSEquipmentComponent::SetRoundsRemaining(int32 NewRoundsRemaining)
 	LSCHECK(CurrentWeaponInstance != nullptr);
 	CurrentWeaponInstance->SetRoundsRemaining(NewRoundsRemaining);
 	OnRoundsRemainingChanged.Broadcast(CurrentWeaponIndex);
+	LSLOG_S(Warning);
 }
 
 int32 ULSEquipmentComponent::GetRoundsRemaining() const
 {
+	LSLOG_S(Warning);
 	LSCHECK(CurrentWeaponInstance != nullptr, -1);
 	return CurrentWeaponInstance->GetRoundsRemaining();
 }
 
 void ULSEquipmentComponent::DecreaseRoundsRemaining()
 {
+	LSLOG_S(Warning);
 	// 탄약을 1보다 많이 소모하는 속성 넣는 경우 여기 수정하기
 	int32 NewRoundsRemaining = CurrentWeaponInstance->GetRoundsRemaining() - 1;
 	SetRoundsRemaining(NewRoundsRemaining);
