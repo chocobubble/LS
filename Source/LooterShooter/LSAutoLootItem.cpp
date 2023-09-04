@@ -3,7 +3,8 @@
 
 #include "LSAutoLootItem.h"
 #include "LSPlayer.h"
-#include "LSPlayerStatComponent.h"
+#include "LSCharacterStatComponent.h"
+#include "LSDefenseComponent.h"
 
 ALSAutoLootItem::ALSAutoLootItem()
 {	
@@ -67,12 +68,12 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 	{
 		case ELootItemType::GOLD:
 		{
-			LSPlayer->ResourceManager->SetGoldAmount(LootingAmount);
+			LSPlayer->GetResourceManager()->SetGoldAmount(LootingAmount);
 			break;
 		}
 		case ELootItemType::HP:
 		{
-			LSPlayer->CharacterStat->SetHP(LSPlayer->CharacterStat->GetCurrentHP() + LootingAmount);
+			LSPlayer->GetDefenseManager()->SetHP(LSPlayer->GetDefenseManager()->GetCurrentHP() + LootingAmount);
 			break;
 		}
 		case ELootItemType::MP:
@@ -82,7 +83,11 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 		}
 		case ELootItemType::RIFLEAMMO:
 		{
-			LSPlayer->ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, LootingAmount);
+			ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
+			int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE);
+			int32 MaxAmmo = ResourceManager->GetMaxAmmo(EAmmoType::RIFLE);
+			int32 FinalAmmo = (CurrentAmmo + LootingAmount) > MaxAmmo ? MaxAmmo : (CurrentAmmo + LootingAmount);
+			ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, FinalAmmo);
 			break;
 		}
 		case ELootItemType::SHOTGUNAMMO:

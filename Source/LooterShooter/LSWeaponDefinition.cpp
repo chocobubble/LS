@@ -34,6 +34,45 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 	WeaponAbilityComponent->EnhanceWeaponStat(this);
 }
 
+void ULSWeaponDefinition::SetWeaponDefaultStats()
+{
+	MagazineCapacity = WeaponBaseData->MagazineCapacity;
+	FireRate = WeaponBaseData->FireRate;
+	MovementSpeed = WeaponBaseData->MovementSpeed;
+	BulletDamage = WeaponBaseData->BulletDamage;
+	CriticalHitChance = WeaponBaseData->CriticalHitChance;
+	CriticalHitMultiplier = WeaponBaseData->CriticalHitMultiplier;
+	DamageReduceDistance = WeaponBaseData->DamageReduceDistance;
+	ReloadTime = WeaponBaseData->ReloadTime;
+	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
+	MaxRange = WeaponBaseData->MaxRange;
+	Enhancement = 0;
+}
+
+void ULSWeaponDefinition::TryEnhanceWeapon()
+{
+	float Rnd = FMath::FRandRange(0.f, 1.f);
+	if (Rnd <= 0.5f)
+	{
+		LSLOG(Warning, TEXT("Enhance failed"));
+		SetWeaponDefaultStats();
+	}
+	else
+	{
+		LSLOG(Warning, TEXT("Enhance succecced"));
+		EnhanceWeapon();
+	}
+}
+
+void ULSWeaponDefinition::EnhanceWeapon()
+{
+	Enhancement += 1;
+	MagazineCapacity = MagazineCapacity * 1.1f;
+	BulletDamage = BulletDamage * 1.1f;
+	CriticalHitChance = CriticalHitChance * 1.1f;
+	CriticalHitMultiplier = CriticalHitMultiplier * 1.1f;
+}
+
 void ULSWeaponDefinition::SetWeaponDefinitionStats()
 {
 	MagazineCapacity = WeaponBaseData->MagazineCapacity + FMath::FRandRange(-10.f, 10.f);

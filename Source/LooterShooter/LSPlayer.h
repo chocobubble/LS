@@ -93,6 +93,10 @@ public:
 	{
 		return InventoryManager;
 	}
+	ULSDefenseComponent* GetDefenseManager() const
+	{
+		return DefenseManager;
+	}
 
 	void SetShootInputInterval(float InputInterval);
 	void SetIsNearInteractableObject(bool Value);

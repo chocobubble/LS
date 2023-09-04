@@ -242,6 +242,19 @@ void ALSMonster::OnAssetLoadCompleted()
 void ALSMonster::DropItem()
 {
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
+	if (RandomNumber < 0.3f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
+	}
+	else if (RandomNumber < 0.6f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::HP, 100);
+	}
+	else if (RandomNumber < 1.f)
+	{
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::RIFLEAMMO, 100);
+	}
+	/*
 	if (RandomNumber < 0.1f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
@@ -266,6 +279,7 @@ void ALSMonster::DropItem()
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::PISTOLAMMO, 100);
 	}
+	*/
 }
 
 void ALSMonster::SetCharacterStateDead()

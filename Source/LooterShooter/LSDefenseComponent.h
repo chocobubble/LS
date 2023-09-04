@@ -32,6 +32,7 @@ public:
 	void SetShield(float NewShield);
 	float GetHPRatio() const;
 	float GetShieldRatio() const;
+	float GetCurrentHP() const;
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;

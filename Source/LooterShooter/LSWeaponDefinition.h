@@ -34,6 +34,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	int32 WeaponItemLevel;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	int32 Enhancement = 0;
 
 	/** 
 	 * 총의 발사 속도
@@ -98,6 +101,9 @@ public:
 	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 ItemLevel);
 	/** 랜덤성을 부여하기 위해 랜덤으로 스탯 수치 수정 */
 	void SetWeaponDefinitionStats();
+	void TryEnhanceWeapon();
+	void SetWeaponDefaultStats();
+	void EnhanceWeapon();
 	
 	EWeaponType GetWeaponType() const
 	{

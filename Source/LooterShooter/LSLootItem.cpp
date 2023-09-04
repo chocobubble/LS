@@ -36,7 +36,7 @@ ALSLootItem::ALSLootItem()
 
 	//LootItem->SetRelativeLocation(FVector(0.0f, -3.5f, -30.0f));
 	ItemMesh->SetCollisionProfileName(TEXT("NoCollision"));
-
+/*
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> P_ITEMDROP(TEXT("/Game/LS/Particle/P_Default.P_Default"));
 	if (P_ITEMDROP.Succeeded())
 	{
@@ -47,6 +47,7 @@ ALSLootItem::ALSLootItem()
 	{
 		LSLOG_S(Warning);
 	}
+*/
 }
 
 // Called when the game starts or when spawned

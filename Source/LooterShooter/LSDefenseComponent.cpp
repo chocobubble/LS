@@ -23,6 +23,10 @@ void ULSDefenseComponent::BeginPlay()
 void ULSDefenseComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
+	if(CurrentHP > MaxHP)
+	{
+		CurrentHP = MaxHP;
+	}
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
@@ -49,6 +53,11 @@ float ULSDefenseComponent::GetHPRatio() const
 float ULSDefenseComponent::GetShieldRatio() const
 {
 	return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+}
+
+float ULSDefenseComponent::GetCurrentHP() const
+{
+	return CurrentHP;
 }
 
 void ULSDefenseComponent::SetDamage(float NewDamage)

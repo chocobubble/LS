@@ -393,41 +393,9 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		Params
 	);
 
-#if ENABLE_DRAW_DEBUG
-	DrawDebugLine(
-		GetWorld(),
-		SpringArm->GetComponentLocation(),
-		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)), //AttackRange,
-		bResult ? FColor::Green : FColor::White,
-		true,
-		1.0f,
-		0,
-		1.f);
-#endif
 
-	FVector TempVector = CurrentWeapon->CalculateRecoil(
-		FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X),
-		CurrentWeapon->GetCurrentSpreadAngle());
-	ShowDebugLine(TempVector);
-	
-	LSLOG(Warning, TEXT("DecreaseRounmdsRemaining"));
 	EquipmentManager->DecreaseRoundsRemaining();
-	// 반동에 따른 조준점 이동
-	// GetController()->SetControlRotation(TempVector.Rotation());
-	////////////Test/////////
-	if(CurrentWeapon->GetGunType() == EWeaponType::SHOTGUN)
-	{
-		CurrentRemainElapsedTime = RemainElapsedTime;
-		CurrentRecoilTest = RecoilTest;
-		InterpolateSpeed = Acceleration;
-	}
-	else
-	{
-		GetController()->SetControlRotation(TempVector.Rotation());
-	}
-	/////////////////////////
-
-	LSLOG(Warning, TEXT("if hit result"));
+	
 	// 사격 히트
 	if (bResult)
 	{
