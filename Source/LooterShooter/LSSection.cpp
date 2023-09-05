@@ -17,7 +17,7 @@ ALSSection::ALSSection()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
 
-	FString AssetPath = TEXT("/Game/LS/Meshes/item.item");
+	FString AssetPath = TEXT("/Game/LS/Meshes/SM_floor.SM_floor");
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ITEM(*AssetPath);
 	if (ITEM.Succeeded())
 	{
@@ -63,7 +63,8 @@ void ALSSection::SetState(ESectionState NewState)
 		case ESectionState::BATTLE :
 		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
-
+			BattleStart();
+/*
 			GetWorld()->GetTimerManager().SetTimer(SpawnNPCTimerHandle,
 				FTimerDelegate::CreateUObject(this, &ALSSection::OnNPCSpawn),
 				EnemySpawnTime, true);
@@ -72,17 +73,16 @@ void ALSSection::SetState(ESectionState NewState)
 				FTimerDelegate::CreateLambda([this]() -> void {
 					FVector2D RandXY = FMath::RandPointInCircle(600.0f);
 					GetWorld()->SpawnActor<ALSItemBox>(GetActorLocation() +
-						FVector(RandXY, 30.0f), FRotator::ZeroRotator);
-
-					
+						FVector(RandXY, 30.0f), FRotator::ZeroRotator);		
 				}), ItemBoxSpawnTime, false);
 
-
+*/
 			break;
 		}
 		case ESectionState::COMPLETE :
 		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
+			SectionClear();
 			break;
 		}
 	}
@@ -104,20 +104,23 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent * OverlappedComponent
 		LSLOG(Warning, TEXT("Set Battle State"));
 	}
 }
-
+/*
 void ALSSection::OnNPCSpawn()
 {
 /*
 	GetWorld()->SpawnActor<ALSMonster>(GetActorLocation() + FVector::UpVector * 80.0f,
 										 FRotator::ZeroRotator);
 */
+/*
 	GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
 	auto KeyNPC = GetWorld()->SpawnActor<ALSMonster>(GetActorLocation() + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
 	if (nullptr != KeyNPC)
 	{
 		KeyNPC->OnDestroyed.AddDynamic(this, &ALSSection::OnKeyNPCDestroyed);
 	}
+
 }
+*/
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
@@ -141,4 +144,8 @@ void ALSSection::Tick(float DeltaTime)
 
 }
 */
+
+void ALSSection::BattleStart() {}
+void ALSSection::SectionClear() {}
+
 

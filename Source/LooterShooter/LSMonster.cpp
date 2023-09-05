@@ -148,6 +148,7 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 
 		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
 			DropItem();
+			MonsterWeapon->Destroy();
 			Destroy(); }),
 			DeadTimer, false);
 	}
