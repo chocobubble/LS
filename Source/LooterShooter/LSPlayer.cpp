@@ -382,6 +382,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	}
 	LSLOG(Warning, TEXT("Shoot"));
 
+	RecoilStart();
 	float FinalAttackRange = GetFinalAttackRange();
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);

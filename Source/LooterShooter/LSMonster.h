@@ -44,7 +44,7 @@ public:
 	void OnAssetLoadCompleted();
 	void ShowDebugLine(FVector Dir); // 디버깅 용도
 	/** 무기 장착 */
-	void SetWeapon(ALSWeapon* NewWeapon);
+	void SetWeapon();
 
 // Attack
 	/** Behavior Tree Blackboard의 AttackTarget을 TargetPawn으로 설정 */
@@ -98,7 +98,10 @@ public:
 	ULSCharacterStatComponent* CharacterStat;
 
 	UPROPERTY(VisibleAnywhere, Category=Weapon)
-	ALSWeapon* CurrentWeapon;
+	ALSWeapon* MonsterWeapon;
+
+	UPROPERTY(EditInstanceOnly, Category = Weapon)
+	TSubclassOf<ALSWeapon> LSWeaponInstanceClass;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Attack)
@@ -109,7 +112,7 @@ private:
 	float BulletSpreadAngle = 5.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = Attack)
-	float AttackRange = 600.0f;
+	float AttackRange = 3000.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = Attack)
 	float AttackDamage = 100.0f;

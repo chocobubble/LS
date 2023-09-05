@@ -44,12 +44,14 @@ ALSMonster::ALSMonster()
 		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/MonsterAnimBP.MonsterAnimBP_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
 	if (MONSTER_ANIM.Succeeded())
 	{
 		LSCHECK(MONSTER_ANIM.Class != nullptr);
 		GetMesh()->SetAnimInstanceClass(MONSTER_ANIM.Class);
 	}
+
+	LSWeaponInstanceClass = ALSWeapon::StaticClass();
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 	
@@ -78,13 +80,18 @@ void ALSMonster::BeginPlay()
 	LSAIController = Cast<ALSAIController>(GetController());
 	LSCHECK(nullptr != LSAIController);
 
-	CharacterAssetToLoad.SetPath(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn'"));
+	CharacterAssetToLoad.SetPath(TEXT("/Game/LS/Meshes/SKM_Player2.SKM_Player2"));
 	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
 	LSCHECK(nullptr != LSGameInstance);
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSMonster::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
 
-	
+	// 나중에 async로 바꾸기
+	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator); 
+    //MonsterWeapon->SetBaseWeaponDefinition(this);
+	//MonsterWeapon->Init();
+	SetWeapon();
+
 	DefenseManager->OnHPIsZero.AddUObject(this, &ALSMonster::SetCharacterStateDead);
 }
 
@@ -201,33 +208,15 @@ float ALSMonster::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent
 	return FinalDamage;
 }
 
-void ALSMonster::SetWeapon(ALSWeapon *NewWeapon)
+void ALSMonster::SetWeapon()
 {
 	FName WeaponSocket(TEXT("weapon_r_socket"));
-	if (nullptr == RootComponent)
-	{
-		LSLOG(Warning, TEXT("No RootComponent"));
-	}
-	if (nullptr == GetMesh())
-	{
-		LSLOG(Warning, TEXT("no mesh"));
-		return;
-	}
-	if (nullptr != NewWeapon)
-	{
-		LSLOG(Warning, TEXT("Attach to socket"));
-		NewWeapon->SetActorHiddenInGame(false);
-		NewWeapon->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			WeaponSocket);
-		NewWeapon->SetOwner(this);
-		CurrentWeapon = NewWeapon;
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("CurWeapon is nullptr"));
-	}
+	LSCHECK(nullptr != MonsterWeapon)
+	MonsterWeapon->AttachToComponent(
+		GetMesh(),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		WeaponSocket);
+	MonsterWeapon->SetOwner(this);
 }
 
 void ALSMonster::OnAssetLoadCompleted()
@@ -237,6 +226,8 @@ void ALSMonster::OnAssetLoadCompleted()
 	LSCHECK(nullptr != AssetLoaded);
 	GetMesh()->SetSkeletalMesh(AssetLoaded);
 	SetCharacterState(ECharacterState::READY);
+	//MonsterWeapon = LSGameInstance->RifleWeaponMesh;
+	//SetWeapon();
 }
 
 void ALSMonster::DropItem()
