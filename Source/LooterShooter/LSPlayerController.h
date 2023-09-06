@@ -96,7 +96,7 @@ private:
 	UPROPERTY()
 	ULSGameplayWidget* MenuWidget;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Widget");
 	ULSGameplayResultWidget* ResultWidget;
 
 	UPROPERTY()

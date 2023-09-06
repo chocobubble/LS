@@ -107,11 +107,11 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 
 		auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 		LSCHECK(nullptr != LSGameMode);
-		//int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
-		//int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
-		int32 CurrentPlayerLevel = LSGameMode->GetPlayerLevel();
-		LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
-		CharacterStat->SetNewLevel(CurrentPlayerLevel);
+		//int32 CurrentPlayerLevel = LSGameMode->GetPlayerLevel();
+		//LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
+		//CharacterStat->SetNewLevel(CurrentPlayerLevel);
+		LSLOG(Warning, TEXT("New NPC Level : %d"), MonsterLevel);
+		CharacterStat->SetNewLevel(MonsterLevel);
 
 		SetActorHiddenInGame(true);
 		HPBarWidget->SetHiddenInGame(true);

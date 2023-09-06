@@ -5,8 +5,9 @@
 #include "Components/BoxComponent.h"
 #include "LSMonster.h"
 #include "LSItemBox.h"
-#include "LSPlayerController.h"
 #include "LSGameMode.h"
+#include "LSPlayerController.h"
+#include "LSPlayer.h"
 
 // Sets default values
 ALSSection::ALSSection()
@@ -103,6 +104,8 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent * OverlappedComponent
 		SetState(ESectionState::BATTLE);
 		LSLOG(Warning, TEXT("Set Battle State"));
 	}
+	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
+	LSPlayerController = Cast<ALSPlayerController>(LSPlayer->GetController());
 }
 /*
 void ALSSection::OnNPCSpawn()
@@ -124,12 +127,13 @@ void ALSSection::OnNPCSpawn()
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
+	/*
 	auto LSMonster = Cast<ALSMonster>(DestroyedActor);
 	LSCHECK(nullptr != LSMonster);
 
 	auto LSPlayerController = Cast<ALSPlayerController>(LSMonster->LastHitBy);
 	LSCHECK(nullptr != LSPlayerController);
-
+*/
 	auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 	LSCHECK(nullptr != LSGameMode);
 	//LSGameMode->AddScore(LSPlayerController);

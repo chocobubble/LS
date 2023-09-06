@@ -7,6 +7,7 @@
 #include "LSSection.generated.h"
 
 class UBoxComponent;
+class ALSPlayerController;
 
 enum class ESectionState : uint8
 {
@@ -66,6 +67,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
 	float ItemBoxSpawnTime;
+
+	UPROPERTY(VisibleAnywhere)
+	ALSPlayerController* LSPlayerController;
 
 	FTimerHandle SpawnNPCTimerHandle = {};
 	FTimerHandle SpawnItemBoxTimerHandle = {};

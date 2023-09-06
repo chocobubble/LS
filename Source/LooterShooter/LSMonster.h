@@ -84,6 +84,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetMonsterLevel(int32 Value)
+	{
+		MonsterLevel = Value;
+	}
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = Defense)
 	ULSDefenseComponent* DefenseManager;
@@ -119,4 +124,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	int32 Exp = 5;
+
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	int32 MonsterLevel = 2;
 };

@@ -4,23 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "LSSection.h"
-#include "LSFirstSection.generated.h"
+#include "LSBossSection.generated.h"
 
-class ALSMonster;
 class ALSDoor;
+class ALSMonster;
 /**
  * 
  */
 UCLASS()
-class LOOTERSHOOTER_API ALSFirstSection : public ALSSection
+class LOOTERSHOOTER_API ALSBossSection : public ALSSection
 {
 	GENERATED_BODY()
-public:
-	ALSFirstSection();
 	
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void BattleStart() override;
 	virtual void SectionClear() override;
 
@@ -38,27 +35,8 @@ private:
 	FVector DoorSpawnPoint;
 
 	UPROPERTY(VisibleAnywhere)
-	int32 KilledMonsterCount;
-
-	UPROPERTY(VisibleAnywhere)
-	int32 ClearCondition;
-
-	UPROPERTY(VisibleAnywhere)
-	TArray<ALSMonster*> MonsterArray;
-
-	UPROPERTY(VisibleAnywhere)
 	ALSDoor* LSDoor;
+
+	FTimerHandle SpawnBossTimerHandle = {};
 	
-	
-	FTimerHandle SpawnMonsterTimerHandle = {};
-
-
-public:
-	UPROPERTY(VisibleAnywhere)
-	AActor* SpawnPointActor;
-
-	UPROPERTY(VisibleAnywhere)
-	AActor* NextDoor;
-
-
 };

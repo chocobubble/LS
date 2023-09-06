@@ -241,10 +241,12 @@ void ALSPlayerController::ShowResultUI()
 {
     // #include "Kismet/GameplayStatics.h"
     ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
-    LSCHECK(nullptr != LSGameState);
-    ResultWidget->BindGameState(LSGameState);
-
-    ResultWidget->AddToViewport();
+    //LSCHECK(nullptr != LSGameState);
+    //ResultWidget->BindGameState(LSGameState);
+    if(ResultWidget != nullptr)
+    {
+        ResultWidget->AddToViewport();
+    }
     ChangeInputMode(false);
 }
 

@@ -3,16 +3,17 @@
 #include "LSFirstSection.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 #include "LSMonster.h"
+#include "LSDoor.h"
 ALSFirstSection::ALSFirstSection()
 {
  	PrimaryActorTick.bCanEverTick = false;
-
+/*
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DOOR(TEXT("/Game/LS/Meshes/SM_Door.SM_Door"));
 	if (!SM_DOOR.Succeeded())
 	{
 		LSLOG_S(Error);
 	}
-/*
+
     NextDoor = GetWorld()->SpawnActor<AActor>(FVector(0.f,0.f,0.f), FRotator::ZeroRotator);//(FVector(1330.f, 5200.f, 190.f), FRotator(0.f, 180.f, 0.f));
     UStaticMeshComponent* DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
     NextDoor->SetRootComponent(DoorMesh);
@@ -28,7 +29,24 @@ void ALSFirstSection::BeginPlay()
     EnemySpawnTime = 10.0f;
 
     /*
-    UWorld* CurrentWorld = GetWorld();
+    
+    */
+    MonsterSpawnPoint = FVector(1390.f, 4300.f, 0.f);
+    DoorSpawnPoint = FVector(1320.f, 5200.f, 190.f);
+}
+
+void ALSFirstSection::BattleStart()
+{
+    Super::BattleStart();
+
+    GetWorld()->GetTimerManager().SetTimer(SpawnMonsterTimerHandle,
+            FTimerDelegate::CreateUObject(this, &ALSFirstSection::OnMonsterSpawn),
+            EnemySpawnTime, true);
+
+    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.f, 180.f, 0.f));
+	LSCHECK(LSDoor);
+/*
+     UWorld* CurrentWorld = GetWorld();
     for(const auto& Entry : FActorRange(CurrentWorld))
     {
         LSLOG(Warning, TEXT("%s"), *Entry->GetName());
@@ -41,27 +59,23 @@ void ALSFirstSection::BeginPlay()
             LSLOG(Warning, TEXT("Get mOnster spawn point "));
         }
     }
-    */
-    SpawnPoint = FVector(1390.f, 4300.f, 0.f);
-}
-
-void ALSFirstSection::BattleStart()
-{
-    Super::BattleStart();
-
-    GetWorld()->GetTimerManager().SetTimer(SpawnNPCTimerHandle,
-            FTimerDelegate::CreateUObject(this, &ALSFirstSection::OnMonsterSpawn),
-            EnemySpawnTime, true);
+*/
 }
 
 void ALSFirstSection::OnMonsterSpawn()
 {
 	//
-	auto Monster = GetWorld()->SpawnActor<ALSMonster>(SpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
+	auto Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
+    LSCHECK(Monster != nullptr);
+    Monster->SetMonsterLevel(1);
 	if (nullptr != Monster)
 	{
-        MonsterArray.Push(Monster);
 		Monster->OnDestroyed.AddDynamic(this, &ALSFirstSection::OnMonsterDestroyed);
+        MonsterArray.Push(Monster);
+        if(MonsterArray.Num() >= 3) // 몬스터 5 생성 시 스폰 중단
+        {
+            GetWorld()->GetTimerManager().ClearTimer(SpawnMonsterTimerHandle);
+        }
 	}
 }
 
@@ -78,7 +92,7 @@ void ALSFirstSection::SectionClear()
 {
     Super::SectionClear();
 
-    GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
+    GetWorld()->GetTimerManager().ClearTimer(SpawnMonsterTimerHandle);
     for(ALSMonster* LiveMonster : MonsterArray)
     {
         if(LiveMonster != nullptr)
@@ -86,6 +100,6 @@ void ALSFirstSection::SectionClear()
             LiveMonster->SetCharacterState(ECharacterState::DEAD);
         }
     }
-    LSCHECK(NextDoor != nullptr);
-    NextDoor->Destroy();
+    LSCHECK(LSDoor != nullptr);
+    LSDoor->Destroy();
 }
