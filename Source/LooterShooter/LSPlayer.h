@@ -31,6 +31,7 @@ class ULSCharacterStatComponent;
 class ALSPlayerController;
 class ALSWeaponInstance;
 class UInputTriggerPulse;
+class ALSAmmo;
 struct FInputActionValue;
 struct FInputActionInstance;
 
@@ -237,6 +238,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category=Weapon)
 	ALSWeaponInstance* CurrentWeapon;
+
+	UPROPERTY(VisibleAnywhere, Category=Weapon)
+	ALSAmmo* Ammo;
 
 	UPROPERTY(VisibleAnywhere, Category=Animation)
 	ULSPlayerAnimInstance* LSPlayerAnim;

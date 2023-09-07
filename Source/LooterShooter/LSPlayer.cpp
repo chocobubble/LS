@@ -26,6 +26,7 @@
 #include "LSInventoryComponent.h"
 #include "LSItemBox.h"
 #include "LSWeaponDefinition.h"
+#include "LSAmmo.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -164,7 +165,7 @@ ALSPlayer::ALSPlayer()
 		InteractAction = IA_INTERACT.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UCurveVector> CURVE_RECOIL(TEXT("/Game/LS/AK47_RecoilCurve.AK47_RecoilCurve"));
+	static ConstructorHelpers::FObjectFinder<UCurveVector> CURVE_RECOIL(TEXT("/Game/LS/RecoilCurve.RecoilCurve"));
 	if (CURVE_RECOIL.Succeeded())
 	{
 		RecoilCurve = CURVE_RECOIL.Object;
@@ -381,6 +382,13 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		return;
 	}
 	LSLOG(Warning, TEXT("Shoot"));
+
+	Ammo = GetWorld()->SpawnActor<ALSAmmo>(CurrentWeapon->GetTransform().GetLocation(), FRotator::ZeroRotator);
+    LSCHECK(Ammo);;
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+	Ammo->Mesh->SetWorldRotation(Rotation);
+	Ammo->Fire(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
 
 	RecoilStart();
 	float FinalAttackRange = GetFinalAttackRange();
