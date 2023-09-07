@@ -236,7 +236,7 @@ void ALSMonster::DropItem()
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
 	if (RandomNumber < 0.3f)
 	{
-		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
+		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
 	}
 	else if (RandomNumber < 0.6f)
 	{
@@ -311,10 +311,10 @@ void ALSMonster::Attack()
 		GetActorLocation(),
 		(ShootDir * AttackRange) + GetActorLocation(),
 		bResult ? FColor::Green : FColor::White,
-		true,
-		-1.0f,
+		false,
+		0.5f,
 		0.,
-		5.f);
+		2.0f);
 
 #endif
 

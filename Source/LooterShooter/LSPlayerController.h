@@ -18,6 +18,7 @@ class ULSGameplayResultWidget;
 class ALSMonster;
 class ULSInventoryWidget;
 class ULSRoundProgressbar;
+class ULSEnhanceWidget;
 
 ///tset
 class UMaterialInstance;
@@ -43,11 +44,13 @@ public:
 	void MonsterKill(ALSMonster* KilledMonster) const;	
 	void OnGamePause(const FInputActionValue& Value);
 	void OnInventoryOpen(const FInputActionValue& Value);
+	void OnEnhanceUIOpen(const FInputActionValue& Value);
 
 	void ChangeInputMode(bool bGameMode = true);
 
 	void ShowResultUI();
 	void ShowInventoryUI();
+	void ShowEnhanceUI();
 
 	bool GetIsAutoRunning() const;
 
@@ -74,6 +77,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* OpenInventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenEnhanceUI;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
 	TSubclassOf<ULSGameplayWidget> MenuWidgetClass;
 
@@ -85,6 +91,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	TSubclassOf<ULSRoundProgressbar> RoundPBWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<ULSEnhanceWidget> EnhanceWidgetClass;
 
 private:
 	UPROPERTY()
@@ -105,6 +114,8 @@ private:
 	UPROPERTY()
 	ULSRoundProgressbar* RoundPBWidget;
 
+	UPROPERTY()
+	ULSEnhanceWidget* EnhanceWidget;
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;

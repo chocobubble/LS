@@ -16,6 +16,9 @@
 #include "LSMonster.h"
 #include "LSInventoryWidget.h"
 #include "LSRoundProgressbar.h"
+#include "LSEnhanceWidget.h"
+#include "LSInventoryComponent.h"
+#include "LSResourceManageComponent.h"
 
 //test
 #include "Materials/MaterialInterface.h"
@@ -48,6 +51,12 @@ ALSPlayerController::ALSPlayerController()
 		OpenInventory = IA_INVENTORY.Object;
 	}
 
+    static ConstructorHelpers::FObjectFinder<UInputAction> IA_ENHANCE(TEXT("/Game/LS/Input/Actions/IA_Enhance.IA_Enhance"));
+	if ( IA_ENHANCE.Succeeded())
+	{
+		OpenEnhanceUI = IA_ENHANCE.Object;
+	}
+
     static ConstructorHelpers::FClassFinder<ULSGameplayWidget> UI_MENU_C(TEXT("/Game/LS/UI/UI_Menu.UI_Menu_C"));
     if (UI_MENU_C.Succeeded())
     {
@@ -58,6 +67,16 @@ ALSPlayerController::ALSPlayerController()
     if (UI_RESULT_C.Succeeded())
     {
         ResultWidgetClass = UI_RESULT_C.Class;
+    }
+
+    static ConstructorHelpers::FClassFinder<ULSEnhanceWidget> UI_ENHANCE_C(TEXT("/Game/LS/UI/UI_Enhancement.UI_Enhancement_C"));
+    if (UI_ENHANCE_C.Succeeded())
+    {
+        EnhanceWidgetClass = UI_ENHANCE_C.Class;
+    }
+    else
+    {
+        LSLOG_S(Error);
     }
 
     static ConstructorHelpers::FClassFinder<ULSInventoryWidget> UI_INVENTORY_C(TEXT("/Game/LS/UI/UI_Inventory.UI_Inventory_C"));
@@ -201,6 +220,7 @@ void ALSPlayerController::SetupInputComponent()
 	}
 	EnhancedInputComponent->BindAction(GamePause, ETriggerEvent::Triggered, this, &ALSPlayerController::OnGamePause);
 	EnhancedInputComponent->BindAction(OpenInventory, ETriggerEvent::Triggered, this, &ALSPlayerController::OnInventoryOpen);
+    EnhancedInputComponent->BindAction(OpenEnhanceUI, ETriggerEvent::Triggered, this, &ALSPlayerController::OnEnhanceUIOpen);
 
 }
 
@@ -222,6 +242,15 @@ void ALSPlayerController::OnInventoryOpen(const FInputActionValue& Value)
     SetPause(true);
     ChangeInputMode(false);
 }
+
+void ALSPlayerController::OnEnhanceUIOpen(const FInputActionValue& Value)
+{
+    LSLOG(Warning, TEXT("Enhancemnet UI Open"));
+    ShowEnhanceUI();
+    SetPause(true);
+    ChangeInputMode(false);
+}
+
 
 void ALSPlayerController::ChangeInputMode(bool bGameMode)
 {
@@ -262,6 +291,17 @@ void ALSPlayerController::ShowInventoryUI()
     LSCHECK(nullptr != InventoryWidget);
     InventoryWidget->Init(Cast<ALSPlayer>(GetPawn())->GetInventoryManager());
     InventoryWidget->AddToViewport();
+    ChangeInputMode(false);
+}
+
+void ALSPlayerController::ShowEnhanceUI()
+{
+    EnhanceWidget = CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
+    LSCHECK(nullptr != EnhanceWidget);
+    ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetPawn());
+    EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0),
+                        LSPlayer->GetResourceManager());
+    EnhanceWidget->AddToViewport();
     ChangeInputMode(false);
 }
 

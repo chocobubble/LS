@@ -17,7 +17,8 @@
 			"regex": "cpp",
 			"sstream": "cpp",
 			"strstream": "cpp",
-			"xiosbase": "cpp"
+			"xiosbase": "cpp",
+			"__config": "cpp"
 		}
 	},
 	"extensions": {

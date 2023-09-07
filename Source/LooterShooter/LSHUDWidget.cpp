@@ -70,17 +70,14 @@ void ULSHUDWidget::NativeConstruct()
     ShieldBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbShield")));
     LSCHECK(nullptr != ShieldBar);
 
-    ExpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbExp")));
-    LSCHECK(nullptr != ExpBar);
+    //ExpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbExp")));
+    //LSCHECK(nullptr != ExpBar);
 
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
     LSCHECK(nullptr != InteractionProgressBar);
 
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     LSCHECK(nullptr != InteractBox);
-
-    ReloadBox = Cast<USizeBox>(GetWidgetFromName(TEXT("boxReload")));
-    LSCHECK(nullptr != ReloadBox);
 
     PlayerLevel = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
     LSCHECK(nullptr != PlayerLevel);

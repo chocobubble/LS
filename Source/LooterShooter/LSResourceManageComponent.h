@@ -104,7 +104,7 @@ private:
 */
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Resource, meta = (AllowPrivateAccess = "true"))
-	int32 GoldAmount = 0;
+	int32 GoldAmount = 1000;
 
 public:	
 	// Called every frame

@@ -30,7 +30,8 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 	
 	WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
 	LSCHECK(WeaponBaseData);
-	SetWeaponDefinitionStats();
+	//SetWeaponDefinitionStats();
+	SetWeaponDefaultStats();
 	WeaponAbilityComponent->EnhanceWeaponStat(this);
 }
 
@@ -49,19 +50,22 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 	Enhancement = 0;
 }
 
-void ULSWeaponDefinition::TryEnhanceWeapon()
+bool ULSWeaponDefinition::TryEnhanceWeapon()
 {
 	float Rnd = FMath::FRandRange(0.f, 1.f);
 	if (Rnd <= 0.5f)
 	{
 		LSLOG(Warning, TEXT("Enhance failed"));
 		SetWeaponDefaultStats();
+		return false;
 	}
 	else
 	{
 		LSLOG(Warning, TEXT("Enhance succecced"));
 		EnhanceWeapon();
+		return true;
 	}
+	//OnWeaponStatChanged.Broadcast();
 }
 
 void ULSWeaponDefinition::EnhanceWeapon()

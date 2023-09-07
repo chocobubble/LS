@@ -10,6 +10,10 @@
 #include "LSWeaponDefinition.generated.h"
 
 class ULSWeaponAbilityComponent;
+
+/** 강화 등에 의해 무기 스탯 변경 시 */
+DECLARE_MULTICAST_DELEGATE(FOnWeaponStatChangedDelegate);
+
 /**
  * 무기가 구현되었을 때 해당 무기의 데이터를 보관하는 클래스
  * 인벤토리에 이 형태로 무기가 보관되어 있다.
@@ -101,13 +105,17 @@ public:
 	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 ItemLevel);
 	/** 랜덤성을 부여하기 위해 랜덤으로 스탯 수치 수정 */
 	void SetWeaponDefinitionStats();
-	void TryEnhanceWeapon();
+	bool TryEnhanceWeapon();
 	void SetWeaponDefaultStats();
 	void EnhanceWeapon();
 	
 	EWeaponType GetWeaponType() const
 	{
 		return WeaponType;
+	}
+	int32 GetEnhancement() const
+	{
+		return Enhancement;
 	}
 	float GetMagazineCapacity() const
 	{
@@ -165,4 +173,6 @@ public:
 	{
 		BulletDamage = Value;
 	}
+
+	FOnWeaponStatChangedDelegate OnWeaponStatChanged; 
 };

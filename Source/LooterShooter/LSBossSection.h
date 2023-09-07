@@ -38,5 +38,6 @@ private:
 	ALSDoor* LSDoor;
 
 	FTimerHandle SpawnBossTimerHandle = {};
+	FTimerHandle ClearTimerHandle = {};
 	
 };

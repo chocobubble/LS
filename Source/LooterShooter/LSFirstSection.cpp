@@ -26,12 +26,12 @@ void ALSFirstSection::BeginPlay()
     Super::BeginPlay();
     KilledMonsterCount = 0;
     ClearCondition = 2;
-    EnemySpawnTime = 10.0f;
+    EnemySpawnTime = 5.0f;
 
     /*
     
     */
-    MonsterSpawnPoint = FVector(1390.f, 4300.f, 0.f);
+    MonsterSpawnPoint = FVector(1390.f, 3200.f, 0.f);
     DoorSpawnPoint = FVector(1320.f, 5200.f, 190.f);
 }
 

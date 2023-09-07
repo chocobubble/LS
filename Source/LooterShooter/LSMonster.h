@@ -114,7 +114,7 @@ private:
 
 	/** 탄착군을 형성하는 각도 */
 	UPROPERTY(VisibleAnywhere, Category = Attack)
-	float BulletSpreadAngle = 5.0f;
+	float BulletSpreadAngle = 3.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = Attack)
 	float AttackRange = 3000.0f;

@@ -7,6 +7,7 @@
 #include "LSGameplayResultWidget.generated.h"
 
 class ALSGameState;
+class ULSEnhanceWidget;
 /**
  * 
  */
@@ -18,10 +19,23 @@ class LOOTERSHOOTER_API ULSGameplayResultWidget : public ULSGameplayWidget
 
 public:
 	void BindGameState(ALSGameState* GameState);
+	void ShowEnhanceUI();
+
+	UFUNCTION()
+	void OnEnhanceClicked();
 
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 	TWeakObjectPtr<ALSGameState> CurrentGameState;
+
+	UPROPERTY()
+	TSubclassOf<ULSEnhanceWidget> EnhanceWidgetClass;
+
+	UPROPERTY()
+	ULSEnhanceWidget* EnhanceWidget;
+
+	UPROPERTY()
+	UButton* EnhanceButton;
 };

@@ -37,11 +37,19 @@ void ALSBossSection::OnMonsterSpawn()
 
 void ALSBossSection::OnMonsterDestroyed(AActor* DestroyedActor) 
 {
-    SetState(ESectionState::COMPLETE);
+    LSLOG_S(Warning);
+    GetWorld()->GetTimerManager().ClearTimer(ClearTimerHandle);
+    GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle,
+            FTimerDelegate::CreateLambda([this]() -> void {
+            SetState(ESectionState::COMPLETE);
+							
+				}),EnemySpawnTime, false);
+    
 }
 
 void ALSBossSection::SectionClear() 
 {
+    LSLOG_S(Warning);
     Super::SectionClear();
     GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
     DisableInput(LSPlayerController);
