@@ -312,7 +312,7 @@ void ALSPlayer::Tick(float DeltaTime)
 		}
 	}
 
-	//recoil
+	// 반동 tick
 	RecoilTick(DeltaTime);
 }
 
@@ -390,7 +390,9 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	Ammo->Mesh->SetWorldRotation(Rotation);
 	Ammo->Fire(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
 
+	// 반동 시작
 	RecoilStart();
+
 	float FinalAttackRange = GetFinalAttackRange();
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -402,7 +404,6 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		Params
 	);
 
-
 	EquipmentManager->DecreaseRoundsRemaining();
 	
 	// 사격 히트
@@ -412,7 +413,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 			float FinalAttackDamage;
-			if(HitResult.BoneName == TEXT("head"))// || HitResult.BoneName == FName(*(TEXT("head").ToString())));
+			if(HitResult.BoneName == TEXT("head"))
 			{
 				LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
 				bool bIsWeakPoint = true;
@@ -776,7 +777,7 @@ float ALSPlayer::GetFinalAttackDamage(bool bIsWeakPoint) const
 
 void ALSPlayer::InteractCheck()
 {
-	// TODO: 1. interact UI popup, 2. interact progress
+	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
 
 	if(!bIsNearInteractableObject)
 	{
@@ -826,30 +827,26 @@ void ALSPlayer::SetIsNearInteractableObject(bool Value)
 void ALSPlayer::RecoilStart()
 {
 	LSCHECK(RecoilCurve);
-	//Setting all rotators to default values
+	// rotator 변수 초기화 - 반동 시작
 	PlayerDeltaRot = FRotator(0.0f, 0.0f, 0.0f);
 	RecoilDeltaRot = FRotator(0.0f, 0.0f, 0.0f);
 	Del = FRotator(0.0f, 0.0f, 0.0f);
 	RecoilStartRot = LSPlayerController->GetControlRotation();
-
 	bIsFiring = true;
-
-	//Timer for the recoil: I have set it to 10s but dependeding how long it takes to empty the gun mag, you can increase the time.
-			
-	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ALSPlayer::RecoilTimerFunction, 10.0f, false);
-			
 	bRecoil = true;
 	bRecoilRecovery = false;
+
+	// 반동 중단 타이머
+	// TODO : 우선 10초로 잡아 뒀으니 나중에 총기 스탯이랑 연계하기	
+	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &ALSPlayer::RecoilTimerFunction, 10.0f, false);
 }
 
-  //Called when firing stops
 void ALSPlayer::RecoilStop()
 {
 	bIsFiring = false;
 	// GetWorld()->GetTimerManager().SetTimer(RecoveryTimer, this, &ALSPlayer::RecoveryTimerFunction, 1.0f, false);
 }
 
- //This function is automatically called, no need to call this. It is inside the Tick function
 void ALSPlayer::RecoveryStart()
 {
  	if (LSPlayerController->GetControlRotation().Pitch > RecoilStartRot.Pitch)
@@ -859,62 +856,53 @@ void ALSPlayer::RecoveryStart()
     }
 }
 
-  //This function too is automatically called from the recovery start function.
 void ALSPlayer::RecoveryTimerFunction()
 {
-		bRecoilRecovery = false;
-
+	bRecoilRecovery = false;
 }
 
-
-  //Automatically called in RecoilStart(), no need to call this explicitly
 void ALSPlayer::RecoilTimerFunction()
 {
 	bRecoil = false;
 	GetWorld()->GetTimerManager().PauseTimer(FireTimer);
 }
 
-  //Needs to be called on event tick to update the control rotation.
 void ALSPlayer::RecoilTick(float DeltaTime)
+{
+	//float Recoiltime;
+	FVector RecoilVec;
+	if (bRecoil)
 	{
-		//float Recoiltime;
-		FVector RecoilVec;
-		if (bRecoil)
+	  	// 회전 계산
+		Recoiltime = GetWorld()->GetTimerManager().GetTimerElapsed(FireTimer);
+		RecoilVec = RecoilCurve->GetVectorValue(Recoiltime);
+		Del.Roll = 0;
+		Del.Pitch = (RecoilVec.Y);
+		Del.Yaw = (RecoilVec.Z);
+		PlayerDeltaRot = LSPlayerController->GetControlRotation() - RecoilStartRot - RecoilDeltaRot;
+		LSPlayerController->SetControlRotation(RecoilStartRot + PlayerDeltaRot + Del);
+		RecoilDeltaRot = Del;
+
+		if(bIsFiring)// (!bIsFiring)
 		{
-
-		  //Calculation of control rotation to update 
-
-			Recoiltime = GetWorld()->GetTimerManager().GetTimerElapsed(FireTimer);
-			RecoilVec = RecoilCurve->GetVectorValue(Recoiltime);
-			Del.Roll = 0;
-			Del.Pitch = (RecoilVec.Y);
-			Del.Yaw = (RecoilVec.Z);
-			PlayerDeltaRot = LSPlayerController->GetControlRotation() - RecoilStartRot - RecoilDeltaRot;
-			LSPlayerController->SetControlRotation(RecoilStartRot + PlayerDeltaRot + Del);
-			RecoilDeltaRot = Del;
-
-		//Conditionally start resetting the recoil
-
-			if(bIsFiring)// (!bIsFiring)
+			// 반동 시작되고 나서 시간이 탄창 내 탄약을 모두 소비하는 시간 보다 더 지난 경우
+			if (Recoiltime > FireRate)
 			{
-				if (Recoiltime > FireRate)
-				{
-					GetWorld()->GetTimerManager().ClearTimer(FireTimer);
-					RecoilStop();
-					bRecoil = false;
-					RecoveryStart();
-
-				}
+				GetWorld()->GetTimerManager().ClearTimer(FireTimer);
+				RecoilStop();
+				bRecoil = false;
+				RecoveryStart();
 			}
 		}
-		else if (bRecoilRecovery)
-		{
-		  //Recoil resetting
-			FRotator tmprot = LSPlayerController->GetControlRotation();
-		if (tmprot.Pitch >= RecoilStartRot.Pitch)
+	}
+	else if (bRecoilRecovery)
+	{
+	    //Recoil resetting
+		FRotator TempRot = LSPlayerController->GetControlRotation();
+		if (TempRot.Pitch >= RecoilStartRot.Pitch)
 		{
 			LSPlayerController->SetControlRotation(UKismetMathLibrary::RInterpTo(GetControlRotation(), GetControlRotation() - RecoilDeltaRot, DeltaTime, 10.0f));
-			RecoilDeltaRot = RecoilDeltaRot + (GetControlRotation() - tmprot);
+			RecoilDeltaRot = RecoilDeltaRot + (GetControlRotation() - TempRot);
 		}
 		else
 		{

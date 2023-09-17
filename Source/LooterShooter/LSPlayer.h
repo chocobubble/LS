@@ -68,7 +68,6 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public:
-	// not override?
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override; 
 	bool CanSetWeapon();
 	void SetWeapon(ALSWeaponInstance* NewWeapon);
@@ -336,12 +335,6 @@ private:
 	
 /////////// 
 	/** 그래플링 훅 관련 */
-
-	/** @TODO: 그래플링 훅 로프 구현하기 */
-/*
-	UPROPERTY(VisibleAnywhere, Category = Grppling)
-	UCableComponent* Cable;
-*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grppling, meta = (AllowPrivateAccess = "true"))
 	float GrapplingHookRange = 5000.0f;
 
@@ -364,63 +357,77 @@ private:
 	FVector GrappleToLocation;
 
 	FTimerHandle GrapplingTimerHandle = { };
+
+	/** @TODO: 그래플링 훅 로프 구현하기 */
+/*
+	UPROPERTY(VisibleAnywhere, Category = Grppling)
+	UCableComponent* Cable;
+*/
 ///////////////
 
 
 ///////////// recoil
-public:
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-UCurveVector* RecoilCurve;
+	public:
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	UCurveVector* RecoilCurve;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-bool bIsFiring=false;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	bool bIsFiring=false;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-float FireRate=0.1f;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	float FireRate=0.1f;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-float Recoiltime;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	float Recoiltime;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-bool bRecoil;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	bool bRecoil;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-bool bRecoilRecovery;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	bool bRecoilRecovery;
 
-UPROPERTY()
-FTimerHandle FireTimer;
+	UPROPERTY()
+	FTimerHandle FireTimer;
 
-UPROPERTY()
-FTimerHandle RecoveryTimer;
+	UPROPERTY()
+	FTimerHandle RecoveryTimer;
 
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-FRotator RecoilStartRot;
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-  FRotator RecoilDeltaRot;
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
-  FRotator PlayerDeltaRot;
-UPROPERTY(VisibleAnywhere, Category = "Recoil")
- FRotator Del;
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	FRotator RecoilStartRot;
 
-UPROPERTY(BlueprintReadWrite)
-float RecoveryTime = 1.0f;
-UPROPERTY(BlueprintReadWrite)
-float RecoverySpeed =10.0f;
- UFUNCTION(BlueprintCallable)
-  void RecoilStart();
- UFUNCTION(BlueprintCallable)
-  void RecoilStop();
- UFUNCTION()
-  void RecoveryStart();
- UFUNCTION()
-  void RecoveryTimerFunction();
- UFUNCTION()
-  void RecoilTimerFunction();
-UFUNCTION(BlueprintCallable)
-void RecoilTick(float DeltaTime);
-/*
- UPROPERTY(BlueprintReadWrite,Replicated)
-  ACPP_MainGameWeapon* CPPWeaponRef;
-*/
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	FRotator RecoilDeltaRot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	FRotator PlayerDeltaRot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
+	FRotator Del;
+
+	UPROPERTY(BlueprintReadWrite)
+	float RecoveryTime = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float RecoverySpeed =10.0f;
+
+	// 사격 시 호출되는 반동 시작 함수
+	UFUNCTION(BlueprintCallable)
+	void RecoilStart();
+
+	// 사격 중단 시 호출되는 반동 종료 함수
+	UFUNCTION(BlueprintCallable)
+	void RecoilStop();
+
+	UFUNCTION()
+	void RecoveryStart();
+
+	UFUNCTION()
+	void RecoveryTimerFunction();
+
+	UFUNCTION()
+	void RecoilTimerFunction();
+
+	UFUNCTION(BlueprintCallable)
+	void RecoilTick(float DeltaTime);
 ///////////// end recoil
 };
