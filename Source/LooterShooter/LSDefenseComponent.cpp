@@ -20,6 +20,24 @@ void ULSDefenseComponent::BeginPlay()
 	// ...
 }
 
+
+void ULSDefenseComponent::Init(int32 Level)
+{
+	
+}
+
+void ULSDefenseComponent::SetMaxHP(float NewMaxHP)
+{
+	MaxHP = NewMaxHP;
+	CurrentHP = NewMaxHP;	
+}
+
+void ULSDefenseComponent::SetMaxShield(float NewMaxShield)
+{
+	MaxShield = NewMaxShield;
+	CurrentShield = NewMaxShield;
+}
+
 void ULSDefenseComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;

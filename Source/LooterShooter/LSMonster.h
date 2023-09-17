@@ -89,6 +89,8 @@ public:
 		MonsterLevel = Value;
 	}
 
+	void Init(int32 Level);
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = Defense)
 	ULSDefenseComponent* DefenseManager;

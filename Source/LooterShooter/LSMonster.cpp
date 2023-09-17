@@ -111,7 +111,8 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 		//LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
 		//CharacterStat->SetNewLevel(CurrentPlayerLevel);
 		LSLOG(Warning, TEXT("New NPC Level : %d"), MonsterLevel);
-		CharacterStat->SetNewLevel(MonsterLevel);
+		// CharacterStat->SetNewLevel(MonsterLevel);
+		// MonsterLevel = LSGameInstance->LSMonsterTable.Level;
 
 		SetActorHiddenInGame(true);
 		HPBarWidget->SetHiddenInGame(true);
@@ -123,11 +124,11 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 		SetActorHiddenInGame(false);
 		HPBarWidget->SetHiddenInGame(false);
 		SetCanBeDamaged(true);
-
+/*
 		CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
 			SetCharacterState(ECharacterState::DEAD);
 		});
-
+*/
 		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 		LSCHECK(nullptr != CharacterWidget);
 		// CharacterWidget->BindCharacterStat(CharacterStat);
@@ -182,12 +183,23 @@ void ALSMonster::PostInitializeComponents()
 	LSCHECK(nullptr != LSMonsterAnim);
 
 	// LSAnim->OnAttackHitCheck.AddUObject(this, &ALSMonster::AttackCheck);
-
+/*
 	CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
 		LSLOG(Warning, TEXT("OnHPIsZero"));
 		LSMonsterAnim->SetDeadAnim();
-		SetActorEnableCollision(false);});
+		SetActorEnableCollision(false);
+	});
+*/
+}
 
+void ALSMonster::Init(int32 Level)
+{
+	SetMonsterLevel(Level);
+	LSCHECK(LSGameInstance != nullptr);
+	FLSMonsterData* LSMonsterData = LSGameInstance->GetLSMonsterData(MonsterLevel);
+	LSCHECK(DefenseManager != nullptr);
+	DefenseManager->SetMaxHP(LSMonsterData->MaxHP);
+	DefenseManager->SetMaxShield(LSMonsterData->MaxShield);
 }
 
 float ALSMonster::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent, AController *EventInstigator, AActor *DamageCauser)

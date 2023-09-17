@@ -66,7 +66,14 @@ public:
 	{
 		return CurrentSpreadAngle;
 	}
-
+	float GetCriticalHitChance() const
+	{
+		return CriticalHitChance;
+	}
+	float GetCriticalHitMultiplier() const
+	{
+		return CriticalHitMultiplier;
+	}
 	/** 탄창 내 남아 있는 탄약 수 리턴 */
 	int32 GetRoundsRemaining() const
 	{

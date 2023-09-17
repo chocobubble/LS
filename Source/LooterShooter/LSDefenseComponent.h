@@ -27,9 +27,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void SetMaxHP(float NewMaxHP);
+	void SetMaxShield(float NewMaxShield);
 	void SetDamage(float NewDamage);
 	void SetHP(float NewHP);
 	void SetShield(float NewShield);
+	void Init(int32 Level);
 	float GetHPRatio() const;
 	float GetShieldRatio() const;
 	float GetCurrentHP() const;

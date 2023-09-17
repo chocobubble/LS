@@ -398,7 +398,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		HitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalAttackRange)),
-		ECollisionChannel::ECC_GameTraceChannel1,
+		ECollisionChannel::ECC_GameTraceChannel2,
 		Params
 	);
 
@@ -411,16 +411,18 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		if (HitResult.HasValidHitObjectHandle())
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+			float FinalAttackDamage;
 			if(HitResult.BoneName == TEXT("head"))// || HitResult.BoneName == FName(*(TEXT("head").ToString())));
 			{
-				LSLOG(Warning, TEXT("Hit head"));
+				LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
+				bool bIsWeakPoint = true;
+				FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
 			}
-			if(HitResult.BoneName == TEXT("root"))
+			else
 			{
-				LSLOG(Warning, TEXT("Hit root"));
+				bool bIsWeakPoint = false;
+				FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
 			}
-			LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
-			float FinalAttackDamage = GetFinalAttackDamage();
 			FVector PopupPosition = HitResult.ImpactPoint + (GetActorLocation() - HitResult.ImpactPoint).Normalize();
 			TWeakObjectPtr<ALSTextPopup> Text = GetWorld()->SpawnActor<ALSTextPopup>(PopupPosition, FRotator::ZeroRotator);
 			Text->SetPopupText(FinalAttackDamage);
@@ -752,10 +754,23 @@ float ALSPlayer::GetFinalInteractRange() const
 	return InteractRange;
 }
 
-float ALSPlayer::GetFinalAttackDamage() const
+float ALSPlayer::GetFinalAttackDamage(bool bIsWeakPoint) const
 {
 	LSCHECK(nullptr != CurrentWeapon, -1.f);
 	float AttackDamage = CurrentWeapon->GetFinalDamage();
+	// 치명타인 경우 약점 공격으로 인한 데미지 증가가 없음
+	float RandValue = FMath::FRandRange(0.0f, 1.0f);
+	float CriticalHitChance = CurrentWeapon->GetCriticalHitChance();
+	if(RandValue <= CriticalHitChance)
+	{
+		AttackDamage *= CurrentWeapon->GetCriticalHitMultiplier();
+	}
+	// 약점 공격시
+	else if(bIsWeakPoint)
+	{
+		// TODO : 수치 변수로 빼기
+		AttackDamage *= 1.2f;
+	}
 	return AttackDamage; 
 }
 

@@ -80,7 +80,7 @@ public:
 	void ShowDebugLine(FVector Dir);
 
 	float GetFinalAttackRange() const;
-	float GetFinalAttackDamage() const;
+	float GetFinalAttackDamage(bool bIsWeakPoint) const;
 	float GetFinalInteractRange() const;
 	ULSResourceManageComponent* GetResourceManager() const
 	{

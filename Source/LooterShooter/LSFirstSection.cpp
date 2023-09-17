@@ -67,7 +67,8 @@ void ALSFirstSection::OnMonsterSpawn()
 	//
 	auto Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
     LSCHECK(Monster != nullptr);
-    Monster->SetMonsterLevel(1);
+    //Monster->SetMonsterLevel(1);
+    Monster->Init(1);
 	if (nullptr != Monster)
 	{
 		Monster->OnDestroyed.AddDynamic(this, &ALSFirstSection::OnMonsterDestroyed);
