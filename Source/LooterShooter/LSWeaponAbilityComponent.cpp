@@ -11,52 +11,50 @@ void UWeaponAbility::SetAbilityStat(float Stat)
 
 void UBulletDamageAbility::ApplyAbility(ULSWeaponDefinition* WeaponDefinition) 
 {
-	LSLOG(Warning, TEXT("Bullet Damage before enhanced : %f"), WeaponDefinition->GetBulletDamage());
+	if(WeaponDefinition == nullptr)
+	{
+		return;
+	}
 	WeaponDefinition->SetBulletDamage(WeaponDefinition->GetBulletDamage() + WeaponDefinition->GetBulletDamage() * AbilityStat);
-	LSLOG(Warning, TEXT("Bullet Damage after enhanced : %f"), WeaponDefinition->GetBulletDamage());
 }
 
-// Sets default values for this component's properties
 ULSWeaponAbilityComponent::ULSWeaponAbilityComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
-	// FBulletDamageAbility DMGAbility(FString("AbilityName"), 1.1f);
 }
 
-
-// Called when the game starts
 void ULSWeaponAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/** 테스트 용 */
 	UBulletDamageAbility* DMGAbilityPtr = NewObject<UBulletDamageAbility>();
 	DMGAbilityPtr->SetAbilityStat(1.1f);
-	//UWeaponAbility* DMGAbilityPtr = &DMGAbility;
 	AbilityList.Add(DMGAbilityPtr);
-	// ...
-	
+	//////////////
 }
 
 void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition)
 {
-	// ALSWeaponDefinition* WeaponDefinition = GetOwner();
+	if(WeaponDefinition == nullptr)
+	{
+		return;
+	}
 	for(UWeaponAbility* Ability : AbilityList)
 	{
-		Ability->ApplyAbility(WeaponDefinition);
+		if(Ability != nullptr) 
+		{
+			Ability->ApplyAbility(WeaponDefinition);
+		}
 	}
 }
 
-/*
-// Called every frame
-void ULSWeaponAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void ULSWeaponAbilityComponent::AttachWeaponAbility(UWeaponAbility* WeaponAbility)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if(WeaponAbility != nullptr) 
+	{
+		AbilityList.Add(WeaponAbility);
+	}
 }
-*/
+
 

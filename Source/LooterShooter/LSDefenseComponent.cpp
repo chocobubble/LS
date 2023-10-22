@@ -2,28 +2,34 @@
 
 #include "LSDefenseComponent.h"
 #include "Engine/World.h"
-// Sets default values for this component's properties
+
 ULSDefenseComponent::ULSDefenseComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-// Called when the game starts
 void ULSDefenseComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 }
-
 
 void ULSDefenseComponent::Init(int32 Level)
 {
 	
+}
+
+void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if(CurrentShield == MaxShield || (GetWorld()->GetTimeSeconds() - LastHitTime) < ShieldRechargeDelay)
+	{	
+		return;
+	}
+	else
+	{
+		SetShield((CurrentShield + ShieldRechargeRate));
+	}
 }
 
 void ULSDefenseComponent::SetMaxHP(float NewMaxHP)
@@ -94,21 +100,5 @@ void ULSDefenseComponent::SetDamage(float NewDamage)
 			OnHPIsZero.Broadcast();
 		}
 		SetHP(CurrentHP);
-	}
-}
-
-// Called every frame
-void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if(CurrentShield == MaxShield || (GetWorld()->GetTimeSeconds() - LastHitTime) < ShieldRechargeDelay)
-	{	
-		return;
-	}
-	else
-	{
-		SetShield((CurrentShield + ShieldRechargeRate));
-		// LSLOG(Warning, TEXT("Shield Recharging"));
 	}
 }

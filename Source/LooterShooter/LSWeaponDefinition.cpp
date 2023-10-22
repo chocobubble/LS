@@ -27,10 +27,9 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 	WeaponItemLevel = ItemLevel;
 	
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	
+	LSCHECK(LSGameInstance != nullptr);
 	WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
-	LSCHECK(WeaponBaseData);
-	//SetWeaponDefinitionStats();
+	LSCHECK(WeaponBaseData != nullptr);
 	SetWeaponDefaultStats();
 	WeaponAbilityComponent->EnhanceWeaponStat(this);
 }

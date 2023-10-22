@@ -50,17 +50,14 @@ class LOOTERSHOOTER_API ULSWeaponAbilityComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	ULSWeaponAbilityComponent();
+	void EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition);
+	void AttachWeaponAbility(UWeaponAbility* WeaponAbility);
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY()
 	TArray<UWeaponAbility*> AbilityList;
-
-public:	
-	void EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition);
 };

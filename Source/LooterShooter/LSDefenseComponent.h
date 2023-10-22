@@ -19,27 +19,18 @@ class LOOTERSHOOTER_API ULSDefenseComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	ULSDefenseComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
-	void SetMaxHP(float NewMaxHP);
-	void SetMaxShield(float NewMaxShield);
-	void SetDamage(float NewDamage);
-	void SetHP(float NewHP);
-	void SetShield(float NewShield);
 	void Init(int32 Level);
-	float GetHPRatio() const;
-	float GetShieldRatio() const;
-	float GetCurrentHP() const;
 	
-	FOnHPIsZeroDelegate OnHPIsZero;
-	FOnHPChangedDelegate OnHPChanged;
-	FOnShieldChangedDelegate OnShieldChanged;
+protected:
+	virtual void BeginPlay() override;
+	/** 
+	 * 마지막 데미지 입은 시점으로 부터 ShieldRechargeDelay만큼의 시간이 지나면
+	 * Shield가 충전되기 시작
+	*/
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 private:
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float MaxHP = 1000.f;
@@ -67,10 +58,18 @@ private:
 
 	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
 	float LastHitTime = 0.0f;
-public:	
-	/** 
-	 * 마지막 데미지 입은 시점으로 부터 ShieldRechargeDelay만큼의 시간이 지나면
-	 * Shield가 충전되기 시작
-	*/
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+public:
+	void SetMaxHP(float NewMaxHP);
+	void SetMaxShield(float NewMaxShield);
+	void SetDamage(float NewDamage);
+	void SetHP(float NewHP);
+	void SetShield(float NewShield);
+	float GetHPRatio() const;
+	float GetShieldRatio() const;
+	float GetCurrentHP() const;
+	
+	FOnHPIsZeroDelegate OnHPIsZero;
+	FOnHPChangedDelegate OnHPChanged;
+	FOnShieldChangedDelegate OnShieldChanged;
 };
