@@ -6,15 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "LSGameInstance.h"
 #include "LSGameState.h"
-
-
 #include "LSWeapon.generated.h"
-
-
 
 /**
  * 이전 버전.
  * @deprecated 사용하지 않는 클래스
+ * ULSWeaponDefinition 사용할 것
  */
 
 UCLASS()

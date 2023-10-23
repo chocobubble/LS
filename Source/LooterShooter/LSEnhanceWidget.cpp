@@ -46,11 +46,11 @@ void ULSEnhanceWidget::Init(ULSWeaponDefinition* WeaponDefinition, ULSResourceMa
 
 void ULSEnhanceWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)
 {
-    if(bIsEnhancing)
+    if (bIsEnhancing)
     {
         ElapsedTime += DeltaSeconds;
         EnhanceProgressBar->SetPercent(ElapsedTime / EnhancementTime);
-        if(ElapsedTime >= EnhancementTime)
+        if (ElapsedTime >= EnhancementTime)
         {
             Enhance();
         }
@@ -60,7 +60,7 @@ void ULSEnhanceWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)
 
 void ULSEnhanceWidget::OnEnhanceButtonClicked()
 {
-    if(Resource->GetGoldAmount() < 100) return;
+    if (Resource->GetGoldAmount() < 100) return;
     LSCHECK(Weapon != nullptr);
     bIsEnhancing = true;
     ElapsedTime = 0.0f;
@@ -83,7 +83,7 @@ void ULSEnhanceWidget::Enhance()
 {
     OnWeaponStatUpdated();
     bIsEnhancing = false;
-    if(bIsEnhanced)
+    if (bIsEnhanced)
     {
         EnhancementSuccessText->SetText(FText::FromString(TEXT("성 공!")));
     }

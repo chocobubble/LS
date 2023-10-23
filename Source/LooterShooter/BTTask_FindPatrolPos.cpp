@@ -23,7 +23,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(
     }
 
     UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
-    if(nullptr == NavSystem)
+    if (nullptr == NavSystem)
     {
         return EBTNodeResult::Failed;
     }

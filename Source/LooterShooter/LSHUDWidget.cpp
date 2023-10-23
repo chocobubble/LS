@@ -154,7 +154,7 @@ void ULSHUDWidget::UpdatePlayerState()
 
 
 /*
-    if(CurrentPlayerState->GetPlayerName() == "")
+    if (CurrentPlayerState->GetPlayerName() == "")
     {
         PlayerName->SetText(FText::FromString("Start Man"));
     }
@@ -251,7 +251,7 @@ void ULSHUDWidget::UpdateInteractProgress(float ElapsedRatio)
 
 void ULSHUDWidget::ShowOrHideInteractPopup(bool Value)
 {
-    if(Value == true)
+    if (Value == true)
     {
         LSLOG(Warning, TEXT("Show interact popup.."));
         InteractBox->SetVisibility(ESlateVisibility::Visible);

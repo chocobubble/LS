@@ -16,19 +16,21 @@ enum class ESectionState : uint8
 	COMPLETE
 };
 
+/**
+ * 게임 내 각 섹션의 부모 클래스
+*/
+
 UCLASS()
 class LOOTERSHOOTER_API ALSSection : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ALSSection();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void SetState(ESectionState NewState);
@@ -55,9 +57,6 @@ private:
 protected:
 	virtual void BattleStart();
 	virtual void SectionClear(); 
-
-//	UFUNCTION()
-//  void OnNPCSpawn();
 
 	UFUNCTION()
 	void OnKeyNPCDestroyed(AActor* DestroyedActor);

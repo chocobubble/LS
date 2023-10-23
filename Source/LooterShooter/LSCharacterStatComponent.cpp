@@ -53,7 +53,7 @@ void ULSCharacterStatComponent::SetNewLevel(int32 NewLevel)
 
 	LSCHECK(nullptr != LSGameInstance);
 	CurrentStatData = LSGameInstance->GetLSPlayerData(NewLevel);
-	if(nullptr != CurrentStatData)
+	if (nullptr != CurrentStatData)
 	{
 		Level = NewLevel;
 		CurrentHP = CurrentStatData->MaxHP;

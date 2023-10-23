@@ -10,7 +10,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp
     EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
     ALSMonster* LSMonster = Cast<ALSMonster>(OwnerComp.GetAIOwner()->GetPawn());
-    if(nullptr == LSMonster)
+    if (nullptr == LSMonster)
     {
         return EBTNodeResult::Failed;
     }

@@ -213,7 +213,7 @@ void ALSPlayerController::SetupInputComponent()
 
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if(EnhancedInputComponent == nullptr) 
+	if (EnhancedInputComponent == nullptr) 
 	{
 		LSLOG(Warning, TEXT("Enhanced Input Component nullptr"));
 		return;
@@ -272,7 +272,7 @@ void ALSPlayerController::ShowResultUI()
     ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
     //LSCHECK(nullptr != LSGameState);
     //ResultWidget->BindGameState(LSGameState);
-    if(ResultWidget != nullptr)
+    if (ResultWidget != nullptr)
     {
         ResultWidget->AddToViewport();
     }

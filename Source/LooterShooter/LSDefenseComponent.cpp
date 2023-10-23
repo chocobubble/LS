@@ -22,7 +22,7 @@ void ULSDefenseComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(CurrentShield == MaxShield || (GetWorld()->GetTimeSeconds() - LastHitTime) < ShieldRechargeDelay)
+	if (CurrentShield == MaxShield || (GetWorld()->GetTimeSeconds() - LastHitTime) < ShieldRechargeDelay)
 	{	
 		return;
 	}
@@ -47,7 +47,7 @@ void ULSDefenseComponent::SetMaxShield(float NewMaxShield)
 void ULSDefenseComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
-	if(CurrentHP > MaxHP)
+	if (CurrentHP > MaxHP)
 	{
 		CurrentHP = MaxHP;
 	}

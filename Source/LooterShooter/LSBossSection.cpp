@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "LSBossSection.h"
 #include "LSMonster.h"
 #include "LSDoor.h"
@@ -28,7 +27,6 @@ void ALSBossSection::BattleStart()
 
 void ALSBossSection::OnMonsterSpawn()
 {
-	//
 	auto Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
     LSCHECK(Monster);
     Monster->SetMonsterLevel(10);
@@ -41,9 +39,9 @@ void ALSBossSection::OnMonsterDestroyed(AActor* DestroyedActor)
     GetWorld()->GetTimerManager().ClearTimer(ClearTimerHandle);
     GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle,
             FTimerDelegate::CreateLambda([this]() -> void {
-            SetState(ESectionState::COMPLETE);
-							
-				}),EnemySpawnTime, false);
+            SetState(ESectionState::COMPLETE);}),
+            EnemySpawnTime,
+            false);
     
 }
 
@@ -54,7 +52,4 @@ void ALSBossSection::SectionClear()
     GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
     DisableInput(LSPlayerController);
     LSPlayerController->ShowResultUI();
-
-    //LSCHECK(LSDoor != nullptr);
-    //LSDoor->Destroy();
 }

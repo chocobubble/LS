@@ -50,11 +50,11 @@ void ALSFirstSection::BattleStart()
     for(const auto& Entry : FActorRange(CurrentWorld))
     {
         LSLOG(Warning, TEXT("%s"), *Entry->GetName());
-        if(*Entry->GetName() == FName("MonsterSpawnPoint"))
+        if (*Entry->GetName() == FName("MonsterSpawnPoint"))
         {
             SpawnPointActor = Cast<AActor>(Entry);
         }
-        if(SpawnPointActor != nullptr) 
+        if (SpawnPointActor != nullptr) 
         {
             LSLOG(Warning, TEXT("Get mOnster spawn point "));
         }
@@ -73,7 +73,7 @@ void ALSFirstSection::OnMonsterSpawn()
 	{
 		Monster->OnDestroyed.AddDynamic(this, &ALSFirstSection::OnMonsterDestroyed);
         MonsterArray.Push(Monster);
-        if(MonsterArray.Num() >= 3) // 몬스터 5 생성 시 스폰 중단
+        if (MonsterArray.Num() >= 3) // 몬스터 5 생성 시 스폰 중단
         {
             GetWorld()->GetTimerManager().ClearTimer(SpawnMonsterTimerHandle);
         }
@@ -83,7 +83,7 @@ void ALSFirstSection::OnMonsterSpawn()
 void ALSFirstSection::OnMonsterDestroyed(AActor* DestroyedActor) 
 {
     ++KilledMonsterCount;
-    if(KilledMonsterCount >= ClearCondition)
+    if (KilledMonsterCount >= ClearCondition)
     {
         SetState(ESectionState::COMPLETE);
     }
@@ -96,7 +96,7 @@ void ALSFirstSection::SectionClear()
     GetWorld()->GetTimerManager().ClearTimer(SpawnMonsterTimerHandle);
     for(ALSMonster* LiveMonster : MonsterArray)
     {
-        if(LiveMonster != nullptr)
+        if (LiveMonster != nullptr)
         {
             LiveMonster->SetCharacterState(ECharacterState::DEAD);
         }

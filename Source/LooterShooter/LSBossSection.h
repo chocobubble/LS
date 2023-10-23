@@ -9,7 +9,7 @@
 class ALSDoor;
 class ALSMonster;
 /**
- * 
+ * 보스 방 섹션 
  */
 UCLASS()
 class LOOTERSHOOTER_API ALSBossSection : public ALSSection

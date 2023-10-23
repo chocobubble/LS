@@ -1,26 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "LSEquipmentComponent.h"
 #include "LSWeapon.h"
 #include "LSWeaponInstance.h"
 #include "LSWeaponDefinition.h"
-
 #include "LSCharacter.h"
 
-// Sets default values for this component's properties
 ULSEquipmentComponent::ULSEquipmentComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
 	WeaponInstanceClass = ALSWeaponInstance::StaticClass();
-	// ...
 }
 
-
-// Called when the game starts
 void ULSEquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,7 +32,7 @@ int32 ULSEquipmentComponent::GetCurrentWeaponIndex() const
 
 void ULSEquipmentComponent::EquipWeapon(ALSWeaponInstance* WeaponInstance)
 {
-	if(WeaponInstanceList.Num() < 3)
+	if (WeaponInstanceList.Num() < 3)
 	{
 		WeaponInstanceList.Emplace(WeaponInstance);
 		CurrentWeaponInstance = WeaponInstance;
@@ -65,7 +57,7 @@ ALSWeaponInstance* ULSEquipmentComponent::GetCurrentWeaponInstance()
 ALSWeaponInstance* ULSEquipmentComponent::GetWeaponInstance(int32 Index)
 {
 	LSCHECK(Index < WeaponInstanceList.Num() , nullptr);
-	if(WeaponInstanceList[Index] != nullptr)
+	if (WeaponInstanceList[Index] != nullptr)
 	{
 		return WeaponInstanceList[Index];
 	}

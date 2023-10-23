@@ -22,7 +22,6 @@ class LOOTERSHOOTER_API ULSEquipmentComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	ULSEquipmentComponent();
 
 	void EquipWeapon(ALSWeaponInstance* Weapon);
@@ -38,7 +37,6 @@ public:
 
 	void DecreaseRoundsRemaining();
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:

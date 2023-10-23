@@ -11,7 +11,7 @@ void UWeaponAbility::SetAbilityStat(float Stat)
 
 void UBulletDamageAbility::ApplyAbility(ULSWeaponDefinition* WeaponDefinition) 
 {
-	if(WeaponDefinition == nullptr)
+	if (WeaponDefinition == nullptr)
 	{
 		return;
 	}
@@ -36,13 +36,13 @@ void ULSWeaponAbilityComponent::BeginPlay()
 
 void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition)
 {
-	if(WeaponDefinition == nullptr)
+	if (WeaponDefinition == nullptr)
 	{
 		return;
 	}
 	for(UWeaponAbility* Ability : AbilityList)
 	{
-		if(Ability != nullptr) 
+		if (Ability != nullptr) 
 		{
 			Ability->ApplyAbility(WeaponDefinition);
 		}
@@ -51,7 +51,7 @@ void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDef
 
 void ULSWeaponAbilityComponent::AttachWeaponAbility(UWeaponAbility* WeaponAbility)
 {
-	if(WeaponAbility != nullptr) 
+	if (WeaponAbility != nullptr) 
 	{
 		AbilityList.Add(WeaponAbility);
 	}

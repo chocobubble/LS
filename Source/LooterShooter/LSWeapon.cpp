@@ -15,7 +15,7 @@ ALSWeapon::ALSWeapon()
 	RootComponent = RifleWeapon;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
-	if( SK_RIFLE.Succeeded() )
+	if ( SK_RIFLE.Succeeded() )
 	{
 		RifleWeapon->SetSkeletalMesh(SK_RIFLE.Object);
 	}

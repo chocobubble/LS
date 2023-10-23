@@ -21,7 +21,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 
     //ALSMonster* ControllingPawn = Cast<ALSMonster>(OwnerComp.GetAIOwner()->GetPawn());
     APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-    if(nullptr == ControllingPawn)
+    if (nullptr == ControllingPawn)
     {
         return false;
     }

@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
     EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
     auto LSCharacter = Cast<ALSCharacter>(OwnerComp.GetAIOwner()->GetPawn());
-    if(nullptr == LSCharacter)
+     if (nullptr == LSCharacter)
     {
         return EBTNodeResult::Failed;
     }

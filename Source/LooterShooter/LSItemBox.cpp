@@ -101,7 +101,7 @@ void ALSItemBox::OpenChest()
 	Effect->Activate(true);
 	Box->SetHiddenInGame(true, true);
 	SetActorEnableCollision(false);
-	if(bIsDestroying)
+	if (bIsDestroying)
 	{
 		LSLOG(Error, TEXT("SOmething wrong"));
 		return;

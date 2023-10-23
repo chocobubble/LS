@@ -15,7 +15,7 @@
 #define LSLOG_S(Verbosity) UE_LOG(LooterShooter, Verbosity, TEXT("%s"), *LSLOG_CALLINFO)
 #define LSLOG(Verbosity, Format, ...) UE_LOG(LooterShooter, Verbosity, TEXT("%s %s"), *LSLOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
 // nullptr 체크 && 디버깅 매크로
-#define LSCHECK(Expr, ...) { if(!(Expr)) { LSLOG(Error, TEXT("ASSERTION : %s"), TEXT("'"#Expr"'")); return __VA_ARGS__;}}
+#define LSCHECK(Expr, ...) { if (!(Expr)) { LSLOG(Error, TEXT("ASSERTION : %s"), TEXT("'"#Expr"'")); return __VA_ARGS__;}}
 ```
 
 ### 프로젝트 관리

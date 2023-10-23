@@ -23,7 +23,7 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
     }
 
     auto Target = Cast<ALSPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
-    if(nullptr == Target)
+    if (nullptr == Target)
     {
         return EBTNodeResult::Failed;
     }

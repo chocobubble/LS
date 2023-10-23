@@ -112,7 +112,7 @@ ULSGameInstance::ULSGameInstance()
     }
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/LS/Meshes/Assault_Rifle.Assault_Rifle"));
-	if( SK_RIFLE.Succeeded() )
+	if ( SK_RIFLE.Succeeded() )
 	{
 		RifleWeaponMesh = SK_RIFLE.Object;
 	}
@@ -122,7 +122,7 @@ ULSGameInstance::ULSGameInstance()
 	}
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_SHOTGUN(TEXT("/Game/LS/Meshes/Shotgun.Shotgun"));
-	if( SK_SHOTGUN.Succeeded() )
+	if ( SK_SHOTGUN.Succeeded() )
 	{
 		ShotgunWeaponMesh = SK_SHOTGUN.Object;
 	}
@@ -132,7 +132,7 @@ ULSGameInstance::ULSGameInstance()
 	}
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_PISTOL(TEXT("/Game/LS/Meshes/Pistols.Pistols"));
-	if( SK_PISTOL.Succeeded() )
+	if ( SK_PISTOL.Succeeded() )
 	{
 		PistolWeaponMesh = SK_PISTOL.Object;
 	}

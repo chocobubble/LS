@@ -58,7 +58,7 @@ int32 ULSInventoryComponent::GetEmptyIndex()
 {
 	for(int32 ItemIndex = 0; ItemIndex < MaxInventoryCapacity; ++ItemIndex)
 	{
-		if(WeaponList[ItemIndex] == nullptr)
+		if (WeaponList[ItemIndex] == nullptr)
 		{
 			LSLOG(Warning, TEXT("%d'th inventory is empty"), ItemIndex);
 			return ItemIndex;
@@ -72,7 +72,7 @@ int32 ULSInventoryComponent::GetEmptyIndex()
 void ULSInventoryComponent::AddWeaponToInventory(TObjectPtr<ULSWeaponDefinition> WeaponDefinition)
 {
 	LSCHECK(WeaponDefinition != nullptr);
-	if(IsInventoryFull())
+	if (IsInventoryFull())
 	{
 		return;
 	}

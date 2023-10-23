@@ -58,10 +58,10 @@ void ULSRoundProgressbar::StartReload(float GunReloadTime)
 void ULSRoundProgressbar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-    if(ReloadTime < KINDA_SMALL_NUMBER) return;
+    if (ReloadTime < KINDA_SMALL_NUMBER) return;
     ElapsedTime += InDeltaTime;
     SetPercentPB(ElapsedTime);
-    if(ElapsedTime >= ReloadTime)
+    if (ElapsedTime >= ReloadTime)
     {
         ReloadTime = 0.0f;
         ElapsedTime = 0.0f;

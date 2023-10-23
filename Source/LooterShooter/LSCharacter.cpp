@@ -35,12 +35,9 @@
 /** @TODO: 그래플링 훅 */
 // #include "CableComponent.h"
 
-
-// Sets default values
 ALSCharacter::ALSCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = true;
 
 	// 카메라, 카메라의 SpringArm 컴포넌트 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
@@ -58,15 +55,12 @@ ALSCharacter::ALSCharacter()
 	// 그래플링 훅 구현을 위한 케이블 컴포넌트 
 	// Cable = CreateDefaultSubobject<ULSCableComponent>(TEXT("CABLE"));
 	
-
-	/** @deprecated: 삭제하기 */	
-	//#include "Components/WidgetComponent.h"
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));	
 
-	// #include "Components/CapsuleComponent.h"
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
-	// Later, Delete
+	
+	/** @TODO: 삭제 */
 	HPBarWidget->SetupAttachment(GetMesh());
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
@@ -75,32 +69,8 @@ ALSCharacter::ALSCharacter()
 	SpringArm->TargetArmLength = ArmLengthTo;  //400.0f;
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetRelativeLocation(FVector(0.0f, 90.0f, 90.0f));
-
-	// max jump height
 	GetCharacterMovement()->JumpZVelocity = 450.0f;
-/*
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/Characters/Heroes/Mannequin/Meshes/SKM_Quinn.SKM_Quinn"));
-	if ( SKM_QUINN.Succeeded() )
-	{
-		GetMesh()->SetSkeletalMesh( SKM_QUINN.Object );
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
-	}
 
-
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> RIFLE_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
-	if (RIFLE_ANIM.Succeeded() )
-	{
-		GetMesh()->SetAnimInstanceClass(RIFLE_ANIM.Class);
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("Rifle anim desn't succeded"));
-	}
-*/
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_Default_KBM.IMC_Default_KBM"));
 	if ( IMC_DEFAULT_KBM.Succeeded())
 	{
@@ -132,7 +102,7 @@ ALSCharacter::ALSCharacter()
 		LSCHECK(ShootAction->Triggers.Num() > 0);
 		TObjectPtr<UInputTriggerPulse> ShootInputTrigger = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
 		LSCHECK(nullptr != ShootInputTrigger);
-		// fire rate
+		// 연사 속도
 		ShootInputTrigger->Interval = 0.1f;
 	}
 
@@ -198,9 +168,9 @@ ALSCharacter::ALSCharacter()
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
-	// Later, delete
+	/** @TODO: 삭제 */
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
-	// Later, delete
+	/** @TODO: 삭제 */
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
 	if (UI_HUD.Succeeded())
@@ -209,20 +179,19 @@ ALSCharacter::ALSCharacter()
 		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 	}
 	
-	// Later, delete
+	/** @TODO: 삭제 */
 	AIControllerClass = ALSAIController::StaticClass();
-	// Later, delete
+	/** @TODO: 삭제 */
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	bIsAttacking = false;
 
 	SetActorHiddenInGame(true);
-	// // Later, delete
+	/** @TODO: 삭제 */
 	HPBarWidget->SetHiddenInGame(true);
 	SetCanBeDamaged(false);
 }
 
-// Called when the game starts or when spawned
 void ALSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -268,7 +237,7 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 	// 캐릭터 비동기 로딩 상태
 	case ECharacterState::LOADING:
 	{
-		if(bIsPlayer)
+		if (bIsPlayer)
 		{
 			DisableInput(LSPlayerController);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
@@ -280,8 +249,6 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		{
 			ALSGameMode* LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
 			LSCHECK(nullptr != LSGameMode);
-			//int32 TargetLevel = FMath::CeilToInt(((float)LSGameMode->GetScore() * 0.8f));
-			//int32 FinalLevel = FMath::Clamp<int32>(TargetLevel, 1, 20);
 			int32 CurrentPlayerLevel = LSGameMode->GetPlayerLevel();
 			LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
 			CharacterStat->SetNewLevel(CurrentPlayerLevel);
@@ -327,7 +294,7 @@ void ALSCharacter::SetCharacterState(ECharacterState NewState)
 		LSAnim->SetDeadAnim();
 		SetCanBeDamaged(false);
 		
-		if(bIsPlayer)
+		if (bIsPlayer)
 		{
 			DisableInput(LSPlayerController);
 		}
@@ -356,7 +323,6 @@ ECharacterState ALSCharacter::GetCharacterState() const
 	return CurrentState;
 }
 
-// Called every frame
 void ALSCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -375,7 +341,7 @@ void ALSCharacter::Tick(float DeltaTime)
 		}
 	}
 }
-// Called to bind functionality to input
+
 void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	APlayerController* PlayerController = GetController<APlayerController>();
@@ -395,7 +361,7 @@ void ALSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 	Subsystem->AddMappingContext(InputMapping, 0);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if(EnhancedInputComponent == nullptr) 
+	if (EnhancedInputComponent == nullptr) 
 	{
 		LSLOG(Warning, TEXT("Enhanced Input Component nullptr"));
 		return;
@@ -431,7 +397,7 @@ void ALSCharacter::Move(const FInputActionValue& Value)
 
 void ALSCharacter::JumpAct(const FInputActionValue& Value)
 {
-	if(Value.Get<bool>())
+	if (Value.Get<bool>())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Jump action input"));
 	}
@@ -443,12 +409,10 @@ void ALSCharacter::JumpAct(const FInputActionValue& Value)
 
 void ALSCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
@@ -506,7 +470,7 @@ void ALSCharacter::EndAiming(const FInputActionValue& Value)
 void ALSCharacter::GrapplingHook(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("GrapplingHook"));
-	if(bIsGrapplingCasting||bIsGrappling)
+	if (bIsGrapplingCasting||bIsGrappling)
 	{
 		return;
 	}
@@ -568,14 +532,14 @@ void ALSCharacter::GrappleBegin()
 void ALSCharacter::Reload(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("Reloading Started"));
-	if(bIsReloading)
+	if (bIsReloading)
 	{
 		return;
 	}
 	LSCHECK(nullptr != EquipmentManager->GetCurrentWeaponInstance());
 	bIsReloading = true;
 	LSAnim->SetReloadAnim(true);
-	// 람다 식 나중에 빼서 구현
+	// TODO: 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
 			bIsReloading = false;
 			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
@@ -595,7 +559,7 @@ void ALSCharacter::EquipFirstWeapon(const FInputActionValue& Value)
 	SetWeapon(EquipmentManager->GetWeaponInstance(0));
 	EquipmentManager->SetCurrentWeaponIndex(0);
 
-	// for test later
+	// 테스트용
 	EquipmentManager->GetWeaponInstance(0)->OnAimDirChange.AddUObject(this, &ALSCharacter::ShowDebugLine);
 }
 
@@ -629,7 +593,7 @@ void ALSCharacter::Interact(const FInputActionValue& Value)
 		Params
 	);
 
-	if(bResult)
+	if (bResult)
 	{
 		LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
@@ -684,7 +648,7 @@ void ALSCharacter::AttackCheck()
 {
 	LSCHECK(EquipmentManager->GetCurrentWeaponInstance() != nullptr);
 	LSLOG_S(Warning);
-	if(!CanShoot(EAmmoType::RIFLE))
+	if (!CanShoot(EAmmoType::RIFLE))
 	{
 		LSLOG(Warning, TEXT("CANNOT Shoot"));
 		return;
@@ -751,7 +715,7 @@ void ALSCharacter::AttackCheck()
 
 bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 {
-	if(bIsReloading)
+	if (bIsReloading)
 	{
 		LSLOG(Warning, TEXT("IsReloading"));
 		return false;
@@ -759,7 +723,7 @@ bool ALSCharacter::CanShoot(EAmmoType AmmoType)
 	//  TODO: weapon 의 magazine ammo로 바꾸기
 	LSCHECK(EquipmentManager->WeaponInstanceList.Num() > 0 &&
 			EquipmentManager->CurrentWeaponInstance != nullptr ,false);
-	if(EquipmentManager->GetRoundsRemaining() == 0)
+	if (EquipmentManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));
 	 	return false;
@@ -798,11 +762,11 @@ void ALSCharacter::SetWeapon(ALSWeaponInstance* NewWeapon)
 	}
 	
 	FName WeaponSocket(TEXT("weapon_r_socket"));
-	if(nullptr == RootComponent)
+	if (nullptr == RootComponent)
 	{
 		LSLOG(Warning, TEXT("No RootComponent"));
 	}
-	if(nullptr == GetMesh())
+	if (nullptr == GetMesh())
 	{
 		LSLOG(Warning, TEXT("no mesh"));
 		return;
@@ -874,7 +838,7 @@ float ALSCharacter::GetFinalAttackDamage() const
 
 void ALSCharacter::InteractCheck()
 {
-	if(!bIsNearInteractableObject)
+	if (!bIsNearInteractableObject)
 	{
 		return;
 	}
@@ -890,7 +854,7 @@ void ALSCharacter::InteractCheck()
 		Params
 	);	
 
-	if(bResult)
+	if (bResult)
 	{
 		LSLOG(Warning, TEXT("HIT BOx"));
 	}
@@ -899,27 +863,27 @@ void ALSCharacter::InteractCheck()
 void ALSCharacter::DropItem()
 {
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
-	if(RandomNumber < 0.1f)
+	if (RandomNumber < 0.1f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
 	}
-	else if(RandomNumber < 0.2f)
+	else if (RandomNumber < 0.2f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::HP, 100);
 	}
-	else if(RandomNumber < 0.4f)
+	else if (RandomNumber < 0.4f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::MP, 100);
 	}
-	else if(RandomNumber < 0.6f)
+	else if (RandomNumber < 0.6f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::RIFLEAMMO, 100);
 	}
-	else if(RandomNumber < 0.8f)
+	else if (RandomNumber < 0.8f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::SHOTGUNAMMO, 100);
 	}
-	else if(RandomNumber <= 1.f)
+	else if (RandomNumber <= 1.f)
 	{
 		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::PISTOLAMMO, 100);
 	}

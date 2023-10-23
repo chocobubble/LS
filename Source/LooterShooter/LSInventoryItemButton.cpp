@@ -27,7 +27,7 @@ void ULSInventoryItemButton::Selected()
 {
     LSLOG(Warning, TEXT("Button Clicked"));
     bIsSelected = !bIsSelected;
-    if(bIsSelected)
+    if (bIsSelected)
     {
         
         LSLOG(Warning, TEXT("Item is selected"));

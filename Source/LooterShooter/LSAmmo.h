@@ -14,11 +14,9 @@ class LOOTERSHOOTER_API ALSAmmo : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ALSAmmo();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:

@@ -305,7 +305,7 @@ void ALSPlayer::Tick(float DeltaTime)
 		float temp = FMath::FInterpTo(0, CurrentRecoilTest, DeltaTime, InterpolateSpeed);
 		AddControllerPitchInput(temp);
 		CurrentRemainElapsedTime -= DeltaTime;
-		if(CurrentRemainElapsedTime < 0.3f)
+		if (CurrentRemainElapsedTime < 0.3f)
 		{
 			CurrentRecoilTest = -RecoilTest;
 			InterpolateSpeed = Acceleration / 2;
@@ -376,7 +376,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	//AttackCheck();
 	LSCHECK(CurrentWeapon != nullptr);
 	// TODO : ammo type 늘리기
-	if(!CanShoot(EAmmoType::RIFLE))
+	if (!CanShoot(EAmmoType::RIFLE))
 	{
 		LSLOG(Warning, TEXT("CANNOT Shoot"));
 		return;
@@ -413,7 +413,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 			float FinalAttackDamage;
-			if(HitResult.BoneName == TEXT("head"))
+			if (HitResult.BoneName == TEXT("head"))
 			{
 				LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
 				bool bIsWeakPoint = true;
@@ -477,7 +477,7 @@ void ALSPlayer::EndAiming(const FInputActionValue& Value)
 void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("GrapplingHook"));
-	if(bIsGrapplingCasting||bIsGrappling)
+	if (bIsGrapplingCasting||bIsGrappling)
 	{
 		return;
 	}
@@ -529,7 +529,7 @@ void ALSPlayer::GrappleBegin()
 void ALSPlayer::Reload(const FInputActionValue& Value)
 {
 	LSLOG(Warning, TEXT("Reloading Started"));
-	if(bIsReloading)
+	if (bIsReloading)
 	{
 		return;
 	}
@@ -597,7 +597,7 @@ void ALSPlayer::Interact(const FInputActionValue& Value)
 		Params
 	);
 
-	if(bResult)
+	if (bResult)
 	{
 		LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
@@ -615,7 +615,7 @@ void ALSPlayer::Interact(const FInputActionValue& Value)
 
 void ALSPlayer::InteractProgress(const FInputActionInstance& ActionInstance)
 {
-	if(!bIsNearInteractableObject)
+	if (!bIsNearInteractableObject)
 	{
 		return;
 	}
@@ -660,7 +660,7 @@ void ALSPlayer::PostInitializeComponents()
 
 bool ALSPlayer::CanShoot(EAmmoType AmmoType)
 {
-	if(bIsReloading)
+	if (bIsReloading)
 	{
 		LSLOG(Warning, TEXT("IsReloading"));
 		return false;
@@ -668,7 +668,7 @@ bool ALSPlayer::CanShoot(EAmmoType AmmoType)
 	//  TODO: weapon 의 magazine ammo로 바꾸기
 	LSCHECK(EquipmentManager->WeaponInstanceList.Num() > 0 &&
 			EquipmentManager->CurrentWeaponInstance != nullptr, false);
-	if(EquipmentManager->GetRoundsRemaining() == 0)
+	if (EquipmentManager->GetRoundsRemaining() == 0)
 	{
 		LSLOG(Warning, TEXT("No Ammo"));
 	 	return false;
@@ -762,12 +762,12 @@ float ALSPlayer::GetFinalAttackDamage(bool bIsWeakPoint) const
 	// 치명타인 경우 약점 공격으로 인한 데미지 증가가 없음
 	float RandValue = FMath::FRandRange(0.0f, 1.0f);
 	float CriticalHitChance = CurrentWeapon->GetCriticalHitChance();
-	if(RandValue <= CriticalHitChance)
+	if (RandValue <= CriticalHitChance)
 	{
 		AttackDamage *= CurrentWeapon->GetCriticalHitMultiplier();
 	}
 	// 약점 공격시
-	else if(bIsWeakPoint)
+	else if (bIsWeakPoint)
 	{
 		// TODO : 수치 변수로 빼기
 		AttackDamage *= 1.2f;
@@ -779,7 +779,7 @@ void ALSPlayer::InteractCheck()
 {
 	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
 
-	if(!bIsNearInteractableObject)
+	if (!bIsNearInteractableObject)
 	{
 		return;
 	}
@@ -795,7 +795,7 @@ void ALSPlayer::InteractCheck()
 		Params
 	);	
 
-	if(bResult)
+	if (bResult)
 	{
 		
 	}
@@ -883,7 +883,7 @@ void ALSPlayer::RecoilTick(float DeltaTime)
 		LSPlayerController->SetControlRotation(RecoilStartRot + PlayerDeltaRot + Del);
 		RecoilDeltaRot = Del;
 
-		if(bIsFiring)// (!bIsFiring)
+		if (bIsFiring)// (!bIsFiring)
 		{
 			// 반동 시작되고 나서 시간이 탄창 내 탄약을 모두 소비하는 시간 보다 더 지난 경우
 			if (Recoiltime > FireRate)

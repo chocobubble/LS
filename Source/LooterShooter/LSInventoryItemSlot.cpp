@@ -39,7 +39,7 @@ void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
 {
     LSCHECK(WeaponDefinition != nullptr);
     ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-    if(WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
+    if (WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
     {
         LSCHECK(GunImage != nullptr);
         GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
@@ -54,7 +54,7 @@ void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
 void ULSInventoryItemSlot::TurnOn()
 {
     LSLOG(Warning, TEXT("Item Slot Clicked"));
-    if(bIsTurnedOn)
+    if (bIsTurnedOn)
     {
         SlotBorder->SetVisibility(ESlateVisibility::Hidden);
     }
