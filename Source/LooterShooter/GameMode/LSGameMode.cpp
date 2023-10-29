@@ -2,11 +2,10 @@
 
 
 #include "LSGameMode.h"
-#include "LSCharacter.h"
-#include "LSPlayerController.h"
-#include "LSPlayerState.h"
+#include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayerState.h"
 #include "LSGameState.h"
-#include "LSPlayer.h"
+#include "LooterShooter/Character/LSPlayer.h"
 #include "Engine/PawnIterator.h"
 
 ALSGameMode::ALSGameMode()

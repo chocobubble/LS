@@ -2,7 +2,7 @@
 
 
 #include "LSWeaponAbilityComponent.h"
-#include "LSWeaponDefinition.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
 
 void UWeaponAbility::SetAbilityStat(float Stat)
 {

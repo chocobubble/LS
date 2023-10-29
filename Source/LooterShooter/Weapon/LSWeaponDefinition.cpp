@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LSWeaponDefinition.h"
-#include "LSEquipmentComponent.h"
+#include "LooterShooter/Component/LSEquipmentComponent.h"
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "LSWeaponAbilityComponent.h"
+#include "LooterShooter/Component/LSWeaponAbilityComponent.h"
 
 ULSWeaponDefinition::ULSWeaponDefinition()
 {

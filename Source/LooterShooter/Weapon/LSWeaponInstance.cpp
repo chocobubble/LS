@@ -3,11 +3,8 @@
 
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "LSWeaponAbilityComponent.h"
+#include "LooterShooter/Component/LSWeaponAbilityComponent.h"
 #include "LSWeaponDefinition.h"
-
-// later delete
-#include "LSCharacter.h"
 
 // Sets default values
 ALSWeaponInstance::ALSWeaponInstance()

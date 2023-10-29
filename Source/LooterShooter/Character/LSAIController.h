@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "AIController.h"
 #include "LSAIController.generated.h"
 

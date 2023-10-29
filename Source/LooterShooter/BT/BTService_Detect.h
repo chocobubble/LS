@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "BehaviorTree/BTService.h"
 #include "BTService_Detect.generated.h"
 

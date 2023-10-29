@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Actor.h"
-#include "LSGameInstance.h"
-#include "LSGameState.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/GameMode/LSGameState.h"
 #include "LSWeapon.generated.h"
 
 /**

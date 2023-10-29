@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/PlayerState.h"
 #include "LSPlayerState.generated.h"
 

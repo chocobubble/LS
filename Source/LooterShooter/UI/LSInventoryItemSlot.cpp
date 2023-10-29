@@ -5,8 +5,8 @@
 #include "Components/Border.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
-#include "LSWeaponDefinition.h"
-#include "LSGameInstance.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
+#include "LooterShooter/System/LSGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULSInventoryItemSlot::NativeConstruct()

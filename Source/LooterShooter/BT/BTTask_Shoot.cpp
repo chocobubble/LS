@@ -2,8 +2,8 @@
 
 
 #include "BTTask_Shoot.h"
-#include "LSMonster.h"
-#include "LSAIController.h"
+#include "LooterShooter/Character/LSMonster.h"
+#include "LooterShooter/Character/LSAIController.h"
 
 EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

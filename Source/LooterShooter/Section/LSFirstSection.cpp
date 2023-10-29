@@ -2,8 +2,8 @@
 
 #include "LSFirstSection.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
-#include "LSMonster.h"
-#include "LSDoor.h"
+#include "LooterShooter/Character/LSMonster.h"
+#include "LooterShooter/Obstacles/LSDoor.h"
 ALSFirstSection::ALSFirstSection()
 {
  	PrimaryActorTick.bCanEverTick = false;

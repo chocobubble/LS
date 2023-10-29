@@ -5,9 +5,9 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
-#include "LSWeaponDefinition.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
 #include "LSRoundProgressbar.h"
-#include "LSResourceManageComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 
 void ULSEnhanceWidget::NativeConstruct()
 {

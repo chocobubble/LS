@@ -2,8 +2,8 @@
 
 
 #include "LSPlayerState.h"
-#include "LSGameInstance.h"
-#include "LSSaveGame.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/GameMode/LSSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
 ALSPlayerState::ALSPlayerState()

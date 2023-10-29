@@ -1,10 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LSEquipmentComponent.h"
-#include "LSWeapon.h"
-#include "LSWeaponInstance.h"
-#include "LSWeaponDefinition.h"
-#include "LSCharacter.h"
+#include "LooterShooter/Weapon/LSWeapon.h"
+#include "LooterShooter/Weapon/LSWeaponInstance.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
 
 ULSEquipmentComponent::ULSEquipmentComponent()
 {

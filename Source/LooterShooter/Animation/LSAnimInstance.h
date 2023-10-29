@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LSGameMode.h"
+//#include "LSGameMode.h"
 #include "Animation/AnimInstance.h"
 #include "LSAnimInstance.generated.h"
 

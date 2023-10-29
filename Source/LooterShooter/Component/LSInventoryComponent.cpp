@@ -2,9 +2,9 @@
 
 
 #include "LSInventoryComponent.h"
-#include "LSWeaponDefinition.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
 #include "LSEquipmentComponent.h"
-#include "LSGameState.h"
+#include "LooterShooter/GameMode/LSGameState.h"
 // #include "LSPlayerAnimInstance.h"
 
 // Sets default values for this component's properties

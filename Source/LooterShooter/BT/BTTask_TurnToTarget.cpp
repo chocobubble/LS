@@ -2,8 +2,8 @@
 
 
 #include "BTTask_TurnToTarget.h"
-#include "LSPlayer.h"
-#include "LSAIController.h"
+#include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/Character/LSAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_TurnToTarget::UBTTask_TurnToTarget()

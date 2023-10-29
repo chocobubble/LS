@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "UObject/NoExportTypes.h"
 #include "LSWeaponInstance.h"
-#include "LSGameInstance.h"
-#include "LSGameState.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/GameMode/LSGameState.h"
 #include "LSWeaponDefinition.generated.h"
 
 class ULSWeaponAbilityComponent;

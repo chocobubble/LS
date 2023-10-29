@@ -4,12 +4,12 @@
 #include "LSGameplayResultWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
-#include "LSGameState.h"
-#include "LSPlayerController.h"
-#include "LSPlayer.h"
-#include "LSEnhanceWidget.h"
-#include "LSInventoryComponent.h"
-#include "LSResourceManageComponent.h"
+#include "LooterShooter/GameMode/LSGameState.h"
+#include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/UI/LSEnhanceWidget.h"
+#include "LooterShooter/Component/LSInventoryComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 
 void ULSGameplayResultWidget::NativeConstruct()
 {

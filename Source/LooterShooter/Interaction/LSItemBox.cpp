@@ -2,11 +2,11 @@
 
 
 #include "LSItemBox.h"
-#include "LSWeapon.h"
+#include "LooterShooter/Weapon/LSWeapon.h"
 #include "Components/BoxComponent.h"
-#include "LSPlayer.h"
+#include "LooterShooter/Character/LSPlayer.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "LSWeaponDefinition.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
 
 // Sets default values
 ALSItemBox::ALSItemBox()

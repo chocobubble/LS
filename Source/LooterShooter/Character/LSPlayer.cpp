@@ -9,22 +9,22 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h"
-#include "LSCharacterStatComponent.h"
-#include "LSPlayerAnimInstance.h"
+#include "LooterShooter/Component/LSCharacterStatComponent.h"
+#include "LooterShooter/Animation/LSPlayerAnimInstance.h"
 #include "LSPlayerController.h"
 #include "LSPlayerState.h"
-#include "LSGameInstance.h"
-#include "LSHUDWidget.h"
-#include "LSDefenseComponent.h"
-#include "LSEquipmentComponent.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/UI/LSHUDWidget.h"
+#include "LooterShooter/Component/LSDefenseComponent.h"
+#include "LooterShooter/Component/LSEquipmentComponent.h"
 #include "Math/RotationMatrix.h"
-#include "LSTextPopup.h"
-#include "LSAutoLootItem.h"
-#include "LSWeaponInstance.h"
-#include "LSInventoryComponent.h"
-#include "LSItemBox.h"
-#include "LSWeaponDefinition.h"
-#include "LSAmmo.h"
+#include "LooterShooter/UI/LSTextPopup.h"
+#include "LooterShooter/Interaction/LSAutoLootItem.h"
+#include "LooterShooter/Weapon/LSWeaponInstance.h"
+#include "LooterShooter/Component/LSInventoryComponent.h"
+#include "LooterShooter/Interaction/LSItemBox.h"
+#include "LooterShooter/Weapon/LSWeaponDefinition.h"
+#include "LooterShooter/Weapon/LSAmmo.h"
 #include "DrawDebugHelpers.h"
 
 ALSPlayer::ALSPlayer()
@@ -70,6 +70,11 @@ ALSPlayer::ALSPlayer()
 	if (IMC_DEFAULT_KBM.Succeeded())
 	{
 		InputMapping = IMC_DEFAULT_KBM.Object;
+		//LSLOG_S(Error);
+	}
+	else
+	{
+		LSLOG_S(Error);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MOVE(TEXT("/Game/LS/Input/Actions/IA_Move.IA_Move"));
@@ -77,17 +82,29 @@ ALSPlayer::ALSPlayer()
 	{
 		MoveAction = IA_MOVE.Object;
 	}
+	else
+	{
+		LSLOG_S(Error);
+	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_JUMP(TEXT("/Game/LS/Input/Actions/IA_Jump.IA_Jump"));
 	if (IA_JUMP.Succeeded())
 	{
 		JumpAction = IA_JUMP.Object;
 	}
+	else
+	{
+		LSLOG_S(Error);
+	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LOOK(TEXT("/Game/LS/Input/Actions/IA_LOOK.IA_LOOK"));
 	if (IA_LOOK.Succeeded())
 	{
 		LookAction = IA_LOOK.Object;
+	}
+	else
+	{
+		LSLOG_S(Error);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_SHOOT(TEXT("/Game/LS/Input/Actions/IA_SHOOT.IA_SHOOT"));
@@ -199,6 +216,15 @@ void ALSPlayer::BeginPlay()
 	{
 		ToAimDirection = FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X);
 	}
+/*
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMapping, 0);
+		}
+	}
+	*/
 }
 
 void ALSPlayer::SetCharacterState(ECharacterState NewState)
@@ -251,7 +277,7 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 
 			GetWorld()->GetTimerManager().SetTimer(
 				DeadTimerHandle,
-				FTimerDelegate::CreateLambda([]() -> void {LSPlayerController->ShowResultUI();}),
+				FTimerDelegate::CreateLambda([this]() -> void {LSPlayerController->ShowResultUI();}),
 				DeadTimer,
 				false
 			);
@@ -261,6 +287,7 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 
 void ALSPlayer::OnAssetLoadCompleted()
 {
+	LSLOG(Warning, TEXT("Asset Loadt"));
 	USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
 	AssetStreamingHandle.Reset();
 	if(AssetLoaded != nullptr)
@@ -313,25 +340,31 @@ void ALSPlayer::Tick(float DeltaTime)
 
 void ALSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController != nullptr)
+	if (PlayerController == nullptr)
 	{
 		return;
 	}
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	if (Subsystem != nullptr)
+	if (Subsystem == nullptr)
 	{
 		return;
 	}
 
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(InputMapping, 0);
+	LSLOG_S(Error);
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (EnhancedInputComponent != nullptr)
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+	if (EnhancedInputComponent == nullptr)
 	{
 		return;
+	}
+	else
+	{
+		LSLOG_S(Error);
 	}
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALSPlayer::Move);
@@ -423,7 +456,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 			if (HitResult.BoneName == TEXT("head"))
 			{
 				// LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
-				bool bIsWeakPoint = true;
+				bIsWeakPoint = true;
 			}
 			FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
 			
@@ -578,7 +611,7 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 	// TODO: 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(
 		ReloadTimerHandle,
-		FTimerDelegate::CreateLambda([]()->void {
+		FTimerDelegate::CreateLambda([this]()->void {
 			LSCHECK(CurrentWeapon != nullptr);
 			bIsReloading = false;
 			EAmmoType CurrentAmmoType = CurrentWeapon->GetAmmoType();
@@ -707,7 +740,7 @@ void ALSPlayer::PostInitializeComponents()
 	{
 		if (DefenseManager != nullptr)
 		{
-			DefenseManager->OnHPIsZero.AddLambda([]() -> void {
+			DefenseManager->OnHPIsZero.AddLambda([this]() -> void {
 				LSLOG(Warning, TEXT("OnHPIsZero"));
 				LSPlayerAnim->SetDeadAnim();
 				SetActorEnableCollision(false);
@@ -987,6 +1020,18 @@ void ALSPlayer::RecoilTick(float DeltaTime)
 	}
 }
 
+float ALSPlayer::GetFinalAttackRange() const
+{
+	return (CurrentWeapon != nullptr) ? CurrentWeapon->GetMaxRange() : DefaultAttackRange;
+}
+
+void ALSPlayer::SetShootInputInterval(float InputInterval)
+{
+	if(ShootInputTriggerPulse != nullptr)
+	{
+		ShootInputTriggerPulse->Interval = InputInterval;
+	}
+}
 
 /*
 void ALSPlayer::SetShootInputInterval(float InputInterval)

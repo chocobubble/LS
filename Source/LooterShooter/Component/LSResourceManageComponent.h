@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "Components/ActorComponent.h"
 
 #include "LSResourceManageComponent.generated.h"

@@ -2,7 +2,7 @@
 
 
 #include "BTTask_FindPatrolPos.h"
-#include "LSAIController.h"
+#include "LooterShooter/Character/LSAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NavigationSystem.h"
 

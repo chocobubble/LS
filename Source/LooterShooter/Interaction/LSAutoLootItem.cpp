@@ -2,9 +2,9 @@
 
 
 #include "LSAutoLootItem.h"
-#include "LSPlayer.h"
-#include "LSCharacterStatComponent.h"
-#include "LSDefenseComponent.h"
+#include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/Component/LSCharacterStatComponent.h"
+#include "LooterShooter/Component/LSDefenseComponent.h"
 
 ALSAutoLootItem::ALSAutoLootItem()
 {	

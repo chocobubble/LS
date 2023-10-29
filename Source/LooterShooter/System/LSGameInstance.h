@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
 #include "Engine/StreamableManager.h"
-#include "LSAutoLootItem.h"
+#include "LooterShooter/Interaction/LSAutoLootItem.h"
 
 #include "LSGameInstance.generated.h"
 
@@ -26,8 +26,6 @@ struct FLSWeaponBaseData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FLSWeaponBaseData() : 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 	int32 Level = 1;
 

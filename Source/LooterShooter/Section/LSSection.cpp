@@ -3,11 +3,11 @@
 
 #include "LSSection.h"
 #include "Components/BoxComponent.h"
-#include "LSMonster.h"
-#include "LSItemBox.h"
-#include "LSGameMode.h"
-#include "LSPlayerController.h"
-#include "LSPlayer.h"
+#include "LooterShooter/Character/LSMonster.h"
+#include "LooterShooter/Interaction/LSItemBox.h"
+#include "LooterShooter/GameMode/LSGameMode.h"
+#include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayer.h"
 
 // Sets default values
 ALSSection::ALSSection()

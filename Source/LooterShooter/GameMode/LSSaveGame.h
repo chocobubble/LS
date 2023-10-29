@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/SaveGame.h"
 #include "LSSaveGame.generated.h"
 

@@ -2,11 +2,10 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "Animation/AnimInstance.h"
-//#include "LSGameInstance.h"
+#include "LooterShooter/System/LSGameInstance.h"
 
-class EWeaponType; // 가능?
 
 #include "LSPlayerAnimInstance.generated.h"
 /**
@@ -19,6 +18,8 @@ class LOOTERSHOOTER_API ULSPlayerAnimInstance : public UAnimInstance
 	
 public:
 	ULSPlayerAnimInstance();
+
+	void PlayAttackMontage();
 
 protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

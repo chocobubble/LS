@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Actor.h"
-#include "LSGameInstance.h"
-#include "LSResourceManageComponent.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 
 
 #include "Curves/CurveVector.h"// for recoil

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Character.h"
 #include "LSMonster.generated.h"
 
@@ -59,7 +59,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
+	//FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))

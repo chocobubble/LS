@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "Blueprint/UserWidget.h"
 #include "LSHUDWidget.generated.h"
 

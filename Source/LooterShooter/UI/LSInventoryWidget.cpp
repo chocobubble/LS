@@ -4,14 +4,14 @@
 #include "LSInventoryWidget.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
-#include "LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Styling/SlateBrush.h"
 #include "Styling/SlateTypes.h"
 #include "Styling/SlateColor.h"
 #include "Math/Color.h"
 #include "LSInventoryItemButton.h"
-#include "LSInventoryComponent.h"
+#include "LooterShooter/Component/LSInventoryComponent.h"
 
 void ULSInventoryWidget::NativeConstruct()
 {

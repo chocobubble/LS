@@ -2,9 +2,9 @@
 
 
 #include "BTService_Detect.h"
-#include "LooterShooter/LSAIController.h"
-#include "LooterShooter/LSPlayer.h"
-#include "LooterShooter/LSMonster.h"
+#include "LooterShooter/Character/LSAIController.h"
+#include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/Character/LSMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
 
@@ -42,7 +42,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
     if (bResult)
     {
-        for (TArray<FOverlapResult> const& OverlapResult : OverlapResults)
+        for (FOverlapResult const& OverlapResult : OverlapResults)
         {
             ALSPlayer* LSPlayer = Cast<ALSPlayer>(OverlapResult.GetActor());
             if (LSPlayer && LSPlayer->GetController() && LSPlayer->GetController()->IsPlayerController())

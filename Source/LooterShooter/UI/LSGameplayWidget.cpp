@@ -3,7 +3,7 @@
 
 #include "LSGameplayWidget.h"
 #include "Components/Button.h"
-#include "LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULSGameplayWidget::NativeConstruct()

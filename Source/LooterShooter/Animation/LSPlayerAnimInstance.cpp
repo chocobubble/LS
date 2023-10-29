@@ -14,7 +14,7 @@ void ULSPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Super::NativeUpdateAnimation(DeltaSeconds);
 
     APawn* Pawn = TryGetPawnOwner();
-    if (!::IsValid(Pawn) && !bIsDead)
+    if (::IsValid(Pawn) && !bIsDead)
     {
         CurrentPawnSpeed = Pawn->GetVelocity().Size();
         ACharacter* Character = Cast<ACharacter>(Pawn);
@@ -23,4 +23,10 @@ void ULSPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
             IsInAir = Character->GetMovementComponent()->IsFalling();
         }
     }
+}
+
+void ULSPlayerAnimInstance::PlayAttackMontage()
+{
+    LSLOG(Warning, TEXT("Play Attack Montage"));
+    //Montage_Play(AttackMontage, 1.0f);
 }

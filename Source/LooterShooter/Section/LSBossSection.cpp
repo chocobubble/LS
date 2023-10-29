@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LSBossSection.h"
-#include "LSMonster.h"
-#include "LSDoor.h"
-#include "LSPlayerController.h"
+#include "LooterShooter/Character/LSMonster.h"
+#include "LooterShooter/Obstacles/LSDoor.h"
+#include "LooterShooter/Character/LSPlayerController.h"
 
 void ALSBossSection::BeginPlay()
 {

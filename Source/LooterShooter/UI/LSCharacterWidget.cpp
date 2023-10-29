@@ -2,7 +2,7 @@
 
 #include "LSCharacterWidget.h"
 #include "Components/ProgressBar.h"
-#include "LSDefenseComponent.h"
+#include "LooterShooter/Component/LSDefenseComponent.h"
 
 
 void ULSCharacterWidget::BindDefenseComponent(ULSDefenseComponent* NewDefenseComponent)

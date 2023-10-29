@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "Engine/TextRenderActor.h"
 #include "LSTextPopup.generated.h"
 

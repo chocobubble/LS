@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "LooterShooter.h"
+#include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Character.h"
-#include "LSResourceManageComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 
 //////// recoil
 #include "Curves/CurveVector.h"
@@ -352,6 +352,8 @@ private:
 
 	FTimerHandle GrapplingTimerHandle = { };
 
+	
+
 	/** @TODO: 그래플링 훅 로프 구현하기 */
 /*
 	UPROPERTY(VisibleAnywhere, Category = "Grapple")
@@ -391,10 +393,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	FRotator Del;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = "Recoil", meta = (AllowPrivateAccess = "true"))
 	float RecoveryTime = 1.0f;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Category = "Recoil", meta = (AllowPrivateAccess = "true"))
 	float RecoverySpeed = 10.0f;
 
 	// 사격 시 호출되는 반동 시작 함수
@@ -443,9 +445,6 @@ public:
 	bool CanShoot(EAmmoType AmmoType);
 
 	float GetFinalAttackRange() const;
-	{
-		return (CurrentWeapon != nullptr) ? CurrentWeapon->GetMaxRange() : DefaultAttackRange;
-	}
 
 	float GetFinalAttackDamage(bool bIsWeakPoint) const;
 	
@@ -474,13 +473,7 @@ public:
 		return DefenseManager;
 	}
 
-	void SetShootInputInterval(float InputInterval)
-	{
-		if(ShootInputTriggerPulse != nullptr)
-		{
-			ShootInputTriggerPulse->Interval = InputInterval;
-		}
-	}
+	void SetShootInputInterval(float InputInterval);
 
 	void SetIsNearInteractableObject(bool Value);
 
