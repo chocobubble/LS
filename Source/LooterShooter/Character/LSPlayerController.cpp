@@ -4,7 +4,6 @@
 #include "LSPlayerController.h"
 #include "LooterShooter/UI/LSHUDWidget.h"
 #include "LSPlayerState.h"
-//#include "LSCharacter.h"
 #include "LSPlayer.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
@@ -74,19 +73,11 @@ ALSPlayerController::ALSPlayerController()
     {
         EnhanceWidgetClass = UI_ENHANCE_C.Class;
     }
-    else
-    {
-        LSLOG_S(Error);
-    }
 
     static ConstructorHelpers::FClassFinder<ULSInventoryWidget> UI_INVENTORY_C(TEXT("/Game/LS/UI/UI_Inventory.UI_Inventory_C"));
     if (UI_INVENTORY_C.Succeeded())
     {
         InventoryWidgetClass = UI_INVENTORY_C.Class;
-    }
-    else
-    {
-        LSLOG_S(Error);
     }
 
     static ConstructorHelpers::FClassFinder<ULSRoundProgressbar> UI_ROUNDPB_C(TEXT("/Game/LS/UI/WB_RadialPB.WB_RadialPB_C"));
@@ -94,22 +85,16 @@ ALSPlayerController::ALSPlayerController()
     {
         RoundPBWidgetClass = UI_ROUNDPB_C.Class;
     }
-    else
-    {
-        LSLOG_S(Error);
-    }
 }
 
 
 void ALSPlayerController::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
-    LSLOG_S(Warning);
 }
 
 void ALSPlayerController::OnPossess(APawn* aPawn)
 {
-    LSLOG_S(Warning);
     Super::OnPossess(aPawn);
 }
 
@@ -120,7 +105,8 @@ void ALSPlayerController::PlayerTick(float DeltaTime)
 	// AutoRun이 활성화 되었을 때
 	if (GetIsAutoRunning())
 	{
-		if (APawn* CurrentPawn = GetPawn())
+        APawn* CurrentPawn = GetPawn();
+		if (CurrentPawn)
 		{
 			const FRotator MovementRotation(0.0f, GetControlRotation().Yaw, 0.0f);
 			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
@@ -133,56 +119,41 @@ void ALSPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    //    ChangeInputMode(true);
+    // ChangeInputMode(true);
 
     FInputModeGameOnly InputMode;
     SetInputMode(InputMode);
-
-
     ChangeInputMode(true);
 
-    HUDWidget  = CreateWidget<ULSHUDWidget>(this, HUDWidgetClass);
-    LSCHECK(nullptr != HUDWidget);
-    HUDWidget->AddToViewport(1);
-
-    ResultWidget = CreateWidget<ULSGameplayResultWidget>(this, ResultWidgetClass);
-    LSCHECK(nullptr != ResultWidget);
+    HUDWidget = CreateWidget<ULSHUDWidget>(this, HUDWidgetClass);
+    if (HUDWidget)
+    {
+        HUDWidget->AddToViewport(1);
+    }
     
-    InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
-    LSCHECK(nullptr != InventoryWidget);
-
-    RoundPBWidget = CreateWidget<ULSRoundProgressbar>(this, RoundPBWidgetClass);
-    LSCHECK(nullptr != RoundPBWidget);
-    RoundPBWidget->AddToViewport(0);
-
-/*
-    HUDWidget->AddToViewport(1);
-*/
-    LSPlayerState = Cast<ALSPlayerState>(PlayerState);
-    LSCHECK(nullptr != LSPlayerState);
-    HUDWidget->BindPlayerState(LSPlayerState);
-    LSPlayerState->OnPlayerStateChanged.Broadcast();  
-
-
-    ALSPlayer* LSPlayer =  Cast<ALSPlayer>(GetCharacter());
-    LSCHECK(nullptr != LSPlayer);
-    HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
-    HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
-    HUDWidget->BindPlayer(LSPlayer);
-/*
-    ALSCharacter* LSCharacter =  Cast<ALSCharacter>(GetCharacter());
-    LSCHECK(nullptr != LSCharacter);
-*/
-/*
     ResultWidget = CreateWidget<ULSGameplayResultWidget>(this, ResultWidgetClass);
-    LSCHECK(nullptr != ResultWidget);
-*/
+    InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
+    RoundPBWidget = CreateWidget<ULSRoundProgressbar>(this, RoundPBWidgetClass);
+    if (RoundPBWidget)
+    {
+        RoundPBWidget->AddToViewport(0);
+    }
+
+    LSPlayerState = Cast<ALSPlayerState>(PlayerState);
+    if (LSPlayerState)
+    {
+        HUDWidget->BindPlayerState(LSPlayerState);
+        LSPlayerState->OnPlayerStateChanged.Broadcast();
+        ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetCharacter());
+        if (LSPlayer && HUDWidget)
+        {
+            HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
+            HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
+            HUDWidget->BindPlayer(LSPlayer);
+        }
+    }
 }
 
-ULSHUDWidget* ALSPlayerController::GetHUDWidget() const
-{
-    return HUDWidget;
-}
 
 void ALSPlayerController::MonsterKill(ALSMonster* KilledMonster) const
 {

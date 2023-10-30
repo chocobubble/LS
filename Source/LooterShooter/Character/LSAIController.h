@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "LSAIController.generated.h"
 
+class UBehaviorTree;
+class UBlackboardData;
 /**
  * Monster의 베이스 컨트롤러
  */
@@ -34,8 +36,8 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class UBehaviorTree* BTAsset;
+	UBehaviorTree* BTAsset;
 
 	UPROPERTY()
-	class UBlackboardData* BBAsset;
+	UBlackboardData* BBAsset;
 };

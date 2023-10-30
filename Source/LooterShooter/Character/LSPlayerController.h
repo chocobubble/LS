@@ -39,7 +39,10 @@ public:
 	//virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void SetupInputComponent() override;
 
-	ULSHUDWidget* GetHUDWidget() const;
+	ULSHUDWidget* GetHUDWidget() const
+	{
+	    return HUDWidget;
+	}
 
 	void MonsterKill(ALSMonster* KilledMonster) const;	
 	void OnGamePause(const FInputActionValue& Value);

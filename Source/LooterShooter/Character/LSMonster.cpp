@@ -20,10 +20,8 @@
 #include "LooterShooter/GameMode/LSGameMode.h"
 #include "LSPlayerController.h"
 
-// Sets default values
 ALSMonster::ALSMonster()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
@@ -31,38 +29,39 @@ ALSMonster::ALSMonster()
 	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
-
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_CharM_Ram(TEXT("/Game/LS/Meshes/SK_CharM_Ram.SK_CharM_Ram"));
-	if ( SKM_CharM_Ram.Succeeded() )
+	if (SKM_CharM_Ram.Succeeded())
 	{
-		GetMesh()->SetSkeletalMesh( SKM_CharM_Ram.Object );
-	}
-	else
-	{
-		LSLOG(Warning, TEXT("skeletalmesh desn't succeded"));
+		GetMesh()->SetSkeletalMesh(SKM_CharM_Ram.Object);
 	}
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
 	if (MONSTER_ANIM.Succeeded())
 	{
-		LSCHECK(MONSTER_ANIM.Class != nullptr);
-		GetMesh()->SetAnimInstanceClass(MONSTER_ANIM.Class);
+		if (MONSTER_ANIM.Class != nullptr)
+		{
+			GetMesh()->SetAnimInstanceClass(MONSTER_ANIM.Class);
+		}
 	}
 
 	LSWeaponInstanceClass = ALSWeapon::StaticClass();
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 	
-	HPBarWidget->SetupAttachment(GetMesh());	
-	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
-	if (UI_HUD.Succeeded())
+	if (HPBarWidget != nullptr)
 	{
-		HPBarWidget->SetWidgetClass(UI_HUD.Class);
-		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+		HPBarWidget->SetupAttachment(GetMesh());	
+		HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+		HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	
+		static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/LS/UI/UI_HPBar.UI_HPBar_C"));
+		if (UI_HUD.Succeeded())
+		{
+			HPBarWidget->SetWidgetClass(UI_HUD.Class);
+			HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+		}
 	}
 
 	AIControllerClass = ALSAIController::StaticClass();
@@ -72,116 +71,96 @@ ALSMonster::ALSMonster()
 	SetCanBeDamaged(false);
 }
 
-// Called when the game starts or when spawned
 void ALSMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
 	LSAIController = Cast<ALSAIController>(GetController());
-	LSCHECK(nullptr != LSAIController);
+	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
 
 	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	CharacterAssetToLoad.SetPath(TEXT("/Game/LS/Meshes/SKM_Player2.SKM_Player2"));
-	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
-	LSCHECK(nullptr != LSGameInstance);
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSMonster::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::LOADING);
 
-	// 나중에 async로 바꾸기
+	// TODO : default 로 생성되게 바꾸기
 	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator); 
-    //MonsterWeapon->SetBaseWeaponDefinition(this);
-	//MonsterWeapon->Init();
 	SetWeapon();
 
-	DefenseManager->OnHPIsZero.AddUObject(this, &ALSMonster::SetCharacterStateDead);
+	if (DefenseManager != nullptr)
+	{
+		DefenseManager->OnHPIsZero.AddUObject(this, &ALSMonster::SetCharacterStateDead);
+	}
 }
 
 void ALSMonster::SetCharacterState(ECharacterState NewState)
 {
-	// LSCHECK(CurrentState != NewState);
 	CurrentState = NewState;
 
 	switch (CurrentState)
 	{
-	case ECharacterState::LOADING:
-	{
-
-		auto LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
-		LSCHECK(nullptr != LSGameMode);
-		//int32 CurrentPlayerLevel = LSGameMode->GetPlayerLevel();
-		//LSLOG(Warning, TEXT("New NPC Level : %d"), CurrentPlayerLevel);
-		//CharacterStat->SetNewLevel(CurrentPlayerLevel);
-		LSLOG(Warning, TEXT("New NPC Level : %d"), MonsterLevel);
-		// CharacterStat->SetNewLevel(MonsterLevel);
-		// MonsterLevel = LSGameInstance->LSMonsterTable.Level;
-
-		SetActorHiddenInGame(true);
-		HPBarWidget->SetHiddenInGame(true);
-		SetCanBeDamaged(false);
-		break;
-	}
-	case ECharacterState::READY:
-	{
-		SetActorHiddenInGame(false);
-		HPBarWidget->SetHiddenInGame(false);
-		SetCanBeDamaged(true);
+		case ECharacterState::LOADING:
+		{	
+			SetActorHiddenInGame(true);
+			HPBarWidget->SetHiddenInGame(true);
+			SetCanBeDamaged(false);
+			break;
+		}
+		case ECharacterState::READY:
+		{
+			SetActorHiddenInGame(false);
+			HPBarWidget->SetHiddenInGame(false);
+			SetCanBeDamaged(true);
 /*
 		CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
 			SetCharacterState(ECharacterState::DEAD);
 		});
 */
-		auto CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-		LSCHECK(nullptr != CharacterWidget);
-		// CharacterWidget->BindCharacterStat(CharacterStat);
-		CharacterWidget->BindDefenseComponent(DefenseManager);
-		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
-		LSAIController->RunAI();
-		break;
-	}
-	case ECharacterState::DEAD:
-	{
-		SetActorEnableCollision(false);
-		GetMesh()->SetHiddenInGame(false);
-		HPBarWidget->SetHiddenInGame(true);
-		LSMonsterAnim->SetDeadAnim();
-		SetCanBeDamaged(false);
+			ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+			if (CharacterWidget != nullptr && DefenseManager != nullptr)
+			{				
+				CharacterWidget->BindDefenseComponent(DefenseManager);
+			}
+			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+			LSAIController->RunAI();
+			break;
+		}
+		case ECharacterState::DEAD:
+		{
+			SetActorEnableCollision(false);
+			GetMesh()->SetHiddenInGame(false);
+			HPBarWidget->SetHiddenInGame(true);
+			LSMonsterAnim->SetDeadAnim();
+			SetCanBeDamaged(false);
 
-		LSAIController->StopAI();
+			LSAIController->StopAI();
 
-		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
-			DropItem();
-			MonsterWeapon->Destroy();
-			Destroy(); }),
-			DeadTimer, false);
-	}
+			GetWorld()->GetTimerManager().SetTimer(
+				DeadTimerHandle, 
+				FTimerDelegate::CreateLambda([this]() -> void {
+					DropItem();
+					MonsterWeapon->Destroy();
+					Destroy(); }),
+				DeadTimer, 
+				false
+			);
+		}
 	}
 }
 
-ECharacterState ALSMonster::GetCharacterState() const
-{
-	return CurrentState;
-}
-
-// Called every frame
 void ALSMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
-void ALSMonster::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
 void ALSMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	LSLOG_S(Warning);
 
-	LSCHECK(GetMesh()->GetAnimInstance() != nullptr);
-	LSMonsterAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
-	LSCHECK(nullptr != LSMonsterAnim);
+	if (GetMesh() != nullptr && GetMesh()->GetAnimInstance() != nullptr)
+	{
+		LSMonsterAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+	}
 
 	// LSAnim->OnAttackHitCheck.AddUObject(this, &ALSMonster::AttackCheck);
 /*
@@ -193,53 +172,65 @@ void ALSMonster::PostInitializeComponents()
 */
 }
 
-void ALSMonster::Init(int32 Level)
+void ALSMonster::Init(const int32 Level)
 {
 	SetMonsterLevel(Level);
-	LSCHECK(LSGameInstance != nullptr);
-	FLSMonsterData* LSMonsterData = LSGameInstance->GetLSMonsterData(MonsterLevel);
-	LSCHECK(DefenseManager != nullptr);
-	DefenseManager->SetMaxHP(LSMonsterData->MaxHP);
-	DefenseManager->SetMaxShield(LSMonsterData->MaxShield);
+	if (LSGameInstance != nullptr)
+	{
+		FLSMonsterData* LSMonsterData = LSGameInstance->GetLSMonsterData(MonsterLevel);
+		if (DefenseManager != nullptr && LSMonsterData != nullptr)
+		{
+			DefenseManager->SetMaxHP(LSMonsterData->MaxHP);
+			DefenseManager->SetMaxShield(LSMonsterData->MaxShield);
+		}
+	}
 }
 
-float ALSMonster::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
+float ALSMonster::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
-	DefenseManager->SetDamage(FinalDamage);
+	// LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
+	if (DefenseManager != nullptr)
+	{
+		DefenseManager->SetDamage(FinalDamage);
+	}
 
 	if (CurrentState == ECharacterState::DEAD)
 	{
 		if (EventInstigator->IsPlayerController())
 		{
-			LSLOG_S(Warning);
-			ALSPlayerController* LSPC = Cast<ALSPlayerController>(EventInstigator);
-			LSCHECK(nullptr != LSPC, 0.0f);
-			LSPC->MonsterKill(this);
+			ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(EventInstigator);
+			if (LSPlayerController != nullptr)
+			{
+				LSPlayerController->MonsterKill(this);	
+			}
 		}
 	}
 	return FinalDamage;
 }
 
-void ALSMonster::SetWeapon()
+void ALSMonster::EquipWeapon()
 {
 	FName WeaponSocket(TEXT("weapon_r_socket"));
-	LSCHECK(nullptr != MonsterWeapon)
-	MonsterWeapon->AttachToComponent(
-		GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		WeaponSocket);
-	MonsterWeapon->SetOwner(this);
+	if (MonsterWeapon != nullptr)
+	{
+		MonsterWeapon->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			WeaponSocket);
+		MonsterWeapon->SetOwner(this);
+	}
 }
 
 void ALSMonster::OnAssetLoadCompleted()
 {
 	USkeletalMesh *AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
 	AssetStreamingHandle.Reset();
-	LSCHECK(nullptr != AssetLoaded);
-	GetMesh()->SetSkeletalMesh(AssetLoaded);
-	SetCharacterState(ECharacterState::READY);
+	if (AssetLoaded != nullptr)
+	{
+		GetMesh()->SetSkeletalMesh(AssetLoaded);
+		SetCharacterState(ECharacterState::READY);	
+	}
 	//MonsterWeapon = LSGameInstance->RifleWeaponMesh;
 	//SetWeapon();
 }
@@ -289,7 +280,7 @@ void ALSMonster::DropItem()
 
 void ALSMonster::SetCharacterStateDead()
 {
-	LSLOG(Warning, TEXT("Monster is dead"));
+	// LSLOG(Warning, TEXT("Monster is dead"));
 	SetCharacterState(ECharacterState::DEAD);
 }
 
@@ -299,15 +290,19 @@ void ALSMonster::ShowDebugLine(FVector Dir)
 
 void ALSMonster::SetAttackTarget(APawn* TargetPawn)
 {
-	LSCHECK(TargetPawn != nullptr);
-	AttackTarget = TargetPawn;
+	if (TargetPawn != nullptr)
+	{
+		AttackTarget = TargetPawn;
+	}
 }
 
 void ALSMonster::Attack()
 {
-	LSCHECK(AttackTarget != nullptr);
+	if (AttackTarget == nullptr)
+	{
+		return;
+	}
 	FVector ShootDir = CalculateRecoil(AttackTarget->GetActorLocation() - GetActorLocation(), BulletSpreadAngle);
-
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -315,10 +310,10 @@ void ALSMonster::Attack()
 		GetActorLocation(),
 		(ShootDir * AttackRange) + GetActorLocation(),
 		ECollisionChannel::ECC_GameTraceChannel1,
-		Params);
+		Params
+	);
 
 #if ENABLE_DRAW_DEBUG
-
 	DrawDebugLine(
 		GetWorld(),
 		GetActorLocation(),
@@ -326,16 +321,16 @@ void ALSMonster::Attack()
 		bResult ? FColor::Green : FColor::White,
 		false,
 		0.5f,
-		0.,
-		2.0f);
-
+		0.0f,
+		2.0f
+	);
 #endif
 
 	if (bResult)
 	{
 		if (HitResult.HasValidHitObjectHandle())
 		{
-			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
+			// LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 			float FinalAttackDamage = AttackDamage;
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(FinalAttackDamage, DamageEvent, GetController(), this);
@@ -345,20 +340,15 @@ void ALSMonster::Attack()
 			LSLOG(Warning, TEXT("Actor nullptr"));
 		}
 	}
-	else
-	{
-		LSLOG(Warning, TEXT("Didn't hit"));
-	}
 }
 
 FVector ALSMonster::CalculateRecoil(FVector AimDir, const float SpreadAngle)
 {
 	const float RandomAngle = FMath::FRandRange(0.f, 1.f) * 360.0f;
-
 	FRotator Rot = AimDir.Rotation();
 	FQuat DirQuat(Rot);
 	FQuat FromCenterQuat(FRotator(0.0f, SpreadAngle, 0.0f));
-	FQuat AroundQuat(FRotator(0.0f, 0.0, RandomAngle));
+	FQuat AroundQuat(FRotator(0.0f, 0.0f, RandomAngle));
 	FQuat FinalDirectionQuat = DirQuat * AroundQuat * FromCenterQuat;
 	FinalDirectionQuat.Normalize();
 	return FinalDirectionQuat.RotateVector(FVector::ForwardVector);
