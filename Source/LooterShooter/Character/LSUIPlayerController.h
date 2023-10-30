@@ -18,9 +18,10 @@ class LOOTERSHOOTER_API ALSUIPlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+private:
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TSubclassOf<UUserWidget> UIWidgetClass;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	UUserWidget* UIWidgetInstance;
 };

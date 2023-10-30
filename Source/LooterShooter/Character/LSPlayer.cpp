@@ -52,7 +52,7 @@ ALSPlayer::ALSPlayer()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_MANNY(TEXT("/Game/LS/Meshes/SKM_Player.SKM_Player"));
 	if (SKM_MANNY.Succeeded())
 	{
-		GetMesh()->SetSkeletalMesh( SKM_MANNY.Object );
+		GetMesh()->SetSkeletalMesh(SKM_MANNY.Object);
 	}
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> ANIM_PLAYER(TEXT("/Game/LS/Animations/PlayerAnimBlueprint.PlayerAnimBlueprint_C"));
@@ -70,11 +70,6 @@ ALSPlayer::ALSPlayer()
 	if (IMC_DEFAULT_KBM.Succeeded())
 	{
 		InputMapping = IMC_DEFAULT_KBM.Object;
-		//LSLOG_S(Error);
-	}
-	else
-	{
-		LSLOG_S(Error);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_MOVE(TEXT("/Game/LS/Input/Actions/IA_Move.IA_Move"));
@@ -82,29 +77,17 @@ ALSPlayer::ALSPlayer()
 	{
 		MoveAction = IA_MOVE.Object;
 	}
-	else
-	{
-		LSLOG_S(Error);
-	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_JUMP(TEXT("/Game/LS/Input/Actions/IA_Jump.IA_Jump"));
 	if (IA_JUMP.Succeeded())
 	{
 		JumpAction = IA_JUMP.Object;
 	}
-	else
-	{
-		LSLOG_S(Error);
-	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_LOOK(TEXT("/Game/LS/Input/Actions/IA_LOOK.IA_LOOK"));
 	if (IA_LOOK.Succeeded())
 	{
 		LookAction = IA_LOOK.Object;
-	}
-	else
-	{
-		LSLOG_S(Error);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_SHOOT(TEXT("/Game/LS/Input/Actions/IA_SHOOT.IA_SHOOT"));
@@ -114,7 +97,7 @@ ALSPlayer::ALSPlayer()
 		if (ShootAction->Triggers.Num() > 0)
 		{
 			ShootInputTriggerPulse = Cast<UInputTriggerPulse>(ShootAction->Triggers[0]);
-			if (ShootInputTriggerPulse != nullptr)
+			if (ShootInputTriggerPulse)
 			{
 				// TODO : 수정
 				// fire rate
@@ -197,39 +180,29 @@ void ALSPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	LSPlayerController = Cast<ALSPlayerController>(GetController());
-
 	ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
-
 	LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
+
 	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	CharacterAssetToLoad.SetPath(TEXT("/Game/LS/Meshes/SKM_Player.SKM_Player"));
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSPlayer::OnAssetLoadCompleted));
 	
 	SetCharacterState(ECharacterState::LOADING);
 
-	if (DefenseManager != nullptr)
+	if (DefenseManager)
 	{
 		DefenseManager->OnHPIsZero.AddUObject(this, &ALSPlayer::SetCharacterStateDead);
 	}
 
-	if (Camera != nullptr)
+	if (Camera)
 	{
 		ToAimDirection = FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X);
 	}
-/*
-		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMapping, 0);
-		}
-	}
-	*/
 }
 
 void ALSPlayer::SetCharacterState(ECharacterState NewState)
 {
-	if(CurrentState == NewState)
+	if (CurrentState == NewState)
 	{
 		return;
 	}
@@ -287,16 +260,11 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 
 void ALSPlayer::OnAssetLoadCompleted()
 {
-	LSLOG(Warning, TEXT("Asset Loadt"));
 	USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
 	AssetStreamingHandle.Reset();
-	if(AssetLoaded != nullptr)
+	if (AssetLoaded)
 	{
 		GetMesh()->SetSkeletalMesh(AssetLoaded);
-	}
-	else
-	{
-		LSLOG_S(Error);
 	}
 	SetCharacterState(ECharacterState::READY);
 }
@@ -341,6 +309,7 @@ void ALSPlayer::Tick(float DeltaTime)
 void ALSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 	APlayerController* PlayerController = GetController<APlayerController>();
 	if (PlayerController == nullptr)
 	{
@@ -355,16 +324,11 @@ void ALSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(InputMapping, 0);
-	LSLOG_S(Error);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent == nullptr)
 	{
 		return;
-	}
-	else
-	{
-		LSLOG_S(Error);
 	}
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALSPlayer::Move);
@@ -400,7 +364,7 @@ void ALSPlayer::Move(const FInputActionValue& Value)
 
 void ALSPlayer::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
 }
@@ -418,6 +382,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		return;
 	}
 
+	// 총알 생성 후 발사
 	Ammo = GetWorld()->SpawnActor<ALSAmmo>(CurrentWeapon->GetTransform().GetLocation(), FRotator::ZeroRotator);
     if (Ammo == nullptr)
 	{
@@ -431,7 +396,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	// 반동 시작
 	RecoilStart();
 
-	float FinalAttackRange = GetFinalAttackRange();
+	const float FinalAttackRange = GetFinalAttackRange();
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -451,14 +416,13 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		if (HitResult.HasValidHitObjectHandle())
 		{
 			// LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-			float FinalAttackDamage;
 			bool bIsWeakPoint = false;
 			if (HitResult.BoneName == TEXT("head"))
 			{
 				// LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
 				bIsWeakPoint = true;
 			}
-			FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
+			const float FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
 			
 			// TODO: popup 부분 함수 다로 빼기
 			const FVector PopupPosition = HitResult.ImpactPoint + (GetActorLocation() - HitResult.ImpactPoint).Normalize();
@@ -492,7 +456,7 @@ void ALSPlayer::OnRunning(const FInputActionValue& Value)
 	{
 		return;
 	}
-	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
+	LSPlayerController->SetAutoRunning(!LSPlayerController->IsAutoRunning());
 	GetCharacterMovement()->MaxWalkSpeed = DefaultRunningSpeed;
 }
 
@@ -503,7 +467,7 @@ void ALSPlayer::EndRunning(const FInputActionValue& Value)
 	{
 		return;
 	}
-	LSPlayerController->SetIsAutoRunning(!LSPlayerController->GetIsAutoRunning());
+	LSPlayerController->SetAutoRunning(!LSPlayerController->IsAutoRunning());
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 }
 
@@ -539,7 +503,6 @@ void ALSPlayer::EndAiming(const FInputActionValue& Value)
 
 void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 {
-	// LSLOG(Warning, TEXT("GrapplingHook"));
 	if (bIsGrapplingCasting || bIsGrappling)
 	{
 		return;
@@ -611,27 +574,35 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 	// TODO: 람다 식 나중에 빼서 구현
 	GetWorld()->GetTimerManager().SetTimer(
 		ReloadTimerHandle,
-		FTimerDelegate::CreateLambda([this]()->void {
-			LSCHECK(CurrentWeapon != nullptr);
-			bIsReloading = false;
-			EAmmoType CurrentAmmoType = CurrentWeapon->GetAmmoType();
-			int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(CurrentAmmoType);
-			int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
-			int32 ReloadRounds = FMath::Clamp(
-				CurrentWeapon->GetMagazineCapacity() - CurrentRounds,
-				0,
-				CurrentAmmo); 
-			CurrentAmmo = CurrentAmmo - ReloadRounds;
-			EquipmentManager->SetRoundsRemaining(CurrentWeapon->GetMagazineCapacity());
-			ResourceManager->SetCurrentAmmo(CurrentAmmoType, CurrentAmmo);
-			LSPlayerAnim->SetReloadAnim(false);
-			LSLOG(Warning, TEXT("ReLoading Completed"));
-		}),
+		this,
+		&ALSPlayer::OnReloadComplete,
 		CurrentWeapon->GetReloadTime(),
 		false
 	);
 
 	OnReloadProgress.Broadcast(CurrentWeapon->GetReloadTime());
+}
+
+void ALSPlayer::OnReloadComplete()
+{
+	if (CurrentWeapon == nullptr)
+	{
+		return;
+	}	
+	bIsReloading = false;
+	EAmmoType CurrentAmmoType = CurrentWeapon->GetAmmoType();
+	int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(CurrentAmmoType);
+	int32 CurrentRounds = EquipmentManager->GetRoundsRemaining();
+	int32 ReloadRounds = FMath::Clamp(CurrentWeapon->GetMagazineCapacity() - CurrentRounds,	0, CurrentAmmo); 
+	CurrentAmmo = CurrentAmmo - ReloadRounds;
+	EquipmentManager->SetRoundsRemaining(CurrentWeapon->GetMagazineCapacity());
+	ResourceManager->SetCurrentAmmo(CurrentAmmoType, CurrentAmmo);
+	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
+	if (LSPlayerAnim != nullptr)
+	{
+		LSPlayerAnim->SetReloadAnim(false);
+	}
+	
 }
 
 // TODO: equip 1,2,3 합치기
@@ -672,8 +643,6 @@ void ALSPlayer::EquipThirdWeapon(const FInputActionValue& Value)
 
 void ALSPlayer::Interact(const FInputActionValue& Value)
 {
-	LSLOG(Warning, TEXT("Interact"));
-
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -686,17 +655,12 @@ void ALSPlayer::Interact(const FInputActionValue& Value)
 
 	if (bResult)
 	{
-		LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-		LSLOG(Warning, TEXT("Hit TraceChannel3 -> ItemBox"));
 		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
-		LSCHECK(ItemBox != nullptr);
-		LSLOG(Warning, TEXT("Cast Complete"));
-		//ItemBox->SetWeaponItem(this);
-		LSLOG(Warning, TEXT("Set Weapon complete"));
-		// ULSWeaponDefinition* WeaponDefinition = ItemBox->GetWeaponItem();
-		WeaponDefinition = ItemBox->GetWeaponItem();
-		LSLOG(Warning, TEXT("WeaponDefinite"));
-		InventoryManager->AddWeaponToInventory(WeaponDefinition);
+		if (ItemBox)
+		{
+			WeaponDefinition = ItemBox->GetWeaponItem();
+			InventoryManager->AddWeaponToInventory(WeaponDefinition);
+		}
 	}
 }
 
@@ -712,13 +676,12 @@ void ALSPlayer::InteractProgress(const FInputActionInstance& ActionInstance)
 void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 {
 	InteractionElapsedTime = ElapsedTime;
-	LSLOG(Warning, TEXT("Progress Elpased Time : %f"), GetInteractionElapsedRatio());
+	// Interact Progress Bar 업데이트 함수 호출
 	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
 }
 
 void ALSPlayer::InteractEnd(const FInputActionValue& Value)
 {
-	LSLOG(Warning, TEXT("InteractEnd"));
 }
 
 void ALSPlayer::TestAct(const FInputActionValue& Value)
@@ -733,6 +696,7 @@ void ALSPlayer::TestAct(const FInputActionValue& Value)
 void ALSPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 	InventoryManager->SetEquipmentComponent(EquipmentManager);
 
 	LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
@@ -741,7 +705,6 @@ void ALSPlayer::PostInitializeComponents()
 		if (DefenseManager != nullptr)
 		{
 			DefenseManager->OnHPIsZero.AddLambda([this]() -> void {
-				LSLOG(Warning, TEXT("OnHPIsZero"));
 				LSPlayerAnim->SetDeadAnim();
 				SetActorEnableCollision(false);
 			});
@@ -777,9 +740,9 @@ bool ALSPlayer::CanShoot(EAmmoType AmmoType)
 	return true;
 }
 
-float ALSPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float ALSPlayer::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	const float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	//LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
 	
@@ -809,9 +772,8 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 	}
 	
 	FName WeaponSocket(TEXT("weapon_r_socket"));
-	if (RootComponent != nullptr && GetMesh() != nullptr)
+	if (RootComponent && GetMesh())
 	{
-		LSLOG(Warning, TEXT("Attach to socket"));
 		NewWeapon->SetActorHiddenInGame(false);
 		NewWeapon->AttachToComponent(
 			GetMesh(), 
@@ -819,12 +781,11 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 			WeaponSocket);
 		NewWeapon->SetOwner(this);
 		CurrentWeapon = NewWeapon;
-
-		LSLOG(Warning, TEXT("Fire rate : %f "), CurrentWeapon->GetFireRate());
+		// fire rate 설정
 		SetShootInputInterval(0.2f);//(CurrentWeapon->GetFireRate() / 1800.f);
 
 		LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-		if (LSPlayerAnim != nullptr && CurrentWeapon != nullptr)
+		if (LSPlayerAnim && CurrentWeapon->GetBaseWeaponDefinition())
 		{
 			LSPlayerAnim->SetWeaponType(CurrentWeapon->GetBaseWeaponDefinition()->GetWeaponType());
 		}
@@ -858,18 +819,18 @@ float ALSPlayer::GetFinalAttackDamage(bool bIsWeakPoint) const
 		// TODO : 수치 변수로 빼기
 		AttackDamage *= 1.2f;
 	}
+
 	return AttackDamage; 
 }
 
 void ALSPlayer::InteractCheck()
 {
 	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
-
 	if (!bIsNearInteractableObject)
 	{
 		return;
 	}
-	float FinalInteractRange = GetFinalInteractRange();
+	const float FinalInteractRange = GetFinalInteractRange();
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -903,7 +864,7 @@ void ALSPlayer::ShowDebugLine(FVector Dir)
 
 void ALSPlayer::SetIsNearInteractableObject(bool Value)
 {
-	LSLOG(Warning, TEXT("Player is overlapping with interactable object"));
+	// LSLOG(Warning, TEXT("Player is overlapping with interactable object"));
 	// TODO: 두 개 이상의 상호작용 물체와 겹치고 있는 경우 고려하기
 	bIsNearInteractableObject = Value;
 	OnEnableToInteract.Broadcast(bIsNearInteractableObject);
@@ -1022,12 +983,12 @@ void ALSPlayer::RecoilTick(float DeltaTime)
 
 float ALSPlayer::GetFinalAttackRange() const
 {
-	return (CurrentWeapon != nullptr) ? CurrentWeapon->GetMaxRange() : DefaultAttackRange;
+	return CurrentWeapon ? CurrentWeapon->GetMaxRange() : DefaultAttackRange;
 }
 
-void ALSPlayer::SetShootInputInterval(float InputInterval)
+void ALSPlayer::SetShootInputInterval(const float InputInterval)
 {
-	if(ShootInputTriggerPulse != nullptr)
+	if(ShootInputTriggerPulse)
 	{
 		ShootInputTriggerPulse->Interval = InputInterval;
 	}

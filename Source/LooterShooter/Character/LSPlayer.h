@@ -74,6 +74,8 @@ public:
 
 	void OnAssetLoadCompleted();
 
+	void OnReloadComplete();
+
 	TSharedPtr<FStreamableHandle> AssetStreamingHandle;
 
 	FTimerHandle FireTimer = { };

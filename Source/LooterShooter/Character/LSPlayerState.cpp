@@ -8,24 +8,14 @@
 
 ALSPlayerState::ALSPlayerState()
 {
-    CharacterLevel = 1;
-    CurrentExp = 0;
     SaveSlotName = TEXT("Player");
-}
-
-int32 ALSPlayerState::GetCharacterLevel() const
-{
-    return CharacterLevel;
 }
 
 void ALSPlayerState::InitPlayerData()
 {
-    LSLOG_S(Warning);
-    //	#include "Kismet/GameplayStatics.h"
-    auto LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
-    if (nullptr == LSSaveGame)
+    ULSSaveGame* LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+    if (LSSaveGame == nullptr)
     {
-        LSLOG(Warning, TEXT("LSSaveGame is nullptr"));
         LSSaveGame = GetMutableDefault<ULSSaveGame>();
     }
     SetPlayerName(LSSaveGame->PlayerName);
@@ -48,66 +38,74 @@ void ALSPlayerState::SavePlayerData()
     }
 }
 
-
-int32 ALSPlayerState::GetCurrentExp() const
-{
-    return CurrentExp;
-}
 int32 ALSPlayerState::GetNextExp() const
 {
-    LSCHECK(CurrentStatData != nullptr, -1);
-    return CurrentStatData->NextExp;
+	LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
+	if (LSGameInstance)
+	{
+		PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+		if (PlayerStatData)
+		{
+			return PlayerStatData->NextExp;
+		}
+	}
+	return -1;
 }
 
 float ALSPlayerState::GetExpRatio() const
 {
-    LSCHECK(nullptr != CurrentStatData, 0.0f);
-
-    if (CurrentStatData->NextExp <= KINDA_SMALL_NUMBER)
-    {
-        return 0.0f;
-    }
-
-    float Result = (float) CurrentExp / (float)CurrentStatData->NextExp;
-    LSLOG(Warning, TEXT("Ratio : %f, Current : %d, Next : %d"), Result, CurrentExp, CurrentStatData->NextExp);
-    return Result;
+    LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
+	if (LSGameInstance)
+	{
+		PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+		if (PlayerStatData)
+		{
+			// 0 나눗셈 에러 방지
+    		if (PlayerStatData->NextExp <= KINDA_SMALL_NUMBER)
+   		 	{
+   	    	 	return 0.0f;
+	    	}
+			return (float)CurrentExp / PlayerStatData->NextExp;
+		}
+	}
+    return 0.0f;
 }
 
 bool ALSPlayerState::AddExp(int32 IncomeExp)
 {
-    if (CurrentStatData->NextExp == -1)
-        return false;
+	LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
+	if (LSGameInstance == nullptr)
+	{
+		return false;
+	}
+	PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+	if (PlayerStatData == nullptr || PlayerStatData->NextExp == -1)
+	{
+		return false;
+	}
 
-    bool DidLevelUp = false;
-    CurrentExp = CurrentExp + IncomeExp;
-    if (CurrentExp >= CurrentStatData->NextExp)
+    bool bDidLevelUp = false;
+    CurrentExp += IncomeExp;
+    if (CurrentExp >= PlayerStatData->NextExp)
     {
-        CurrentExp -= CurrentStatData->NextExp;
+        CurrentExp -= PlayerStatData->NextExp;
         SetCharacterLevel(CharacterLevel + 1);
-        DidLevelUp = true;
+        bDidLevelUp = true;
     }
 
     OnPlayerStateChanged.Broadcast();
 
     SavePlayerData();
 
-    return DidLevelUp;
+    return bDidLevelUp;
 }
 
 void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)
 {
-    auto LSGameInstance = Cast<ULSGameInstance>(GetGameInstance());
-    LSCHECK(nullptr != LSGameInstance);
-
-    CurrentStatData = LSGameInstance->GetLSPlayerData(NewCharacterLevel);
-    LSCHECK(nullptr != CurrentStatData);
-    if (CurrentStatData == nullptr)
-    {
-        LSLOG(Warning, TEXT("CurrentStatData nullptr"));
-    }
-    else
-    {
-        LSLOG(Warning, TEXT("CurrentStatData->Level : %d"), CurrentStatData->Level);
-    }
-    CharacterLevel = NewCharacterLevel;
+    LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
+    if (LSGameInstance)
+	{
+		PlayerStatData = LSGameInstance->GetLSPlayerData(NewCharacterLevel);
+	}
+	CharacterLevel = NewCharacterLevel;
 }

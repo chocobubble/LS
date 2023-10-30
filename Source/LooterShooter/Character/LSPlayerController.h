@@ -33,95 +33,106 @@ class LOOTERSHOOTER_API ALSPlayerController : public APlayerController
 public:
 	ALSPlayerController();
 
-	virtual void PostInitializeComponents() override;
-	virtual void OnPossess(APawn* aPawn) override; 
-	virtual void PlayerTick(float DeltaTime) override;
-	//virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	virtual void SetupInputComponent() override;
-
-	ULSHUDWidget* GetHUDWidget() const
-	{
-	    return HUDWidget;
-	}
-
 	void MonsterKill(ALSMonster* KilledMonster) const;	
+	
 	void OnGamePause(const FInputActionValue& Value);
+
 	void OnInventoryOpen(const FInputActionValue& Value);
+
 	void OnEnhanceUIOpen(const FInputActionValue& Value);
 
 	void ChangeInputMode(bool bGameMode = true);
 
 	void ShowResultUI();
-	void ShowInventoryUI();
-	void ShowEnhanceUI();
-
-	bool GetIsAutoRunning() const;
-
-	void SetIsAutoRunning(const bool bEnabled);
-
-//////////////test///////
-public:
-	UPROPERTY(VisibleAnywhere, Category = TEST)
-	UMaterialInstance* MI;
-/////////////////////////
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<ULSHUDWidget> HUDWidgetClass;
+	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input")
-	UInputMappingContext* InputMapping;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* GamePause;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* OpenInventory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* OpenEnhanceUI;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
-	TSubclassOf<ULSGameplayWidget> MenuWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<ULSGameplayResultWidget> ResultWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<ULSInventoryWidget> InventoryWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<ULSRoundProgressbar> RoundPBWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<ULSEnhanceWidget> EnhanceWidgetClass;
+	virtual void OnPossess(APawn* aPawn) override; 
+	
+	virtual void PlayerTick(float DeltaTime) override;
+	
+	virtual void SetupInputComponent() override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
+	UInputMappingContext* InputMapping;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
+	UInputAction* GamePause;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
+	UInputAction* OpenInventory;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
+	UInputAction* OpenEnhanceUI;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSHUDWidget> HUDWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSGameplayWidget> MenuWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSGameplayResultWidget> ResultWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSInventoryWidget> InventoryWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSRoundProgressbar> RoundPBWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TSubclassOf<ULSEnhanceWidget> EnhanceWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSHUDWidget* HUDWidget;
 
-	UPROPERTY()
-	ALSPlayerState* LSPlayerState;
-
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSGameplayWidget* MenuWidget;
 
-	UPROPERTY(VisibleAnywhere, Category = "Widget");
+	UPROPERTY(VisibleAnywhere, Category = "UI");
 	ULSGameplayResultWidget* ResultWidget;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSInventoryWidget* InventoryWidget;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSRoundProgressbar* RoundPBWidget;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSEnhanceWidget* EnhanceWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	ALSPlayerState* LSPlayerState;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	bool bIsAutoRunning = false;
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;
 
-	bool bIsAutoRunning = false;
+
+//////////////test///////
+	UPROPERTY(VisibleAnywhere, Category = "TEST")
+	UMaterialInstance* MI;
+/////////////////////////
+
+public:
+	ULSHUDWidget* GetHUDWidget() const
+	{
+	    return HUDWidget;
+	}
+
+	bool IsAutoRunning() const
+	{
+		return bIsAutoRunning;
+	}
+
+	void SetAutoRunning(const bool bEnabled);
+	{
+		bIsAutoRunning = bEnabled;
+	}
 };

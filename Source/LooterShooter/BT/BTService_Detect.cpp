@@ -42,7 +42,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
     if (bResult)
     {
-        for (FOverlapResult const& OverlapResult : OverlapResults)
+        for (const FOverlapResult& OverlapResult : OverlapResults)
         {
             ALSPlayer* LSPlayer = Cast<ALSPlayer>(OverlapResult.GetActor());
             if (LSPlayer && LSPlayer->GetController() && LSPlayer->GetController()->IsPlayerController())

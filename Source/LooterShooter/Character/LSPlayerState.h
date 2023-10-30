@@ -9,6 +9,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerStateChangedDelegate);
 
+class ULSGameInstance;
+struct FLSPlayerData;
 /**
  * 
  */
@@ -20,30 +22,47 @@ class LOOTERSHOOTER_API ALSPlayerState : public APlayerState
 public:
 	ALSPlayerState();
 
-	int32 GetCharacterLevel() const;
-	FString SaveSlotName;
-
-	int32 GetCurrentExp() const;
-	int32 GetNextExp() const;
-	float GetExpRatio() const;
 	bool AddExp(int32 IncomeExp);
 
 	void InitPlayerData();
+
 	void SavePlayerData();
 
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 
-protected:
-	UPROPERTY(Transient)
-	int32 GameScore;
-
-	UPROPERTY(Transient)
-	int32 CharacterLevel;
-
-	UPROPERTY(Transient)
-	int32 CurrentExp;
-
 private:
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 GameScore = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 CharacterLevel = 1;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 CurrentExp = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	FLSPlayerData* PlayerStatData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mode")
+	ULSGameInstance* LSGameInstance;
+
+	UPROPERTY()
+	FString SaveSlotName;
+
+public:
+	int32 GetCharacterLevel() const
+	{
+	    return CharacterLevel;	
+	}
+
+	int32 GetCurrentExp() const
+	{
+    	return CurrentExp;
+	}
+
+	int32 GetNextExp() const;
+
+	float GetExpRatio() const;
+
 	void SetCharacterLevel(int32 NewCharacterLevel);
-	struct FLSPlayerData* CurrentStatData;
 };

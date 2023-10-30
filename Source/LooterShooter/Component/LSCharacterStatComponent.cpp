@@ -5,41 +5,21 @@
 #include "LooterShooter/System/LSGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values for this component's properties
 ULSCharacterStatComponent::ULSCharacterStatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false; //true;
+	PrimaryComponentTick.bCanEverTick = false; 
 
 	bWantsInitializeComponent = true;
 
 	Level = 1;
-	// ...
 }
 
-
-// Called when the game starts
 void ULSCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	SetNewLevel(Level);
-	// ...
-	
 }
-
-/*
-// Called every frame
-void ULSCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-*/
 
 void ULSCharacterStatComponent::InitializeComponent()
 {
@@ -48,7 +28,6 @@ void ULSCharacterStatComponent::InitializeComponent()
 
 void ULSCharacterStatComponent::SetNewLevel(int32 NewLevel)
 {
-	// #include "Kismet/GameplayStatics.h"
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	LSCHECK(nullptr != LSGameInstance);

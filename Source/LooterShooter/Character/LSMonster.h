@@ -27,7 +27,7 @@ public:
 	/** 에셋 로드 완료 시 호출되는 메서드 */
 	void OnAssetLoadCompleted();
 
-	void ShowDebugLine(FVector const& Dir); // 디버깅 용도
+	void ShowDebugLine(const FVector& Dir); // 디버깅 용도
 
 	/** 무기 장착 */
 	void EquipWeapon();
@@ -40,7 +40,7 @@ public:
 	void Attack();
 
 	/** 명중률에 따른 탄착군 형성 */
-	FVector CalculateRecoil(FVector const& AimDir, const float SpreadAngle);
+	FVector CalculateRecoil(const FVector& AimDir, const float SpreadAngle);
 	
 	void Init(int32 Level);
 
@@ -51,7 +51,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual float TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	virtual float TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 	
 	virtual void Tick(float DeltaTime) override;
 

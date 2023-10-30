@@ -18,7 +18,6 @@
 #include "LooterShooter/UI/LSEnhanceWidget.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
 #include "LooterShooter/Component/LSResourceManageComponent.h"
-
 //test
 #include "Materials/MaterialInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -33,25 +32,25 @@ ALSPlayerController::ALSPlayerController()
     }
 
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_DEFAULT_KBM.IMC_DEFAULT_KBM"));
-	if ( IMC_DEFAULT_KBM.Succeeded())
+	if (IMC_DEFAULT_KBM.Succeeded())
 	{
 		InputMapping = IMC_DEFAULT_KBM.Object;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> IA_GAMEPAUSE(TEXT("/Game/LS/Input/Actions/IA_GamePause.IA_GamePause"));
-	if ( IA_GAMEPAUSE.Succeeded())
+	if (IA_GAMEPAUSE.Succeeded())
 	{
 		GamePause = IA_GAMEPAUSE.Object;
 	}
 
     static ConstructorHelpers::FObjectFinder<UInputAction> IA_INVENTORY(TEXT("/Game/LS/Input/Actions/IA_Inventory.IA_Inventory"));
-	if ( IA_INVENTORY.Succeeded())
+	if (IA_INVENTORY.Succeeded())
 	{
 		OpenInventory = IA_INVENTORY.Object;
 	}
 
     static ConstructorHelpers::FObjectFinder<UInputAction> IA_ENHANCE(TEXT("/Game/LS/Input/Actions/IA_Enhance.IA_Enhance"));
-	if ( IA_ENHANCE.Succeeded())
+	if (IA_ENHANCE.Succeeded())
 	{
 		OpenEnhanceUI = IA_ENHANCE.Object;
 	}
@@ -103,7 +102,7 @@ void ALSPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	// AutoRun이 활성화 되었을 때
-	if (GetIsAutoRunning())
+	if (IsAutoRunning())
 	{
         APawn* CurrentPawn = GetPawn();
 		if (CurrentPawn)
@@ -118,8 +117,6 @@ void ALSPlayerController::PlayerTick(float DeltaTime)
 void ALSPlayerController::BeginPlay()
 {
     Super::BeginPlay();
-
-    // ChangeInputMode(true);
 
     FInputModeGameOnly InputMode;
     SetInputMode(InputMode);
@@ -163,65 +160,67 @@ void ALSPlayerController::MonsterKill(ALSMonster* KilledMonster) const
 void ALSPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
-    //APlayerController* PlayerController = GetController<APlayerController>();
-	if (this == nullptr) 
+
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if (Subsystem != nullptr)
 	{
-		LSLOG(Warning, TEXT("Controller nullptr"));
-		return;
+		Subsystem->ClearAllMappings();
+		Subsystem->AddMappingContext(InputMapping, 0);
 	}
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(this->GetLocalPlayer());
-	if (Subsystem == nullptr)
-	{
-		LSLOG(Warning, TEXT("Subsystem nullptr"));
-		return;
-	}
-
-	Subsystem->ClearAllMappings();
-	Subsystem->AddMappingContext(InputMapping, 0);
-
-	LSLOG_S(Warning);
-
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent == nullptr) 
+	if (EnhancedInputComponent != nullptr) 
 	{
-		LSLOG(Warning, TEXT("Enhanced Input Component nullptr"));
-		return;
+		EnhancedInputComponent->BindAction(GamePause, ETriggerEvent::Triggered, this, &ALSPlayerController::OnGamePause);
+		EnhancedInputComponent->BindAction(OpenInventory, ETriggerEvent::Triggered, this, &ALSPlayerController::OnInventoryOpen);
+   	    EnhancedInputComponent->BindAction(OpenEnhanceUI, ETriggerEvent::Triggered, this, &ALSPlayerController::OnEnhanceUIOpen);
 	}
-	EnhancedInputComponent->BindAction(GamePause, ETriggerEvent::Triggered, this, &ALSPlayerController::OnGamePause);
-	EnhancedInputComponent->BindAction(OpenInventory, ETriggerEvent::Triggered, this, &ALSPlayerController::OnInventoryOpen);
-    EnhancedInputComponent->BindAction(OpenEnhanceUI, ETriggerEvent::Triggered, this, &ALSPlayerController::OnEnhanceUIOpen);
-
 }
 
 void ALSPlayerController::OnGamePause(const FInputActionValue& Value)
 {
-    LSLOG(Warning, TEXT("Game Pause"));
     MenuWidget = CreateWidget<ULSGameplayWidget>(this, MenuWidgetClass);
-    LSCHECK(nullptr != MenuWidget);
-    MenuWidget->AddToViewport(3);
-
+    if (MenuWidget == nullptr)
+	{
+		return;
+	}
+    MenuWidget->AddToViewport(0);
     SetPause(true);
     ChangeInputMode(false);
 }
 
 void ALSPlayerController::OnInventoryOpen(const FInputActionValue& Value)
 {
-    LSLOG(Warning, TEXT("Inventory Open"));
-    ShowInventoryUI();
+   	InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
+    if (InventoryWidget == nullptr)
+	{
+		return;
+	}
+	if (Cast<ALSPlayer>(GetPawn()) && Cast<ALSPlayer>(GetPawn())->GetInventoryManager())
+	{
+    	InventoryWidget->Init(Cast<ALSPlayer>(GetPawn())->GetInventoryManager());
+    	InventoryWidget->AddToViewport();
+	}
     SetPause(true);
     ChangeInputMode(false);
 }
 
 void ALSPlayerController::OnEnhanceUIOpen(const FInputActionValue& Value)
 {
-    LSLOG(Warning, TEXT("Enhancemnet UI Open"));
-    ShowEnhanceUI();
+    EnhanceWidget = CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
+    if (EnhanceWidget == nullptr)
+	{
+		return;
+	}
+    ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetPawn());
+	if(LSPlayer && LSPlayer->GetInventoryManager() && LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0) && LSPlayer->GetResourceManager())
+	{
+    	EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
+	}
+    EnhanceWidget->AddToViewport();
     SetPause(true);
     ChangeInputMode(false);
 }
-
 
 void ALSPlayerController::ChangeInputMode(bool bGameMode)
 {
@@ -239,49 +238,12 @@ void ALSPlayerController::ChangeInputMode(bool bGameMode)
 
 void ALSPlayerController::ShowResultUI()
 {
-    // #include "Kismet/GameplayStatics.h"
-    ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
-    //LSCHECK(nullptr != LSGameState);
+    //ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
     //ResultWidget->BindGameState(LSGameState);
+
     if (ResultWidget != nullptr)
     {
-        ResultWidget->AddToViewport();
+        ResultWidget->AddToViewport(0);
     }
     ChangeInputMode(false);
-}
-
-void ALSPlayerController::ShowInventoryUI()
-{
-    /*
-    // #include "Kismet/GameplayStatics.h"
-    ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
-    LSCHECK(nullptr != LSGameState);
-    ResultWidget->BindGameState(LSGameState);
-*/
-    InventoryWidget = CreateWidget<ULSInventoryWidget>(this, InventoryWidgetClass);
-    LSCHECK(nullptr != InventoryWidget);
-    InventoryWidget->Init(Cast<ALSPlayer>(GetPawn())->GetInventoryManager());
-    InventoryWidget->AddToViewport();
-    ChangeInputMode(false);
-}
-
-void ALSPlayerController::ShowEnhanceUI()
-{
-    EnhanceWidget = CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
-    LSCHECK(nullptr != EnhanceWidget);
-    ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetPawn());
-    EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0),
-                        LSPlayer->GetResourceManager());
-    EnhanceWidget->AddToViewport();
-    ChangeInputMode(false);
-}
-
-bool ALSPlayerController::GetIsAutoRunning() const
-{
-    return bIsAutoRunning;
-}
-
-void ALSPlayerController::SetIsAutoRunning(const bool bEnabled)
-{
-    bIsAutoRunning = bEnabled;
 }

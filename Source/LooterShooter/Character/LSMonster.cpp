@@ -186,7 +186,7 @@ void ALSMonster::Init(const int32 Level)
 	}
 }
 
-float ALSMonster::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float ALSMonster::TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	// LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);

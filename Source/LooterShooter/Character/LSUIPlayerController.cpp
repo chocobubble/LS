@@ -8,15 +8,16 @@ void ALSUIPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    LSCHECK(nullptr != UIWidgetClass);
-
-    UIWidgetInstance = CreateWidget<UUserWidget>(this, UIWidgetClass);
-    LSCHECK(nullptr != UIWidgetInstance);
-
-    UIWidgetInstance->AddToViewport();
-
-    FInputModeUIOnly Mode;
-    Mode.SetWidgetToFocus(UIWidgetInstance->GetCachedWidget());
-    SetInputMode(Mode);
-    bShowMouseCursor = true;
+    if (UIWidgetClass != nullptr)
+	{
+    	UIWidgetInstance = CreateWidget<UUserWidget>(this, UIWidgetClass);
+		if (UIWidgetInstance != nullptr)
+		{
+    		UIWidgetInstance->AddToViewport();
+    		FInputModeUIOnly Mode;
+    		Mode.SetWidgetToFocus(UIWidgetInstance->GetCachedWidget());
+    		SetInputMode(Mode);
+    		bShowMouseCursor = true;
+		}
+	}
 }
