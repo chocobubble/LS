@@ -85,7 +85,7 @@ void ALSMonster::BeginPlay()
 
 	// TODO : default 로 생성되게 바꾸기
 	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator); 
-	SetWeapon();
+	EquipWeapon();
 
 	if (DefenseManager != nullptr)
 	{
@@ -284,10 +284,6 @@ void ALSMonster::SetCharacterStateDead()
 	SetCharacterState(ECharacterState::DEAD);
 }
 
-void ALSMonster::ShowDebugLine(FVector Dir)
-{
-}
-
 void ALSMonster::SetAttackTarget(APawn* TargetPawn)
 {
 	if (TargetPawn != nullptr)
@@ -342,7 +338,7 @@ void ALSMonster::Attack()
 	}
 }
 
-FVector ALSMonster::CalculateRecoil(FVector AimDir, const float SpreadAngle)
+FVector ALSMonster::CalculateRecoil(const FVector& AimDir, const float SpreadAngle)
 {
 	const float RandomAngle = FMath::FRandRange(0.f, 1.f) * 360.0f;
 	FRotator Rot = AimDir.Rotation();

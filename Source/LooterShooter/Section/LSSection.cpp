@@ -32,7 +32,7 @@ ALSSection::ALSSection()
 	//#include "Components/BoxComponent.h" 
 	Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TRIGGER"));
 	Trigger->SetupAttachment(RootComponent);
-	Trigger->SetBoxExtent(FVector(40.0f, 40.0f, 100.0f));
+	Trigger->SetBoxExtent(FVector(200.0f, 100.0f, 25.0f));
 	//Trigger->SetRelativeLocation()
 	Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
 

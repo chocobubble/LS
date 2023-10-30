@@ -71,6 +71,11 @@ void ALSLootItem::OnCharacterOverlap(
 		bool bFromSweep, 
 		const FHitResult & SweepResult) {}
 
+void ALSLootItem::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex) {}
+
 /*
 // Called every frame
 void ALSLootItem::Tick(float DeltaTime)

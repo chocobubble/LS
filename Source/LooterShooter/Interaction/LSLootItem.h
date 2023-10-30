@@ -37,7 +37,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
-public:
 	UFUNCTION()
 	virtual void OnCharacterOverlap(
 		UPrimitiveComponent * OverlappedComp, 
@@ -47,12 +46,18 @@ public:
 		bool bFromSweep, 
 		const FHitResult & SweepResult);
 
+	UFUNCTION()
+	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
+
 	// Called every frame
 	// virtual void Tick(float DeltaTime) override;
 
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = Loot)
+	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	UBoxComponent* Trigger;
 
 	UPROPERTY(VisibleAnywhere, Category = Loot)

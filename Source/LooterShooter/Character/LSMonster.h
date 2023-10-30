@@ -27,8 +27,6 @@ public:
 	/** 에셋 로드 완료 시 호출되는 메서드 */
 	void OnAssetLoadCompleted();
 
-	void ShowDebugLine(const FVector& Dir); // 디버깅 용도
-
 	/** 무기 장착 */
 	void EquipWeapon();
 

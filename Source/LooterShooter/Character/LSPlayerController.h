@@ -39,7 +39,7 @@ public:
 
 	void OnInventoryOpen(const FInputActionValue& Value);
 
-	void OnEnhanceUIOpen(const FInputActionValue& Value);
+	void OnEnhanceUIOpen();
 
 	void ChangeInputMode(bool bGameMode = true);
 
@@ -131,7 +131,7 @@ public:
 		return bIsAutoRunning;
 	}
 
-	void SetAutoRunning(const bool bEnabled);
+	void SetAutoRunning(const bool bEnabled)
 	{
 		bIsAutoRunning = bEnabled;
 	}

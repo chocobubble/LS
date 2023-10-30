@@ -3,6 +3,7 @@
 #pragma once
 
 #include "LooterShooter/LooterShooter.h"
+#include "LooterShooter/System/LSGameInstance.h"
 #include "GameFramework/PlayerState.h"
 #include "LSPlayerState.generated.h"
 
@@ -40,7 +41,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentExp = 0;
 
-	UPROPERTY(VisibleAnywhere, Category = "State")
+	//UPROPERTY(VisibleAnywhere, Category = "State")
 	FLSPlayerData* PlayerStatData;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mode")
@@ -60,9 +61,9 @@ public:
     	return CurrentExp;
 	}
 
-	int32 GetNextExp() const;
+	int32 GetNextExp();
 
-	float GetExpRatio() const;
+	float GetExpRatio();
 
 	void SetCharacterLevel(int32 NewCharacterLevel);
 };

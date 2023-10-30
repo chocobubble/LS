@@ -205,7 +205,7 @@ void ALSPlayerController::OnInventoryOpen(const FInputActionValue& Value)
     ChangeInputMode(false);
 }
 
-void ALSPlayerController::OnEnhanceUIOpen(const FInputActionValue& Value)
+void ALSPlayerController::OnEnhanceUIOpen()
 {
     EnhanceWidget = CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
     if (EnhanceWidget == nullptr)

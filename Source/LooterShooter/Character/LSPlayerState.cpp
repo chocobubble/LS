@@ -38,12 +38,12 @@ void ALSPlayerState::SavePlayerData()
     }
 }
 
-int32 ALSPlayerState::GetNextExp() const
+int32 ALSPlayerState::GetNextExp() 
 {
 	LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
 	if (LSGameInstance)
 	{
-		PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+		PlayerStatData = LSGameInstance->GetLSPlayerData(CharacterLevel);
 		if (PlayerStatData)
 		{
 			return PlayerStatData->NextExp;
@@ -52,12 +52,12 @@ int32 ALSPlayerState::GetNextExp() const
 	return -1;
 }
 
-float ALSPlayerState::GetExpRatio() const
+float ALSPlayerState::GetExpRatio() 
 {
     LSGameInstance = LSGameInstance ? LSGameInstance : Cast<ULSGameInstance>(GetGameInstance());
 	if (LSGameInstance)
 	{
-		PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+		PlayerStatData = LSGameInstance->GetLSPlayerData(CharacterLevel);
 		if (PlayerStatData)
 		{
 			// 0 나눗셈 에러 방지
@@ -78,7 +78,7 @@ bool ALSPlayerState::AddExp(int32 IncomeExp)
 	{
 		return false;
 	}
-	PlayerStatData = LSGameInstance->GetLSPlayerData(ChracterLevel);
+	PlayerStatData = LSGameInstance->GetLSPlayerData(CharacterLevel);
 	if (PlayerStatData == nullptr || PlayerStatData->NextExp == -1)
 	{
 		return false;

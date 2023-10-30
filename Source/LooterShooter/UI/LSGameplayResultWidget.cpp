@@ -35,7 +35,7 @@ void ULSGameplayResultWidget::OnEnhanceClicked()
     LSLOG(Warning, TEXT("Enhancemnet UI Open"));
     ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
     LSCHECK(nullptr != LSPlayerController);
-    LSPlayerController->ShowEnhanceUI();
+    LSPlayerController->OnEnhanceUIOpen();
     LSPlayerController->SetPause(true);
     LSPlayerController->ChangeInputMode(false);
 }
