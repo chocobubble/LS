@@ -278,10 +278,10 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
 	float ArmLengthChangingSpeed = 3.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
 	float DefaultAttackRange = 1000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interact, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
 	float InteractRange = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))

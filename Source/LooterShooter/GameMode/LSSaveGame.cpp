@@ -8,5 +8,8 @@ ULSSaveGame::ULSSaveGame()
     Level = 1;
     Exp = 0;
     PlayerName = TEXT("Guest");
-    HighScore = 0;
+	Gold = 1000;
+	AmmoMap.Add(EAmmoType::RIFLE, 100);
+	WeaponLevel = 1
+	WeaponEnhancementLevel = 0;
 }

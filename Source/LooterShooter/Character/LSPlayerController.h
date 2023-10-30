@@ -135,4 +135,9 @@ public:
 	{
 		bIsAutoRunning = bEnabled;
 	}
+
+	ALSPlayerState* GetPlayerState() const
+	{
+		return LSPlayerState;
+	}
 };

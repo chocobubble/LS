@@ -35,7 +35,7 @@ public:
 	void SetRoundsRemaining(int32 NewRoundsRemaining);
 	int32 GetRoundsRemaining() const;
 
-	void DecreaseRoundsRemaining();
+	int32 DecreaseRoundsRemaining();
 protected:
 	virtual void BeginPlay() override;
 

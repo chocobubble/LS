@@ -408,7 +408,14 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	);
 
 	// 사격 후 소지 총알 감소
-	EquipmentManager->DecreaseRoundsRemaining();
+	int32 CurrentRoundsRemaining = EquipmentManager->DecreaseRoundsRemaining();
+	LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetController());
+	if(LSPlayerController && LSPlayerController->GetPlayerState())
+	{
+		// TODO: EAmmoType 다양하게
+		LSPlayerController->GetPlayerState()->SetCurrentAmmo(EAmmoType::RIFLE, CurrentRoundsRemaining);
+	}
+	
 	
 	// 사격 히트 한 경우
 	if (bResult)

@@ -5,10 +5,13 @@
 #include "LooterShooter/System/LSGameInstance.h"
 #include "LooterShooter/GameMode/LSSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "LooterShooter/Component/LSInventoryComponent.h"
+#include "LooterShooter/Character/LSPlayerController.h"
 
 ALSPlayerState::ALSPlayerState()
 {
     SaveSlotName = TEXT("Player");
+	CurrentAmmoMap.Add(EAmmoType::RIFLE, 0);
 }
 
 void ALSPlayerState::InitPlayerData()
@@ -18,9 +21,19 @@ void ALSPlayerState::InitPlayerData()
     {
         LSSaveGame = GetMutableDefault<ULSSaveGame>();
     }
-    SetPlayerName(LSSaveGame->PlayerName);
-    SetCharacterLevel(LSSaveGame->Level);
-    CurrentExp = LSSaveGame->Exp;
+    SetPlayerName(LSSaveGame->GetSavedPlayerName());
+    SetCharacterLevel(LSSaveGame->GetSavedCharacterLevel());
+    CurrentExp = LSSaveGame->GetSavedCharacterExp();
+	CurrentGold = LSSaveGame->GetSavedGold();
+	CurrentWeaponLevel = LSSaveGame->GetSavedWeaponLevel();
+	CurrentWeaponEnhancementLevel = LSSaveGame->GetWeaponEnhancementLevel();
+	CurrentAmmoMap[EAmmoType::RIFLE] = LSSaveGame->GetWeaponAmmoMap()[EAmmoType::RIFLE];
+
+	UPORPERTY(VisibleAnywhere)
+	ALSPlayerController* LSPlayerController;
+
+	UPORPERTY(VisibleAnywhere)
+	ULSInventoryComponent* LSInventory;
 
     SavePlayerData();
 }
@@ -28,9 +41,13 @@ void ALSPlayerState::InitPlayerData()
 void ALSPlayerState::SavePlayerData()
 {
     ULSSaveGame* NewPlayerData = NewObject<ULSSaveGame>();
-    NewPlayerData->PlayerName = GetPlayerName();
-    NewPlayerData->Level = CharacterLevel;
-    NewPlayerData->Exp = CurrentExp;
+    NewPlayerData->SavePlayerName(GetPlayerName());
+    NewPlayerData->SaveCharacterLevel(CharacterLevel);
+    NewPlayerData->SaveCharacterExp(CurrentExp);
+	NewPlayerData->SaveGold(CurrentGold);
+	NewPlayerData->SaveWeaponLevel(CurrentWeaponLevel);
+	NewPlayerData->SaveWeaponEnhancementLevel(CurrentWeaponEnhancementLevel);
+	NewPlayerData->SaveAmmoMap(CurrentAmmoMap);
 
     if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
     {
@@ -108,4 +125,9 @@ void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)
 		PlayerStatData = LSGameInstance->GetLSPlayerData(NewCharacterLevel);
 	}
 	CharacterLevel = NewCharacterLevel;
+}
+
+void ALSPlayerState::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
+{
+	CurrentAmmoMap[AmmoType] = Amount;
 }

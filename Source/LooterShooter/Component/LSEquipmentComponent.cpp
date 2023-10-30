@@ -82,11 +82,12 @@ int32 ULSEquipmentComponent::GetRoundsRemaining() const
 	return CurrentWeaponInstance->GetRoundsRemaining();
 }
 
-void ULSEquipmentComponent::DecreaseRoundsRemaining()
+int32 ULSEquipmentComponent::DecreaseRoundsRemaining()
 {
 	LSLOG_S(Warning);
 	// 탄약을 1보다 많이 소모하는 속성 넣는 경우 여기 수정하기
 	int32 NewRoundsRemaining = CurrentWeaponInstance->GetRoundsRemaining() - 1;
 	SetRoundsRemaining(NewRoundsRemaining);
+	return NewRoundsRemaining;
 }
 

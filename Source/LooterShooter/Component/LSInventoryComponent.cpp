@@ -5,6 +5,8 @@
 #include "LooterShooter/Weapon/LSWeaponDefinition.h"
 #include "LSEquipmentComponent.h"
 #include "LooterShooter/GameMode/LSGameState.h"
+#include "LooterShooter/Character/LSPlayerState.h"
+//#include "LooterShooter/Character/LSPlayerController.h"
 // #include "LSPlayerAnimInstance.h"
 
 // Sets default values for this component's properties
@@ -42,6 +44,8 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
 	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
+	WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
+
 	TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
 	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::SHOTGUN, 3);
@@ -93,4 +97,23 @@ void ULSInventoryComponent::EquipItem(int32 ItemIndex)
 TObjectPtr<ULSWeaponDefinition> ULSInventoryComponent::GetWeaponDefinitionInList(int32 Index) const
 {
 	return WeaponList[Index];
+}
+
+void ULSInventoryComponent::UpdateWeaponDefinition()
+{
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (OwnerPawn)
+	{
+		AController* Controller = Cast<AController>(OwnerPawn->GetController());
+		if (Controller)
+		{
+			ALSPlayerState* PlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState());
+			if (PlayerState)
+			{
+				// TODO : list
+				PlayerState->SetCurrentWeaponLevel(WeaponList[0]->GetWeaponItemLevel());
+				PlayerState->SetCurrentWeaponEnhancementLevel(WeaponList[0]->GetEnhancement());
+			}
+		}
+	}
 }

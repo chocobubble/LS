@@ -47,6 +47,7 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
 	MaxRange = WeaponBaseData->MaxRange;
 	Enhancement = 0;
+	OnWeaponStatChanged.Broadcast();
 }
 
 bool ULSWeaponDefinition::TryEnhanceWeapon()
@@ -61,6 +62,7 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 	else
 	{
 		LSLOG(Warning, TEXT("Enhance succecced"));
+		++Enhancement;
 		EnhanceWeapon();
 		return true;
 	}
@@ -69,11 +71,12 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 
 void ULSWeaponDefinition::EnhanceWeapon()
 {
-	Enhancement += 1;
+	//Enhancement += 1;
 	MagazineCapacity = MagazineCapacity * 1.1f;
 	BulletDamage = BulletDamage * 1.1f;
 	CriticalHitChance = CriticalHitChance * 1.1f;
 	CriticalHitMultiplier = CriticalHitMultiplier * 1.1f;
+	OnWeaponStatChanged.Broadcast();
 }
 
 void ULSWeaponDefinition::SetWeaponDefinitionStats()

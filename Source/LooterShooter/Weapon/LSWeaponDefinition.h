@@ -109,6 +109,11 @@ public:
 	void SetWeaponDefaultStats();
 	void EnhanceWeapon();
 	
+	int32 GetWeaponItemLevel() const
+	{
+		return WeaponItemLevel;
+	}
+
 	EWeaponType GetWeaponType() const
 	{
 		return WeaponType;

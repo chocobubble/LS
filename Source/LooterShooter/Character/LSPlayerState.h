@@ -4,12 +4,15 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/Types/AmmoType.h"
 #include "GameFramework/PlayerState.h"
 #include "LSPlayerState.generated.h"
 
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerStateChangedDelegate);
 
+class ALSPlayerController;
+class ULSInventoryComponent;
 class ULSGameInstance;
 struct FLSPlayerData;
 /**
@@ -33,22 +36,36 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
-	int32 GameScore = 0;
-
-	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CharacterLevel = 1;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentExp = 0;
 
-	//UPROPERTY(VisibleAnywhere, Category = "State")
-	FLSPlayerData* PlayerStatData;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	FString SaveSlotName;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 CurrentGold = 1000;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	TMap<EAmmoType, int32> CurrentAmmoMap;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 CurrentWeaponLevel = 1;
+
+	UPORPERTY(VisibleAnywhere, Category = "State")
+	int32 CurrentWeaponEnhancementLevel = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mode")
 	ULSGameInstance* LSGameInstance;
 
-	UPROPERTY()
-	FString SaveSlotName;
+	FLSPlayerData* PlayerStatData;
+
+	UPORPERTY(VisibleAnywhere)
+	ALSPlayerController* LSPlayerController;
+
+	UPORPERTY(VisibleAnywhere)
+	ULSInventoryComponent* LSInventory;
 
 public:
 	int32 GetCharacterLevel() const
@@ -66,4 +83,16 @@ public:
 	float GetExpRatio();
 
 	void SetCharacterLevel(int32 NewCharacterLevel);
+
+	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
+
+	void SetCurrentWeaponLevel(int32 WeaponLevel)
+	{
+		CurrentWeaponLevel = WeaponLevel;
+	}
+
+	void SetCurrentWeaponEnhancementLevel(int32 EnhancementLevel)
+	{
+		CurrentWeaponEnhancementLevel = EnhancementLevel;
+	}
 };
