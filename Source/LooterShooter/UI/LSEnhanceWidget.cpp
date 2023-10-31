@@ -30,15 +30,19 @@ void ULSEnhanceWidget::Init(ULSWeaponDefinition* WeaponDefinition, ULSResourceMa
     OnWeaponStatUpdated();
     
     // TODO: Delegate 연결
-    //Weapon->OnWeaponStatChanged.AddUObject(this, &ULSEnhanceWidget::OnWeaponStatUpdated);
+    // Weapon->OnWeaponStatChanged.AddUObject(this, &ULSEnhanceWidget::OnWeaponStatUpdated);
 
     EnhancementButton = Cast<UButton>(GetWidgetFromName(TEXT("btnEnhancement")));
-    LSCHECK(nullptr != EnhancementButton );
-    EnhancementButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnEnhanceButtonClicked);
+    if (EnhancementButton)
+	{
+    	EnhancementButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnEnhanceButtonClicked);
+	}
     
     BackButton = Cast<UButton>(GetWidgetFromName(TEXT("btnBack")));
-    LSCHECK(nullptr != BackButton );
-    BackButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnResumeClicked);
+    if (BackButton)
+	{
+    	BackButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnResumeClicked);
+	}
 }
 
 void ULSEnhanceWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)
@@ -54,26 +58,26 @@ void ULSEnhanceWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)
     }
 }
 
-
 void ULSEnhanceWidget::OnEnhanceButtonClicked()
 {
     if (Resource->GetGoldAmount() < 100) return;
-    LSCHECK(Weapon != nullptr);
+    if (Weapon == nullptr)
+	{
+		return;
+	}
     bIsEnhancing = true;
     ElapsedTime = 0.0f;
     bIsEnhanced = Weapon->TryEnhanceWeapon();
     Resource->SetGoldAmount(Resource->GetGoldAmount() - 100);
-    
-    //LSEnhancePB->StartReload(2.f);
-    //LSEnhancePB = Cast<ULSRoundProgressbar>(GetWidgetFromName(TEXT("pbEnhancement")));
-    ///LSCHECK(LSEnhancePB != nullptr);
-    //LSEnhancePB->SetPercentPB(0.f);
-    //LSLOG(Warning, TEXT("check"));
+
     GetWorld()->GetTimerManager().ClearTimer(EnhancementTimerHandle);
     EnhancementSuccessText->SetText(FText::FromString(TEXT("")));
-    GetWorld()->GetTimerManager().SetTimer(EnhancementTimerHandle,
-				FTimerDelegate::CreateUObject(this, &ULSEnhanceWidget::Enhance),
-                2.f, false);
+    GetWorld()->GetTimerManager().SetTimer(
+		EnhancementTimerHandle,
+		FTimerDelegate::CreateUObject(this, &ULSEnhanceWidget::Enhance),
+        2.f,
+		false
+	);
 }
 
 void ULSEnhanceWidget::Enhance()
@@ -92,11 +96,13 @@ void ULSEnhanceWidget::Enhance()
 
 void ULSEnhanceWidget::OnWeaponStatUpdated()
 {
-    LSCHECK(Weapon != nullptr);
+    if (Weapon == nullptr)
+	{
+		return;
+	}
+
     GoldText->SetText(FText::FromString(FString::FromInt(Resource->GetGoldAmount())));
-    
     EnhancementCountText->SetText(FText::FromString(FString::FromInt(Weapon->GetEnhancement())));
-    // WeaponTypeText->SetText(FText::FromString(FString::FromInt(Weapon->GetEnhancement())));
     DamageText->SetText(FText::FromString(FString::FromInt(Weapon->GetBulletDamage())));
     CriticalHitChanceText->SetText(FText::FromString(FString::FromInt(Weapon->GetCriticalHitChance() * 100)));
     CriticalHitMultiplierText->SetText(FText::FromString(FString::FromInt(Weapon->GetCriticalHitMultiplier() * 100)));      
@@ -104,11 +110,5 @@ void ULSEnhanceWidget::OnWeaponStatUpdated()
 
 void ULSEnhanceWidget::OnResumeClicked()
 {
-    //auto LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    //LSCHECK(nullptr != LSPlayerController);
-
     RemoveFromParent();
-
-    //LSPlayerController->ChangeInputMode(true);
-    //LSPlayerController->SetPause(false);
 }
