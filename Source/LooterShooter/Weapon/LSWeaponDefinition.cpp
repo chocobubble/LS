@@ -21,16 +21,26 @@ ALSWeaponInstance* ULSWeaponDefinition::InstantiateWeapon()
     return NewWeapon;
 }
 
-void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 ItemLevel)
+void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 WeaponLevel, int32 WeaponEnhancementLevel)
 {
 	this->WeaponType = WeaponTypeParam;
-	WeaponItemLevel = ItemLevel;
-	
+	WeaponItemLevel = WeaponLevel;
+
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	LSCHECK(LSGameInstance != nullptr);
 	WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
 	LSCHECK(WeaponBaseData != nullptr);
 	SetWeaponDefaultStats();
+
+	EnhancementLevel = WeaponEnhancementLevel;
+	if (EnhancementLevel > 0)
+	{
+		for (int32 Idx = 0; Idx < EnhancementLevel; ++Idx)
+		{
+			EnhanceWeapon();
+		}
+	}
+
 	WeaponAbilityComponent->EnhanceWeaponStat(this);
 }
 
@@ -46,7 +56,7 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 	ReloadTime = WeaponBaseData->ReloadTime;
 	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
 	MaxRange = WeaponBaseData->MaxRange;
-	Enhancement = 0;
+	EnhancementLevel = 0;
 	OnWeaponStatChanged.Broadcast();
 }
 
@@ -62,7 +72,7 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 	else
 	{
 		LSLOG(Warning, TEXT("Enhance succecced"));
-		++Enhancement;
+		++EnhancementLevel;
 		EnhanceWeapon();
 		return true;
 	}
@@ -71,7 +81,7 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 
 void ULSWeaponDefinition::EnhanceWeapon()
 {
-	//Enhancement += 1;
+	//EnhancementLevel += 1;
 	MagazineCapacity = MagazineCapacity * 1.1f;
 	BulletDamage = BulletDamage * 1.1f;
 	CriticalHitChance = CriticalHitChance * 1.1f;

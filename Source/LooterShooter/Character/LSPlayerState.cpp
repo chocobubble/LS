@@ -5,9 +5,9 @@
 #include "LooterShooter/System/LSGameInstance.h"
 #include "LooterShooter/GameMode/LSSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
 #include "LooterShooter/Character/LSPlayerController.h"
-#include "LooterShooter/Types/AmmoType.h"
 
 ALSPlayerState::ALSPlayerState()
 {
@@ -48,6 +48,28 @@ void ALSPlayerState::SavePlayerData()
     {
         LSLOG_S(Error);
     }
+}
+
+void ALSPlayerState::BindWithResourceManager(ULSResourceManageComponent* Target)
+{
+	if (Target)
+	{
+		Target->OnResourceChanged.AddUObject(this, &ALSPlayerState::UpdateResourceData);
+		ResourceManger = Target;
+	}
+}
+
+void ALSPlayerState::UpdateResourceData()
+{
+	if (ResourceManger == nullptr)
+	{
+		return;
+	}
+	CurrentGold = ResourceManger->GetGoldAmount();
+	// CurrentAmmoMap 업데이트
+	// TODO : 다른 타입 총알도 적용
+	EAmmoType CurrentAmmoType = EAmmoType::RIFLE
+	SetCurrentAmmo(CurrentAmmoType, ResourceManger->GetCurrentAmmo(CurrentAmmoType));
 }
 
 int32 ALSPlayerState::GetNextExp() 

@@ -41,7 +41,7 @@ private:
 	int32 WeaponItemLevel;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	int32 Enhancement = 0;
+	int32 EnhancementLevel = 0;
 
 	/** 
 	 * 총의 발사 속도
@@ -103,7 +103,7 @@ public:
 	/** 무기 장착 시 액터 객체 생성 */
 	ALSWeaponInstance* InstantiateWeapon();
 	/** 아이템 레벨, 무기 타입에 따라 기본 스탯 설정 */
-	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 ItemLevel);
+	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 WeaponLevel, int32 WeaponEnhancementLevel);
 	/** 랜덤성을 부여하기 위해 랜덤으로 스탯 수치 수정 */
 	void SetWeaponDefinitionStats();
 	bool TryEnhanceWeapon();
@@ -119,9 +119,9 @@ public:
 	{
 		return WeaponType;
 	}
-	int32 GetEnhancement() const
+	int32 GetEnhancementLevel() const
 	{
-		return Enhancement;
+		return EnhancementLevel;
 	}
 	float GetMagazineCapacity() const
 	{

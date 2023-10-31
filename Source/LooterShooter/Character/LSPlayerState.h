@@ -14,6 +14,7 @@ DECLARE_MULTICAST_DELEGATE(FOnPlayerStateChangedDelegate);
 class ALSPlayerController;
 class ULSInventoryComponent;
 class ULSGameInstance;
+class ULSResourceManageComponent;
 struct FLSPlayerData;
 /**
  * 
@@ -32,6 +33,11 @@ public:
 
 	void SavePlayerData();
 
+	void BindWithResourceManager(ULSResourceManageComponent* Target);
+
+	UFUNCTION()
+	void UpdateResourceData();
+
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 
 private:
@@ -47,7 +53,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentGold = 1000;
 
-	//UPROPERTY(VisibleAnywhere, Category = "State")
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	TMap<EAmmoType, int32> CurrentAmmoMap;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
@@ -65,7 +71,10 @@ private:
 	ALSPlayerController* LSPlayerController;
 
 	UPROPERTY(VisibleAnywhere)
-	ULSInventoryComponent* LSInventory;
+	ULSInventoryComponent* Inventory;
+
+	UPROPERTY(VisibleAnywhere)
+	ULSResourceManageComponent* ResourceManger;
 
 public:
 	int32 GetCharacterLevel() const
@@ -79,6 +88,26 @@ public:
 	}
 
 	int32 GetNextExp();
+
+	int32 GetCurrentGold() const
+	{
+		return CurrentGold;
+	}
+
+	TMap<EAmmoType, int32>& GetAmmoMap() const
+	{
+		return CurrentAmmoMap;
+	}
+
+	int32 GetCurrentWeaponLevel() const
+	{
+		return CurrentWeaponLevel;
+	}
+
+	int32 GetCurrentWeaponEnhancenmentLevel() const
+	{
+		return CurrentWeaponEnhancementLevel;
+	}
 
 	float GetExpRatio();
 

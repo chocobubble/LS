@@ -26,8 +26,13 @@ protected:
 
 	UFUNCTION()
 	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) {}
+
+	virtual void Interact() {}
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	UBoxComponent* Trigger;
+
+private:
+
 };

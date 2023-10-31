@@ -8,7 +8,7 @@
 #include "LSPlayerController.generated.h"
 
 class ULSHUDWidget;
-class ALSCharacter;
+class ALSPlayer;
 class ALSPlayerState;
 class UInputMappingContext;
 class UInputAction;
@@ -19,9 +19,11 @@ class ALSMonster;
 class ULSInventoryWidget;
 class ULSRoundProgressbar;
 class ULSEnhanceWidget;
+class ULSResourceManageComponent;
 
-///tset
+// test
 class UMaterialInstance;
+
 /**
  * 
  */
@@ -44,6 +46,8 @@ public:
 	void ChangeInputMode(bool bGameMode = true);
 
 	void ShowResultUI();
+
+	void InitResourceManager(ULSResourceManageComponent* ResourceManager);
 
 protected:
 	virtual void BeginPlay() override;
@@ -104,6 +108,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	ULSEnhanceWidget* EnhanceWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = "Player")
+	ALSPlayer* LSPlayer;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	ALSPlayerState* LSPlayerState;

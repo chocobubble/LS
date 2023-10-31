@@ -25,10 +25,26 @@ void ULSInventoryComponent::BeginPlay()
 
 void ULSInventoryComponent::SetDefaultWeapon()
 {
+	int32 DefaultWeaponLevel = 1;
+	int32 DefaultWeaponEnhancementLevel = 0;
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (OwnerPawn)
+	{
+		AController* Controller = Cast<AController>(OwnerPawn->GetController());
+		if (Controller)
+		{
+			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
+			if (LSPlayerState)
+			{
+				DefaultWeaponLevel = LSPlayerState->GetCurrentWeaponLevel();
+				DefaultWeaponEnhancementLevel = LSPlayerState->GetCurrentWeaponEnhancenmentLevel();
+			}
+		}
+	}
 	int32 TempNum;
 	TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, 3);
+	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
 	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
 	WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
@@ -79,7 +95,10 @@ void ULSInventoryComponent::EquipItem(int32 ItemIndex)
 		return;
 	}
 	ALSWeaponInstance* WeaponInstance = WeaponList[ItemIndex]->InstantiateWeapon();
-	EquipmentManager->EquipWeapon(WeaponInstance);
+	if (WeaponInstance)
+	{
+		EquipmentManager->EquipWeapon(WeaponInstance);
+	}
 }
 
 
@@ -91,12 +110,12 @@ void ULSInventoryComponent::UpdateWeaponDefinition()
 		AController* Controller = Cast<AController>(OwnerPawn->GetController());
 		if (Controller)
 		{
-			ALSPlayerState* PlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
-			if (PlayerState)
+			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
+			if (LSPlayerState)
 			{
 				// TODO : list
-				PlayerState->SetCurrentWeaponLevel(WeaponList[0]->GetWeaponItemLevel());
-				PlayerState->SetCurrentWeaponEnhancementLevel(WeaponList[0]->GetEnhancement());
+				LSPlayerState->SetCurrentWeaponLevel(WeaponList[0]->GetWeaponItemLevel());
+				LSPlayerState->SetCurrentWeaponEnhancementLevel(WeaponList[0]->GetEnhancement());
 			}
 		}
 	}

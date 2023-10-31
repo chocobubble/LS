@@ -345,9 +345,8 @@ void ALSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	EnhancedInputComponent->BindAction(EquipFirstWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipFirstWeapon);
 	EnhancedInputComponent->BindAction(EquipSecondWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipSecondWeapon);
 	EnhancedInputComponent->BindAction(EquipThirdWeaponAction, ETriggerEvent::Triggered, this, &ALSPlayer::EquipThirdWeapon);
-	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Ongoing, this, &ALSPlayer::InteractProgress);
-	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSPlayer::Interact);
-	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ALSPlayer::InteractEnd);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Ongoing, this, &ALSPlayer::OnInteractButtonDown);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALSPlayer::OnInteractButtonPressed);
 	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &ALSPlayer::TestAct);
 }
 
@@ -613,7 +612,7 @@ void ALSPlayer::OnReloadComplete()
 }
 
 // TODO: equip 1,2,3 합치기
-void ALSPlayer::EquipFirstWeapon(const FInputActionValue& Value)
+void ALSPlayer::EquipFirstWeapon()
 {
 	LSLOG(Warning, TEXT("EquipFirstWeapon"));
 	if (EquipmentManager->GetWeaponInstance(0) == nullptr)
@@ -648,8 +647,37 @@ void ALSPlayer::EquipThirdWeapon(const FInputActionValue& Value)
 	EquipmentManager->SetCurrentWeaponIndex(2);
 }
 
-void ALSPlayer::Interact(const FInputActionValue& Value)
+void ALSPlayer::InteractCheck()
 {
+	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
+	if (!bIsNearInteractableObject || InteractingObject != nullptr)
+	{
+		return;
+	}
+	const float FinalInteractRange = GetFinalInteractRange();
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalInteractRange)),
+		ECollisionChannel::ECC_GameTraceChannel3,
+		Params
+	);	
+
+	if (bResult)
+	{
+		InteractingObject = Cast<ALSInteractableObejct>(HitResult.GetActor());
+	}
+}
+
+void ALSPlayer::OnInteractButtonPressed(const FInputActionValue& Value)
+{
+	if (InteractingObject == nullptr)
+	{
+		return;
+	}
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
@@ -662,16 +690,18 @@ void ALSPlayer::Interact(const FInputActionValue& Value)
 
 	if (bResult)
 	{
+		/*
 		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
 		if (ItemBox)
 		{
 			WeaponDefinition = ItemBox->GetWeaponItem();
 			InventoryManager->AddWeaponToInventory(WeaponDefinition);
 		}
+		*/
 	}
 }
 
-void ALSPlayer::InteractProgress(const FInputActionInstance& ActionInstance)
+void ALSPlayer::OnInteractButtonDown(const FInputActionInstance& ActionInstance)
 {
 	if (!bIsNearInteractableObject)
 	{
@@ -685,10 +715,18 @@ void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 	InteractionElapsedTime = ElapsedTime;
 	// Interact Progress Bar 업데이트 함수 호출
 	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
+	if (InteractionElapsedTime >= InteractionCompleteTime)
+	{
+		InteractWithObject();
+	}
 }
 
-void ALSPlayer::InteractEnd(const FInputActionValue& Value)
+void ALSPlayer::InteractWithObject()
 {
+	if (ALSInteractableObejct)
+	{
+		InteractingObject->Interact(this);
+	}	
 }
 
 void ALSPlayer::TestAct(const FInputActionValue& Value)
@@ -704,12 +742,15 @@ void ALSPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	InventoryManager->SetEquipmentComponent(EquipmentManager);
-
-	LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	if (LSPlayerAnim != nullptr)
+	if (InventoryManager && EquipmentManager)
 	{
-		if (DefenseManager != nullptr)
+		InventoryManager->SetEquipmentComponent(EquipmentManager);
+	}
+	
+	LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (LSPlayerAnim)
+	{
+		if (DefenseManager)
 		{
 			DefenseManager->OnHPIsZero.AddLambda([this]() -> void {
 				LSPlayerAnim->SetDeadAnim();
@@ -719,6 +760,9 @@ void ALSPlayer::PostInitializeComponents()
 		// LSPlayerAnim->OnAttackHitCheck.AddUObject(this, &ALSPlayer::AttackCheck);
 		LSPlayerAnim->OnMontageEnded.AddDynamic(this, &ALSPlayer::OnAttackMontageEnded);
 	}
+
+	// Default 무기 장착
+	EquipFirstWeapon();
 }
 
 bool ALSPlayer::CanShoot(EAmmoType AmmoType)
@@ -828,31 +872,6 @@ float ALSPlayer::GetFinalAttackDamage(bool bIsWeakPoint) const
 	}
 
 	return AttackDamage; 
-}
-
-void ALSPlayer::InteractCheck()
-{
-	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
-	if (!bIsNearInteractableObject)
-	{
-		return;
-	}
-	const float FinalInteractRange = GetFinalInteractRange();
-
-	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
-	bool bResult = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		SpringArm->GetComponentLocation(),
-		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * FinalInteractRange)),
-		ECollisionChannel::ECC_GameTraceChannel3,
-		Params
-	);	
-
-	if (bResult)
-	{
-		
-	}
 }
 
 void ALSPlayer::ShowDebugLine(FVector Dir)

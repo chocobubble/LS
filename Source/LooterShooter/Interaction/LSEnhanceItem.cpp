@@ -41,6 +41,11 @@ void ALSEnhanceItem::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, 
 	OverlappedCharacter = nullptr;
 }
 
+void ALSEnhanceItem::Interact()
+{	
+	OpenEnhanceUI();
+}
+
 void ALSEnhanceItem::OpenEnhanceUI()
 {
 	SetActorEnableCollision(false);

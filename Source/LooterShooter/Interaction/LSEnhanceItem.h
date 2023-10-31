@@ -26,6 +26,8 @@ public:
 	
 	virtual void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) override;
 
+	virtual void Interact() override;
+
 protected:
 	virtual void BeginPlay() override;
 

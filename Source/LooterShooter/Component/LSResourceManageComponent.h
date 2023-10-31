@@ -52,14 +52,13 @@ private:
 public:	
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
 
+	void SetCurrentAmmo(const TMap<EAmmoType, int32>& CurrentAmmoMap);
+
 	int32 GetCurrentAmmo(EAmmoType AmmoType) const;
 	
 	int32 GetMaxAmmo(EAmmoType AmmoType) const;
 	
-	void SetGoldAmount(int32 Amount)
-	{
-		GoldAmount = Amount;
-	}
+	void SetGoldAmount(int32 Amount);
 		
 	int32 GetGoldAmount() const
 	{

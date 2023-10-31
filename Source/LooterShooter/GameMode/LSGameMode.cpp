@@ -16,7 +16,7 @@ ALSGameMode::ALSGameMode()
     GameStateClass = ALSGameState::StaticClass();
 } 
 
-void ALSGameMode::PostLogin(APlayerController * NewPlayer)
+void ALSGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 

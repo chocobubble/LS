@@ -90,6 +90,18 @@ ALSPlayerController::ALSPlayerController()
 void ALSPlayerController::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
+
+	LSPlayerState = LSPlayerState ? LSPlayerState : Cast<ALSPlayerState>(PlayerState);
+	LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
+    if (LSPlayerState && LSPlayer)
+	{
+		ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
+		if (ResourceManager)
+		{
+			LSPlayerState->BindWithResourceManager(ResourceManager);
+			InitResourceManager(ResourceManager);
+		}
+	}
 }
 
 void ALSPlayerController::OnPossess(APawn* aPawn)
@@ -136,13 +148,13 @@ void ALSPlayerController::BeginPlay()
         RoundPBWidget->AddToViewport(0);
     }
 
-    LSPlayerState = Cast<ALSPlayerState>(PlayerState);
+    LSPlayerState = LSPlayerState ? LSPlayerState : Cast<ALSPlayerState>(PlayerState);
     if (LSPlayerState)
     {
         HUDWidget->BindPlayerState(LSPlayerState);
         LSPlayerState->OnPlayerStateChanged.Broadcast();
-        ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetCharacter());
-        if (LSPlayer && HUDWidget)
+        LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
+    	if (LSPlayer && HUDWidget)
         {
             HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
             HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
@@ -212,7 +224,7 @@ void ALSPlayerController::OnEnhanceUIOpen()
 	{
 		return;
 	}
-    ALSPlayer* LSPlayer = Cast<ALSPlayer>(GetPawn());
+    LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
 	if(LSPlayer && LSPlayer->GetInventoryManager() && LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0) && LSPlayer->GetResourceManager())
 	{
     	EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
@@ -246,4 +258,13 @@ void ALSPlayerController::ShowResultUI()
         ResultWidget->AddToViewport(0);
     }
     ChangeInputMode(false);
+}
+
+void ALSPlayerController::InitResourceManager(ULSResourceManageComponent* ResourceManager)
+{
+	if (LSPlayerState && ResourceManager)
+	{
+		ResourceManager->SetGoldAmount(LSPlayerState->GetCurrentGold());
+		ResourceManager->SetCurrentAmmo(LSPlayerState->GetAmmoMap());
+	}
 }

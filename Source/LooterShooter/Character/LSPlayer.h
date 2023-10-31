@@ -32,6 +32,7 @@ class ALSPlayerController;
 class ALSWeaponInstance;
 class UInputTriggerPulse;
 class ALSAmmo;
+class ALSInteractableObejct;
 struct FInputActionValue;
 struct FInputActionInstance;
 struct FStreamableHandle;
@@ -75,6 +76,8 @@ public:
 	void OnAssetLoadCompleted();
 
 	void OnReloadComplete();
+
+	void InteractWithObject();
 
 	TSharedPtr<FStreamableHandle> AssetStreamingHandle;
 
@@ -123,17 +126,15 @@ private:
 
 	void Reload(const FInputActionValue& Value);
 
-	void EquipFirstWeapon(const FInputActionValue& Value);
+	void EquipFirstWeapon();
 
 	void EquipSecondWeapon(const FInputActionValue& Value);
 
 	void EquipThirdWeapon(const FInputActionValue& Value);
 
-	void InteractProgress(const FInputActionInstance& ActionInstance);
+	void OnInteractButtonDown(const FInputActionInstance& ActionInstance);
 
-	void Interact(const FInputActionValue& Value);
-
-	void InteractEnd(const FInputActionValue& Value);
+	void OnInteractButtonPressed(const FInputActionValue& Value);
 
 	/** enhanced input 시스템 테스트 용 */
 	void TestAct(const FInputActionValue& Value);
@@ -236,6 +237,9 @@ private:
 	
 	UPROPERTY(VisibleInstanceOnly, Category = "State")
 	ECharacterState CurrentState;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Interact")
+	ALSInteractableObejct* InteractingObject;
 	
 	/** For Test */
 	UPROPERTY(EditAnywhere, Category = "Weapon")
