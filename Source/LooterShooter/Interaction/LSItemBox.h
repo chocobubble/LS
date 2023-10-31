@@ -8,6 +8,8 @@
 
 class ULSWeaponDefinition;
 class ALSPlayer;
+class UParticleSystemComponent;
+class UBoxComponent;
 
 UCLASS()
 class LOOTERSHOOTER_API ALSItemBox : public AActor
@@ -15,7 +17,6 @@ class LOOTERSHOOTER_API ALSItemBox : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ALSItemBox();
 
 	UFUNCTION()
@@ -24,46 +25,37 @@ public:
 	ULSWeaponDefinition* GetWeaponItem();
 
 	void SetWeaponItem(ALSPlayer* LSPlayer);
+	
+	UFUNCTION()
+	void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,	AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex);
+		
+	UFUNCTION()
+	void OnEffectFinished(UParticleSystemComponent* PSystem);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 	virtual void PostInitializeComponents() override;
 
-public:	
-	UPROPERTY(VisibleAnywhere, Category = Box)
-	class UBoxComponent* Trigger;
+private:	
+	UPROPERTY(VisibleAnywhere, Category = "Box")
+	UBoxComponent* Trigger;
 
-	UPROPERTY(VisibleAnywhere, Category = Box)
+	UPROPERTY(VisibleAnywhere, Category = "Box")
 	UStaticMeshComponent* Box;
 
-	UPROPERTY(VisibleAnywhere, Category = Effect)
-	class UParticleSystemComponent* Effect;
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	UParticleSystemComponent* Effect;
 
-	UPROPERTY(EditInstanceOnly, Category = Box)
+	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TSubclassOf<ULSWeaponDefinition> WeaponItemClass;
 
-	UPROPERTY(EditAnywhere, Category = Box)
+	UPROPERTY(VisibleAnywhere, Category = "Box")
 	TObjectPtr<ULSWeaponDefinition> WeaponItem;	
 
-private:
-	UFUNCTION()
-	void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
-	
-	UFUNCTION()
-	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
-	
-	UFUNCTION()
-	void OnEffectFinished(class UParticleSystemComponent* PSystem);
-
-	UPROPERTY(VisibleAnywhere, Category = Box)
+	UPROPERTY(VisibleAnywhere, Category = "Box")
 	bool bIsDestroying = false;
 };

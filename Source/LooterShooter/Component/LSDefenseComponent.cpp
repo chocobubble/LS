@@ -69,21 +69,6 @@ void ULSDefenseComponent::SetShield(float NewShield)
 	}
 }
 
-float ULSDefenseComponent::GetHPRatio() const
-{
-	return (CurrentHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
-}
-
-float ULSDefenseComponent::GetShieldRatio() const
-{
-	return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
-}
-
-float ULSDefenseComponent::GetCurrentHP() const
-{
-	return CurrentHP;
-}
-
 void ULSDefenseComponent::SetDamage(float NewDamage)
 {
 	LastHitTime = GetWorld()->GetTimeSeconds();

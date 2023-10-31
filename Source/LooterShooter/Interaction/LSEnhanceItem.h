@@ -22,17 +22,9 @@ public:
 	UFUNCTION()
 	void OpenEnhanceUI();
 
-	virtual void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult) override;
+	virtual void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 	
-	virtual void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex) override;
+	virtual void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,7 +32,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 private:
-
 	UPROPERTY(VisibleAnywhere, Category = "Character")
 	ALSPlayer* OverlappedCharacter;
 };

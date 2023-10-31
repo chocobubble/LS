@@ -20,17 +20,15 @@ class LOOTERSHOOTER_API ALSGameMode : public AGameModeBase
 public:
 	ALSGameMode();
 
+protected:
 	virtual void PostInitializeComponents() override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	int32 GetPlayerLevel() const;
-	//void AddScore(ALSPlayerController* ScoredPlayer);
-	//int32 GetScore() const;
+	
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Mode")
 	ALSGameState* LSGameState;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Mode")
 	ALSPlayerState* LSPlayerState;
-//	UPROPERTY()
-//	int32 ScoreToClear;
 };

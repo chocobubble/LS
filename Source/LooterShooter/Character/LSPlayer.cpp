@@ -213,7 +213,6 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 	{
 		// 캐릭터 비동기 로딩 상태
 		case ECharacterState::LOADING:
-		{
 			DisableInput(LSPlayerController);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
 			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
@@ -224,10 +223,9 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 			SetActorHiddenInGame(true);
 			SetCanBeDamaged(false);
 			break;
-		}
+		
 		// 캐릭터 로딩이 완료되어 씬 상에 표현되고 동작 가능한 상태
 		case ECharacterState::READY:
-		{
 			SetActorHiddenInGame(false);
 			SetCanBeDamaged(true);
 			/*
@@ -238,10 +236,9 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 			GetCharacterMovement()->JumpZVelocity = DefaultJumpHeight;
 			EnableInput(LSPlayerController);
 			break;
-		}
+		
 		// 캐릭터의 HP가 0 이하가 되어 죽은 상태
 		case ECharacterState::DEAD:
-		{
 			SetActorEnableCollision(false);
 			GetMesh()->SetHiddenInGame(false);
 			LSPlayerAnim->SetDeadAnim();
@@ -254,7 +251,7 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 				DeadTimer,
 				false
 			);
-		}
+		
 	}
 }
 

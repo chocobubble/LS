@@ -8,6 +8,7 @@
 
 class ALSMonster;
 class ALSDoor;
+
 /**
  * 
  */
@@ -18,47 +19,43 @@ class LOOTERSHOOTER_API ALSFirstSection : public ALSSection
 public:
 	ALSFirstSection();
 	
-protected:
-	virtual void BeginPlay() override;
-
-	virtual void BattleStart() override;
-	virtual void SectionClear() override;
-
-private:
 	UFUNCTION()
 	void OnMonsterSpawn();
 
 	UFUNCTION()
 	void OnMonsterDestroyed(AActor* DestroyedActor);
 
-	UPROPERTY(VisibleAnywhere)
-	FVector MonsterSpawnPoint;
-
-	UPROPERTY(VisibleAnywhere)
-	FVector DoorSpawnPoint;
-
-	UPROPERTY(VisibleAnywhere)
-	int32 KilledMonsterCount;
-
-	UPROPERTY(VisibleAnywhere)
-	int32 ClearCondition;
-
-	UPROPERTY(VisibleAnywhere)
-	TArray<ALSMonster*> MonsterArray;
-
-	UPROPERTY(VisibleAnywhere)
-	ALSDoor* LSDoor;
-	
-	
 	FTimerHandle SpawnMonsterTimerHandle = {};
 
+protected:
+	virtual void BeginPlay() override;
 
-public:
-	UPROPERTY(VisibleAnywhere)
+	virtual void BattleStart() override;
+
+	virtual void SectionClear() override;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
+	FVector MonsterSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
+	int32 KilledMonsterCount;
+
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
+	int32 ClearCondition;
+
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
+	TArray<ALSMonster*> MonsterArray;
+
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	AActor* SpawnPointActor;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
+	ALSDoor* LSDoor;
+
+	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
+	FVector DoorSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
 	AActor* NextDoor;
-
-
 };

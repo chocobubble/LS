@@ -16,23 +16,17 @@ class LOOTERSHOOTER_API ULSCharacterStatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	ULSCharacterStatComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-	
-	virtual void InitializeComponent() override;
-
-public:
+	/** 레벨에 따른 스탯 설정 */
 	void SetNewLevel(int32 NewLevel);
 
 	void SetDamage(float NewDamage);
-	float GetAttack();
 
+	float GetAttackDamage() const;
 
 	void SetHP(float NewHP);
+
 	float GetHPRatio();
 
 	float GetCurrentHP() const
@@ -45,7 +39,11 @@ public:
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
 
+
+protected:
+	virtual void BeginPlay() override;
 	
+	virtual void InitializeComponent() override;	
 
 private:
 	struct FLSPlayerData* CurrentStatData = nullptr;

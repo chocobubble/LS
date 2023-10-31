@@ -20,5 +20,4 @@ protected:
 public:
 	UPROPERTY()
 	UStaticMeshComponent* Mesh;
-
 };

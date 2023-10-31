@@ -26,22 +26,19 @@ void ULSEnhanceWidget::Init(ULSWeaponDefinition* WeaponDefinition, ULSResourceMa
     CriticalHitMultiplierText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCriticalHitMultiplier")));
     EnhancementSuccessText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtSuccess")));
     EnhanceProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbEnhance")));
-
     
     OnWeaponStatUpdated();
+    
     // TODO: Delegate 연결
     //Weapon->OnWeaponStatChanged.AddUObject(this, &ULSEnhanceWidget::OnWeaponStatUpdated);
-
 
     EnhancementButton = Cast<UButton>(GetWidgetFromName(TEXT("btnEnhancement")));
     LSCHECK(nullptr != EnhancementButton );
     EnhancementButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnEnhanceButtonClicked);
-
     
     BackButton = Cast<UButton>(GetWidgetFromName(TEXT("btnBack")));
     LSCHECK(nullptr != BackButton );
     BackButton->OnClicked.AddDynamic(this, &ULSEnhanceWidget::OnResumeClicked);
-
 }
 
 void ULSEnhanceWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)

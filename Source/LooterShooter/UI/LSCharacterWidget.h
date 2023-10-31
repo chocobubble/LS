@@ -16,8 +16,16 @@ UCLASS()
 class LOOTERSHOOTER_API ULSCharacterWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
 public:
 	void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
+
+	void UpdateHPWidget();
+
+	void UpdateShieldWidget();
+
+protected:
+	virtual void NativeConstruct() override;
 
 private:
 	TWeakObjectPtr<ULSDefenseComponent> CurrentDefenseManager;
@@ -27,9 +35,4 @@ private:
 
 	UPROPERTY()
 	UProgressBar* ShieldProgressBar;
-
-protected:
-	virtual void NativeConstruct() override;
-	void UpdateHPWidget();
-	void UpdateShieldWidget();
 };

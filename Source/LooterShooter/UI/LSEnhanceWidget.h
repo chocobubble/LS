@@ -12,6 +12,7 @@ class UTextBlock;
 class ULSRoundProgressbar;
 class UProgressBar;
 class ULSResourceManageComponent;
+
 /**
  * 
  */
@@ -22,8 +23,6 @@ class LOOTERSHOOTER_API ULSEnhanceWidget : public UUserWidget
 
 public:
 	void Init(ULSWeaponDefinition* WeaponDefinition, ULSResourceManageComponent* ResourceManager);
-	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& Geometry, float DeltaSeconds) override;
 	
 	UFUNCTION()
 	void OnWeaponStatUpdated();
@@ -37,6 +36,14 @@ public:
 	UFUNCTION()
 	void OnResumeClicked();
 
+	FTimerHandle EnhancementTimerHandle = {};
+
+protected:
+	virtual void NativeConstruct() override;
+
+	virtual void NativeTick(const FGeometry& Geometry, float DeltaSeconds) override;
+	
+private:
 	UPROPERTY()
 	UButton* EnhancementButton;
 
@@ -87,6 +94,4 @@ public:
 
 	UPROPERTY()
 	bool bIsEnhanced = false;
-
-	FTimerHandle EnhancementTimerHandle = {};
 };

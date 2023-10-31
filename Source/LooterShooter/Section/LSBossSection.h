@@ -8,6 +8,7 @@
 
 class ALSDoor;
 class ALSMonster;
+
 /**
  * 보스 방 섹션 
  */
@@ -16,28 +17,31 @@ class LOOTERSHOOTER_API ALSBossSection : public ALSSection
 {
 	GENERATED_BODY()
 	
-protected:
-	virtual void BeginPlay() override;
-	virtual void BattleStart() override;
-	virtual void SectionClear() override;
-
-private:
+public:
 	UFUNCTION()
 	void OnMonsterSpawn();
 
 	UFUNCTION()
 	void OnMonsterDestroyed(AActor* DestroyedActor);
 
-	UPROPERTY(VisibleAnywhere)
+	FTimerHandle SpawnBossTimerHandle = {};
+
+	FTimerHandle ClearTimerHandle = {};
+
+protected:
+	virtual void BeginPlay() override;
+
+	virtual void BattleStart() override;
+
+	virtual void SectionClear() override;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	FVector MonsterSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
 	FVector DoorSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
 	ALSDoor* LSDoor;
-
-	FTimerHandle SpawnBossTimerHandle = {};
-	FTimerHandle ClearTimerHandle = {};
-	
 };

@@ -15,7 +15,6 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnRoundsRemainingChangedDelegate, int32);
 /**
  * 캐릭터에 장착된 장비 아이템을 관리하는 컴포넌트
  */
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSEquipmentComponent : public UActorComponent
 {
@@ -25,34 +24,52 @@ public:
 	ULSEquipmentComponent();
 
 	void EquipWeapon(ALSWeaponInstance* Weapon);
+
 	void EquipWeapon(ALSWeaponInstance* Weapon, int8 index);
 
-	ALSWeaponInstance* GetCurrentWeaponInstance();
-	ALSWeaponInstance* GetWeaponInstance(int32 Index);
-
-	void SetCurrentWeaponIndex(int32 Index);
-	int32 GetCurrentWeaponIndex() const;
-	void SetRoundsRemaining(int32 NewRoundsRemaining);
-	int32 GetRoundsRemaining() const;
-
+	/** 사격 시 총알 수 감소 */
 	int32 DecreaseRoundsRemaining();
+
 protected:
 	virtual void BeginPlay() override;
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	int32 CurrentWeaponIndex = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	ALSWeaponInstance* CurrentWeaponInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	TArray<ALSWeaponInstance*> WeaponInstanceList;
-private:
-	UPROPERTY(VisibleAnywhere, Category = Equipment)
+
+	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
 
 public:
+	ALSWeaponInstance* GetCurrentWeaponInstance()
+	{
+		return GetWeaponInstance(CurrentWeaponIndex);
+	}
+
+	ALSWeaponInstance* GetWeaponInstance(int32 Index);
+
+	void SetCurrentWeaponIndex(int32 Index)
+	{
+		CurrentWeaponIndex = Index;
+	}
+
+	int32 GetCurrentWeaponIndex() const
+	{
+		return CurrentWeaponIndex;
+	}
+
+	void SetRoundsRemaining(int32 NewRoundsRemaining);
+
+	int32 GetRoundsRemaining() const;
+
+
 	FOnEquipmentChangedDelegate OnEquipmentChanged;		
+
 	FOnRoundsRemainingChangedDelegate OnRoundsRemainingChanged;
 };

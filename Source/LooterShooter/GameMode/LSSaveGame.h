@@ -8,7 +8,6 @@
 #include "LooterShooter/Types/AmooType.h"
 #include "LSSaveGame.generated.h"
 
-
 /**
  * 
  */
@@ -17,29 +16,30 @@ class LOOTERSHOOTER_API ULSSaveGame : public USaveGame
 {
 	GENERATED_BODY()
 
+public:
 	ULSSaveGame();
 
 private:
-	UPROPERTY()
-	int32 Level;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 Level = 1;
 
-	UPROPERTY()
-	int32 Exp;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 Exp = 0;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	FString PlayerName;
 
-	UPROPERTY()
-	int32 Gold;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 Gold = 1000;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	TMap<EAmmoType, int32> AmmoMap;
 
-	UPROPERTY()
-	int32 WeaponLevel;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 WeaponLevel = 1;
 
-	UPORPERTY()
-	int32 WeaponEnhancementLevel;
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	int32 WeaponEnhancementLevel = 0;
 
 public:
 	int32 GetSavedCharacterLevel const

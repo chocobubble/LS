@@ -20,14 +20,17 @@ UCLASS()
 class UWeaponAbility : public UObject
 {
 	GENERATED_BODY()
+
 public:
 	/** 
 	 * @note: 자식 클래스에서 구현 해주어야 함 
 	 * 무기가 액터 객체가 될 때 부가 속성 능력치 적용하는 함수
 	*/
 	virtual void ApplyAbility(ULSWeaponDefinition* WeaponDefinition) {}
+
 	/** 부가 속성의 능력치 수치 설정 */
 	virtual void SetAbilityStat(float Stat);
+
 protected:
 	/** 부가 속성의 능력치 */
 	UPROPERTY()
@@ -39,8 +42,10 @@ UCLASS()
 class UBulletDamageAbility : public UWeaponAbility
 {
 	GENERATED_BODY()
+
 public:
 	virtual void ApplyAbility(ULSWeaponDefinition* WeaponDefinition) override;
+
 };
 
 /** 무기의 부가 속성들을 관리하는 컴포넌트 */
@@ -51,13 +56,15 @@ class LOOTERSHOOTER_API ULSWeaponAbilityComponent : public UActorComponent
 
 public:	
 	ULSWeaponAbilityComponent();
+
 	void EnhanceWeaponStat(ULSWeaponDefinition* WeaponDefinition);
+
 	void AttachWeaponAbility(UWeaponAbility* WeaponAbility);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	TArray<UWeaponAbility*> AbilityList;
 };

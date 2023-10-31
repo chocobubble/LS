@@ -3,148 +3,76 @@
 
 #include "LSResourceManageComponent.h"
 
-// Sets default values for this component's properties
 ULSResourceManageComponent::ULSResourceManageComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
-
-	OnResourceChanged.AddUObject(this, &ULSResourceManageComponent::NoFunc);
-
+	OnResourceChanged.AddUObject(this, &ULSResourceManageComponent::TestFunc);
 }
 
-
-// Called when the game starts
 void ULSResourceManageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	OnResourceChanged.Broadcast();
 }
-
-
-/*
-// Called every frame
-void ULSResourceManageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-*/
-
 
 void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
 {
 	switch (AmmoType)
 	{
 		case EAmmoType::RIFLE:
-		{
 			CurrentRifleAmmo = Amount;
 			break;
-		}
+		
 		case EAmmoType::PISTOL:
-		{
 			CurrentPistolAmmo = Amount;
 			break;
-		}
+		
 		case EAmmoType::SHOTGUN:
-		{
 			CurrentShotgunAmmo = Amount;
 			break;
-		}
+		
 	}	
-	LSLOG_S(Warning);
 	OnResourceChanged.Broadcast();
 }
+
 int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
 {
 	switch (AmmoType)
 	{
 		case EAmmoType::RIFLE:
-		{
 			return CurrentRifleAmmo;
-		}
+		
 		case EAmmoType::PISTOL:
-		{
 			return CurrentPistolAmmo;
-		}
+		
 		case EAmmoType::SHOTGUN:
-		{
 			return CurrentShotgunAmmo;
-		}
+		
 	}
-	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
 }
-
-/*
-void ULSResourceManageComponent::SetRoundsRemaining(EAmmoType AmmoType, int32 Amount)
-{
-	switch (AmmoType)
-	{
-		case EAmmoType::RIFLE:
-		{
-			RoundsRemaining = FMath::Clamp(RoundsRemaining + Amount, 0, CurrentRifleAmmo);
-			break;
-		}
-		
-		case EAmmoType::PISTOL:
-		{
-			//ResourceData->CurrentPistolAmmo += Amount;
-			SetCurrentRifleAmmo -= Amount
-			break;
-		}
-		case EAmmoType::SHOTGUN:
-		{
-			ResourceData->CurrentShotgunAmmo += Amount;
-			break;
-		}
-		
-	}	
-	LSLOG_S(Warning);
-	OnResourceChanged.Broadcast();
-}
-*/
 
 int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 {
 	switch (AmmoType)
 	{
 		case EAmmoType::RIFLE:
-		{
 			return MaxRifleAmmo;
-			break;
-		}
+		
 		case EAmmoType::PISTOL:
-		{
 			return MaxPistolAmmo;
-			break;
-		}
+		
 		case EAmmoType::SHOTGUN:
-		{
 			return MaxShotgunAmmo;
-			break;
-		}
+		
 	}
-	LSLOG(Warning, TEXT("No Matching Ammo Type"));
 	return -1;
 }
 
 
 void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)
 {
-	/*
-	SetRoundsRemaining(AmmoType, Amount);
-	SetCurrentAmmo(AmmoType, Amount);
-	*/
-}
 
-void ULSResourceManageComponent::SetGoldAmount(int32 Amount)
-{
-	GoldAmount = Amount;
 }

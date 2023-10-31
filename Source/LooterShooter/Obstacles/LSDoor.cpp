@@ -8,22 +8,16 @@ ALSDoor::ALSDoor()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
-
-	FString AssetPath = TEXT("/Game/LS/Meshes/SM_Door.SM_Door");
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DOOR(*AssetPath);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DOORTEXT("/Game/LS/Meshes/SM_Door.SM_Door");
 	if (SM_DOOR.Succeeded())
 	{
 		Mesh->SetStaticMesh(SM_DOOR.Object);
-	}
-	else 
-	{
-		LSLOG_S(Warning);
 	}
 }
 
 void ALSDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
+
 

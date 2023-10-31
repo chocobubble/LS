@@ -25,6 +25,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	
 	/** 
 	 * 마지막 데미지 입은 시점으로 부터 ShieldRechargeDelay만큼의 시간이 지나면
 	 * Shield가 충전되기 시작
@@ -32,44 +33,62 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float MaxHP = 1000.f;
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
+	float MaxHP = 1000.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float CurrentHP = 1000.f;
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
+	float CurrentHP = 1000.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float MaxMP;
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
+	float MaxMP = 0.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
-	float CurrentMP = 0.f;
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
+	float CurrentMP = 0.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
 	float MaxShield = 100.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
 	float CurrentShield = 100.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
 	float ShieldRechargeRate = 0.01f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
 	float ShieldRechargeDelay = 2.0f;
 
-	UPROPERTY(Transient, EditAnywhere, Category = Defense, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Defense")
 	float LastHitTime = 0.0f;
 
 public:
 	void SetMaxHP(float NewMaxHP);
+
 	void SetMaxShield(float NewMaxShield);
+
 	void SetDamage(float NewDamage);
+
 	void SetHP(float NewHP);
+
 	void SetShield(float NewShield);
-	float GetHPRatio() const;
-	float GetShieldRatio() const;
-	float GetCurrentHP() const;
+
+	float GetHPRatio() const
+	{
+		return (CurrentHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
+	}
+
+	float GetShieldRatio() const
+	{
+		return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+	}
+
+	float GetCurrentHP() const
+	{
+		return CurrentHP;
+	}
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
+
 	FOnHPChangedDelegate OnHPChanged;
+
 	FOnShieldChangedDelegate OnShieldChanged;
 };

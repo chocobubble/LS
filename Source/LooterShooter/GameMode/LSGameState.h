@@ -4,7 +4,6 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/GameStateBase.h"
-
 #include "LSGameState.generated.h"
 
 /**
@@ -20,17 +19,17 @@ public:
 
 public:
 	int32 GetTotalGameScore() const;
+
 	void AddGameScore();
 
 	void SetGameCleared();
+
 	bool IsGameCleared() const;
 
-
 private:
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 TotalGameScore;
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bGameCleared;
-
 };

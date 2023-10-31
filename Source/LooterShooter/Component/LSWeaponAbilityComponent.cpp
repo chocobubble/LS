@@ -27,10 +27,13 @@ void ULSWeaponAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/** 테스트 용 */
+	/** 테스트 용도 */
 	UBulletDamageAbility* DMGAbilityPtr = NewObject<UBulletDamageAbility>();
-	DMGAbilityPtr->SetAbilityStat(1.1f);
-	AbilityList.Add(DMGAbilityPtr);
+	if (DMGAbilityPtr)
+	{
+		DMGAbilityPtr->SetAbilityStat(1.1f);
+		AbilityList.Add(DMGAbilityPtr);
+	}
 	//////////////
 }
 
@@ -42,7 +45,7 @@ void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDef
 	}
 	for (UWeaponAbility* Ability : AbilityList)
 	{
-		if (Ability != nullptr) 
+		if (Ability) 
 		{
 			Ability->ApplyAbility(WeaponDefinition);
 		}
@@ -51,7 +54,7 @@ void ULSWeaponAbilityComponent::EnhanceWeaponStat(ULSWeaponDefinition* WeaponDef
 
 void ULSWeaponAbilityComponent::AttachWeaponAbility(UWeaponAbility* WeaponAbility)
 {
-	if (WeaponAbility != nullptr) 
+	if (WeaponAbility) 
 	{
 		AbilityList.Add(WeaponAbility);
 	}
