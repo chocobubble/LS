@@ -5,8 +5,7 @@
 #include "LooterShooter/LooterShooter.h"
 #include "Animation/AnimInstance.h"
 #include "LooterShooter/System/LSGameInstance.h"
-
-
+#include "LooterShooter/Types/WeaponType.h"
 #include "LSPlayerAnimInstance.generated.h"
 /**
  * 

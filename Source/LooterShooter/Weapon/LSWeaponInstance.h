@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "LooterShooter/System/LSGameInstance.h"
 #include "LooterShooter/Component/LSResourceManageComponent.h"
+#include "LooterShooter/Types/WeaponType.h"
 
 
 #include "Curves/CurveVector.h"// for recoil
@@ -172,7 +173,7 @@ private:
 
 ///////////////////////////////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	EWeaponType GunType;
+	EWeaponType GunType = EWeaponType::RIFLE;
 
 	/** 현재 탄착군의 크기 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))

@@ -354,8 +354,6 @@ private:
 
 	FTimerHandle GrapplingTimerHandle = { };
 
-	
-
 	/** @TODO: 그래플링 훅 로프 구현하기 */
 /*
 	UPROPERTY(VisibleAnywhere, Category = "Grapple")

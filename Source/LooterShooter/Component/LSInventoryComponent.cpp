@@ -6,6 +6,8 @@
 #include "LSEquipmentComponent.h"
 #include "LooterShooter/GameMode/LSGameState.h"
 #include "LooterShooter/Character/LSPlayerState.h"
+#include "GameFramework/PlayerState.h"
+#include "GameFramework\Controller.h"
 
 
 ULSInventoryComponent::ULSInventoryComponent()
@@ -89,7 +91,7 @@ void ULSInventoryComponent::UpdateWeaponDefinition()
 		AController* Controller = Cast<AController>(OwnerPawn->GetController());
 		if (Controller)
 		{
-			ALSPlayerState* PlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState());
+			ALSPlayerState* PlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
 			if (PlayerState)
 			{
 				// TODO : list

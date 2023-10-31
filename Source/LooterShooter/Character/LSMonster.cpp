@@ -100,25 +100,28 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 	switch (CurrentState)
 	{
 		case ECharacterState::LOADING:
+		{
 			SetActorHiddenInGame(true);
 			HPBarWidget->SetHiddenInGame(true);
 			SetCanBeDamaged(false);
 			break;
-		
+		}
 		case ECharacterState::READY:
+		{
 			SetActorHiddenInGame(false);
 			HPBarWidget->SetHiddenInGame(false);
 			SetCanBeDamaged(true);
 			ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-			if (CharacterWidge && DefenseManager)
+			if (CharacterWidget && DefenseManager)
 			{				
 				CharacterWidget->BindDefenseComponent(DefenseManager);
 			}
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();
 			break;
-		
+		}
 		case ECharacterState::DEAD:
+		{
 			SetActorEnableCollision(false);
 			GetMesh()->SetHiddenInGame(false);
 			HPBarWidget->SetHiddenInGame(true);
@@ -128,15 +131,15 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 			LSAIController->StopAI();
 
 			GetWorld()->GetTimerManager().SetTimer(
-				DeadTimerHandle, 
+				DeadTimerHandle,
 				FTimerDelegate::CreateLambda([this]() -> void {
 					DropItem();
 					MonsterWeapon->Destroy();
 					Destroy(); }),
-				DeadTimer, 
+				DeadTimer,
 				false
 			);
-		
+		}
 	}
 }
 

@@ -170,27 +170,27 @@ void ULSGameInstance::SpawnAutoLootItem(FVector SpawnLocation, ELootItemType Loo
     switch(LootedItemType)
 	{
 		case ELootItemType::GOLD:
-			AutoLootItem->ItemMesh->SetStaticMesh(GoldMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(GoldMesh);
 			break;
 
         case ELootItemType::HP:
-			AutoLootItem->ItemMesh->SetStaticMesh(HPMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(HPMesh);
 			break;
 
         case ELootItemType::MP:
-			AutoLootItem->ItemMesh->SetStaticMesh(MPMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(MPMesh);
 			break;
 
         case ELootItemType::RIFLEAMMO:
-			AutoLootItem->ItemMesh->SetStaticMesh(RifleAmmoMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(RifleAmmoMesh);
 			break;
 
         case ELootItemType::SHOTGUNAMMO:
-			AutoLootItem->ItemMesh->SetStaticMesh(ShotgunAmmoMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(ShotgunAmmoMesh);
 			break;
 
         case ELootItemType::PISTOLAMMO:
-			AutoLootItem->ItemMesh->SetStaticMesh(PistolAmmoMesh);
+			AutoLootItem->GetItemMesh()->SetStaticMesh(PistolAmmoMesh);
 			break;
 
 	}

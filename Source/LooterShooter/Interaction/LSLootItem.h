@@ -30,7 +30,7 @@ protected:
 	UFUNCTION()
 	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp,	AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex);
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	UBoxComponent* Trigger;
 
@@ -42,4 +42,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	ELootItemType LootItemType;
+
+public:
+	UStaticMeshComponent* GetItemMesh()
+	{
+		return ItemMesh;
+	}
 };

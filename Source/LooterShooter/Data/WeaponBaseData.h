@@ -1,9 +1,13 @@
+#pragma once
+
 #include "Engine/DataTable.h"
+
+#include "WeaponBaseData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FLSWeaponBaseData : public FTableRowBase
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")

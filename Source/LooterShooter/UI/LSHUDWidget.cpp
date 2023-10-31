@@ -225,20 +225,29 @@ void ULSHUDWidget::UpdateCurrentAmmo()
     {
         case 0 :
         {
-            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(0)->GetAmmoType();
-            FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            if (CurrentEquipmentComponent->GetWeaponInstance(0))
+            {
+                EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(0)->GetAmmoType();
+                FirstWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            }
             break;
         }
         case 1 :
         {
-            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(1)->GetAmmoType();
-            SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            if (CurrentEquipmentComponent->GetWeaponInstance(1))
+            {
+                EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(1)->GetAmmoType();
+                SecondWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            }
             break;
         }
         case 2 :
         {
-            EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(2)->GetAmmoType();
-            ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            if (CurrentEquipmentComponent->GetWeaponInstance(2))
+            {
+                EAmmoType CurrentAmmoType = CurrentEquipmentComponent->GetWeaponInstance(2)->GetAmmoType();
+                ThirdWeaponCurrentAmmo->SetText(FText::FromString(FString::FromInt(CurrentResourceManager->GetCurrentAmmo(CurrentAmmoType))));
+            }
             break;
         }
     }

@@ -1,4 +1,8 @@
+#pragma once
+
 #include "Engine/DataTable.h"
+
+#include "PlayerBaseData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FLSPlayerData : public FTableRowBase

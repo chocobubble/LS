@@ -26,6 +26,8 @@ public:
 
 	void EquipItem(int32 ItemIndex);
 
+	void UpdateWeaponDefinition();
+
 protected:
 	virtual void BeginPlay() override;
 

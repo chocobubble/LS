@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
 #include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Types/AmmoType.h"
 
 ALSPlayerState::ALSPlayerState()
 {
@@ -26,14 +27,8 @@ void ALSPlayerState::InitPlayerData()
     CurrentExp = LSSaveGame->GetSavedCharacterExp();
 	CurrentGold = LSSaveGame->GetSavedGold();
 	CurrentWeaponLevel = LSSaveGame->GetSavedWeaponLevel();
-	CurrentWeaponEnhancementLevel = LSSaveGame->GetWeaponEnhancementLevel();
-	CurrentAmmoMap[EAmmoType::RIFLE] = LSSaveGame->GetWeaponAmmoMap()[EAmmoType::RIFLE];
-
-	UPORPERTY(VisibleAnywhere)
-	ALSPlayerController* LSPlayerController;
-
-	UPORPERTY(VisibleAnywhere)
-	ULSInventoryComponent* LSInventory;
+	CurrentWeaponEnhancementLevel = LSSaveGame->GetSavedWeaponEnhancementLevel();
+	CurrentAmmoMap[EAmmoType::RIFLE] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::RIFLE];
 
     SavePlayerData();
 }

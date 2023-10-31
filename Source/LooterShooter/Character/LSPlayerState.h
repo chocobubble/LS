@@ -47,13 +47,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentGold = 1000;
 
-	UPROPERTY(VisibleAnywhere, Category = "State")
+	//UPROPERTY(VisibleAnywhere, Category = "State")
 	TMap<EAmmoType, int32> CurrentAmmoMap;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentWeaponLevel = 1;
 
-	UPORPERTY(VisibleAnywhere, Category = "State")
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentWeaponEnhancementLevel = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mode")
@@ -61,10 +61,10 @@ private:
 
 	FLSPlayerData* PlayerStatData;
 
-	UPORPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	ALSPlayerController* LSPlayerController;
 
-	UPORPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	ULSInventoryComponent* LSInventory;
 
 public:

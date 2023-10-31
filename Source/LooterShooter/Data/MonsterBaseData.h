@@ -1,4 +1,8 @@
+#pragma once
+
 #include "Engine/DataTable.h"
+
+#include "MonsterBaseData.generated.h"
 
 USTRUCT(BlueprintType)
 struct FLSMonsterData : public FTableRowBase

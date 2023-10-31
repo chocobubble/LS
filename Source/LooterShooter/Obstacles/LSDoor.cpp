@@ -8,7 +8,7 @@ ALSDoor::ALSDoor()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DOORTEXT("/Game/LS/Meshes/SM_Door.SM_Door");
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DOOR(TEXT("/Game/LS/Meshes/SM_Door.SM_Door"));
 	if (SM_DOOR.Succeeded())
 	{
 		Mesh->SetStaticMesh(SM_DOOR.Object);

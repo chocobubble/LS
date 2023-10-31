@@ -5,7 +5,7 @@
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/SaveGame.h"
 #include "LooterShooter/Types/WeaponType.h"
-#include "LooterShooter/Types/AmooType.h"
+#include "LooterShooter/Types/AmmoType.h"
 #include "LSSaveGame.generated.h"
 
 /**
@@ -32,7 +32,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 Gold = 1000;
 
-	UPROPERTY(VisibleAnywhere, Category = "State")
+	//UPROPERTY(VisibleAnywhere, Category = "State")
 	TMap<EAmmoType, int32> AmmoMap;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
@@ -42,37 +42,37 @@ private:
 	int32 WeaponEnhancementLevel = 0;
 
 public:
-	int32 GetSavedCharacterLevel const
+	int32 GetSavedCharacterLevel() const
 	{
 		return Level;
 	}
 
-	int32 GetSavedCharacterExp const
+	int32 GetSavedCharacterExp() const
 	{
 		return Exp;
 	}
 
-	FString GetSavedPlayerName const
+	FString GetSavedPlayerName() const
 	{
 		return PlayerName;
 	}
 
-	int32 GetSavedGold const
+	int32 GetSavedGold() const
 	{
 		return Gold;
 	}
 
-	TMap<EAmmoType, int32> GetSavedAmmoMap const
+	TMap<EAmmoType, int32> GetSavedAmmoMap() const
 	{
 		return AmmoMap;
 	}
 
-	int32 GetSavedWeaponLevel const
+	int32 GetSavedWeaponLevel() const
 	{
 		return WeaponLevel;
 	}
 
-	int32 GetSavedWeaponEnhancementLevel const
+	int32 GetSavedWeaponEnhancementLevel() const
 	{
 		return WeaponEnhancementLevel;
 	}
@@ -87,7 +87,7 @@ public:
 		Exp = CurrentExp;
 	}
 
-	void SavePlayerName(FString& Name)
+	void SavePlayerName(FString Name)
 	{
 		PlayerName = Name;
 	}

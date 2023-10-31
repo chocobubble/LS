@@ -134,11 +134,13 @@ EAmmoType ALSWeaponInstance::GetAmmoType()
 {
 	switch(GunType)
 	{
-		case EWeaponType::RIFLE :
+		case EWeaponType::RIFLE:
 			return EAmmoType::RIFLE;
-		case EWeaponType::SHOTGUN :
+
+		case EWeaponType::SHOTGUN:
 			return EAmmoType::SHOTGUN;
-		case EWeaponType::PISTOL :
+
+		case EWeaponType::PISTOL:
 			return EAmmoType::PISTOL; 
 	}
 	LSLOG(Error, TEXT("wrong ammo type"));

@@ -15,7 +15,7 @@ ALSSection::ALSSection()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ITEMTEXT("/Game/LS/Meshes/SM_floor.SM_floor");
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ITEM(TEXT("/Game/LS/Meshes/SM_floor.SM_floor"));
 	if (ITEM.Succeeded())
 	{
 		Mesh->SetStaticMesh(ITEM.Object);

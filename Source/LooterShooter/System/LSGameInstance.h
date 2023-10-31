@@ -6,19 +6,11 @@
 #include "Engine/GameInstance.h"
 #include "Engine/StreamableManager.h"
 #include "LooterShooter/Interaction/LSAutoLootItem.h"
-#include "LooterShotter/Data/WeaponBaseData.h"
-#include "LooterShotter/Data/PlayerBaseData.h"
-#include "LooterShotter/Data/MonsterBaseData.h"
+#include "LooterShooter/Data/WeaponBaseData.h"
+#include "LooterShooter/Data/PlayerBaseData.h"
+#include "LooterShooter/Data/MonsterBaseData.h"
+#include "LooterShooter/Types/WeaponType.h"
 #include "LSGameInstance.generated.h"
-
-
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	RIFLE,
-	PISTOL,
-	SHOTGUN
-};
 
 
 /**
@@ -111,5 +103,10 @@ public:
 	USkeletalMesh* GetPistolMesh() const
 	{
 		return PistolWeaponMesh;
+	}
+
+	UMaterialInstance* GetMIRifle() const
+	{
+		return MI_Rifle;
 	}
 };

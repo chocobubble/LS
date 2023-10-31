@@ -7,6 +7,7 @@
 #include "LSWeaponInstance.h"
 #include "LooterShooter/System/LSGameInstance.h"
 #include "LooterShooter/GameMode/LSGameState.h"
+#include "LooterShooter/Types/WeaponType.h"
 #include "LSWeaponDefinition.generated.h"
 
 class ULSWeaponAbilityComponent;
@@ -30,7 +31,7 @@ private:
 	 */
 	FLSWeaponBaseData* WeaponBaseData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponType;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))

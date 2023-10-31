@@ -35,7 +35,7 @@ void ULSCharacterWidget::NativeConstruct()
 
 void ULSCharacterWidget::UpdateHPWidget()
 {
-    if (CurrentDefenseManager)
+    if (CurrentDefenseManager != nullptr)
     {
         if (HPProgressBar)
         {
@@ -46,7 +46,7 @@ void ULSCharacterWidget::UpdateHPWidget()
 
 void ULSCharacterWidget::UpdateShieldWidget()
 {
-    if (CurrentDefenseManager)
+    if (CurrentDefenseManager != nullptr)
     {
         if (ShieldProgressBar)
         {

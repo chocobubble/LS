@@ -49,7 +49,7 @@ protected:
 	
 	virtual void SectionClear(); 
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UStaticMeshComponent* Mesh;
 
@@ -59,7 +59,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bNoBattle = false;
 
-	UPROPERTY(VisibleAnywhere, Category = "State")	
+	//UPROPERTY(VisibleAnywhere, Category = "State")	
 	ESectionState CurrentState = ESectionState::READY;
 
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")

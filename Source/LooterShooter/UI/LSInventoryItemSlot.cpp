@@ -31,7 +31,7 @@ void ULSInventoryItemSlot::NativeConstruct()
     ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     LSCHECK(LSGameInstance != nullptr); 
     LSCHECK(GunImage != nullptr);
-    GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
+    GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
 }
 
 
@@ -42,12 +42,12 @@ void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
     if (WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
     {
         LSCHECK(GunImage != nullptr);
-        GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
+        GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
     }
 
     // later delete
     LSCHECK(GunImage != nullptr);
-    GunImage->SetBrushFromMaterial(LSGameInstance->MI_Rifle);
+    GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
 }
 
 

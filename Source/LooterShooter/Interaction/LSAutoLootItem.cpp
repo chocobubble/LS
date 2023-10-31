@@ -5,6 +5,7 @@
 #include "LooterShooter/Character/LSPlayer.h"
 #include "LooterShooter/Component/LSCharacterStatComponent.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
+#include "LooterShooter/Types/LootItemType.h"
 
 ALSAutoLootItem::ALSAutoLootItem()
 {	
@@ -27,17 +28,21 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 	switch(LootItemType)
 	{
 		case ELootItemType::GOLD:
+		{
 			LSPlayer->GetResourceManager()->SetGoldAmount(LootingAmount);
 			break;
-		
+		}
 		case ELootItemType::HP:
+		{
 			LSPlayer->GetDefenseManager()->SetHP(LSPlayer->GetDefenseManager()->GetCurrentHP() + LootingAmount);
 			break;
-		
+		}	
 		case ELootItemType::MP:
+		{
 			break;
-		
+		}
 		case ELootItemType::RIFLEAMMO:
+		{
 			ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
 			if (ResourceManager)
 			{
@@ -47,17 +52,19 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 				ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, FinalAmmo);
 			}
 			break;
-		
+		}
 		case ELootItemType::SHOTGUNAMMO:
+		{
 			// TODO
 			LSLOG(Warning, TEXT("Shotgun Ammo gain"));
 			break;
-		
+		}
 		case ELootItemType::PISTOLAMMO:
+		{
 			// TODO
 			LSLOG(Warning, TEXT("Pistol Ammo gain"));
 			break;
-		
+		}
 	}	
     Destroy();
 }

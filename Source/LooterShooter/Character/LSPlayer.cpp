@@ -213,45 +213,48 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 	{
 		// 캐릭터 비동기 로딩 상태
 		case ECharacterState::LOADING:
+		{
 			DisableInput(LSPlayerController);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
 			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
-			if(LSPlayerState != nullptr && CharacterStat != nullptr)
+			if (LSPlayerState != nullptr && CharacterStat != nullptr)
 			{
 				CharacterStat->SetNewLevel(LSPlayerState->GetCharacterLevel());
 			}
 			SetActorHiddenInGame(true);
 			SetCanBeDamaged(false);
 			break;
-		
+		}
 		// 캐릭터 로딩이 완료되어 씬 상에 표현되고 동작 가능한 상태
 		case ECharacterState::READY:
+		{
 			SetActorHiddenInGame(false);
 			SetCanBeDamaged(true);
 			/*
-			CharacterStat->OnHPIsZero.AddLambda([this]() -> void { 
+			CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
 				SetCharacterState(ECharacterState::DEAD); });
 			*/
 			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 			GetCharacterMovement()->JumpZVelocity = DefaultJumpHeight;
 			EnableInput(LSPlayerController);
 			break;
-		
+		}
 		// 캐릭터의 HP가 0 이하가 되어 죽은 상태
 		case ECharacterState::DEAD:
+		{
 			SetActorEnableCollision(false);
 			GetMesh()->SetHiddenInGame(false);
 			LSPlayerAnim->SetDeadAnim();
 			SetCanBeDamaged(false);
-			DisableInput(LSPlayerController);	
+			DisableInput(LSPlayerController);
 
 			GetWorld()->GetTimerManager().SetTimer(
 				DeadTimerHandle,
-				FTimerDelegate::CreateLambda([this]() -> void {LSPlayerController->ShowResultUI();}),
+				FTimerDelegate::CreateLambda([this]() -> void {LSPlayerController->ShowResultUI(); }),
 				DeadTimer,
 				false
 			);
-		
+		}
 	}
 }
 
@@ -731,7 +734,7 @@ bool ALSPlayer::CanShoot(EAmmoType AmmoType)
 	}
 
 	//  TODO: weapon 의 magazine ammo로 바꾸기
-	if (EquipmentManager->WeaponInstanceList.Num() <= 0 || EquipmentManager->CurrentWeaponInstance == nullptr)
+	if (EquipmentManager->GetCurrentWeaponInstance() == nullptr)
 	{
 		return false;
 	}
