@@ -16,9 +16,7 @@ class LOOTERSHOOTER_API ULSGameplayWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
-	virtual void NativeConstruct() override;
-
+public:
 	UFUNCTION()
 	void OnResumeClicked();
 
@@ -27,6 +25,9 @@ protected:
 	
 	UFUNCTION()
 	void OnRetryGameClicked();
+
+protected:
+	virtual void NativeConstruct() override;
 
 protected:
 	UPROPERTY()

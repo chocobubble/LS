@@ -7,10 +7,14 @@
 void ULSPopUpWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    LSLOG_S(Warning);
+    
     PopUpText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtPopUp")));
 
-    GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
-			RemoveFromParent();
-        }), DisappearTimer, false);
+    GetWorld()->GetTimerManager().SetTimer(
+        DestroyTimerHandle, 
+        FTimerDelegate::CreateLambda([this]()->void {
+			RemoveFromParent();}),
+        DisappearTimer,
+        false
+    );
 }

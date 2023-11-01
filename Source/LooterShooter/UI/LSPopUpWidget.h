@@ -16,19 +16,20 @@ class LOOTERSHOOTER_API ULSPopUpWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	FTimerHandle DestroyTimerHandle = { };
+
+protected:
+	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY()
 	UTextBlock* PopUpText;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
-	float DisappearTimer = 1.f;
+	UPROPERTY()
+	float DisappearTimer = 1.0f;
 	
-	FTimerHandle DestroyTimerHandle = { };
-
 public:
-	virtual void NativeConstruct() override;
-
 	UTextBlock* GetPopUpTextBlock()
 	{
 		return PopUpText;

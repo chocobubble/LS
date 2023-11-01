@@ -8,6 +8,8 @@
 
 class ALSGameState;
 class ULSEnhanceWidget;
+class ALSPlayerController;
+
 /**
  * 
  */
@@ -16,9 +18,9 @@ class LOOTERSHOOTER_API ULSGameplayResultWidget : public ULSGameplayWidget
 {
 	GENERATED_BODY()
 
-
 public:
 	void BindGameState(ALSGameState* GameState);
+
 	void ShowEnhanceUI();
 
 	UFUNCTION()
@@ -28,6 +30,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 private:
+	UPROPERTY()
 	TWeakObjectPtr<ALSGameState> CurrentGameState;
 
 	UPROPERTY()
@@ -38,4 +41,7 @@ private:
 
 	UPROPERTY()
 	UButton* EnhanceButton;
+
+	UPROPERTY()
+	ALSPlayerController* LSPlayerController;
 };

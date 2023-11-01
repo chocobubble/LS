@@ -9,37 +9,39 @@ ALSAmmo::ALSAmmo()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
+
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("PROJECTILE"));
 
-	FString AssetPath = TEXT("/Game/LS/Meshes/SM_Ammo.SM_Ammo");
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_AMMO(*AssetPath);
-	if (SM_AMMO.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_AMMO(TEXT("/Game/LS/Meshes/SM_Ammo.SM_Ammo"));
+	if (SM_AMMO.Succeeded() && Mesh)
 	{
 		Mesh->SetStaticMesh(SM_AMMO.Object);
+		Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 	}
-	else 
-	{
-		LSLOG_S(Warning);
-	}
-	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 void ALSAmmo::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorld()->GetTimerManager().SetTimer(OnLifeTimerHandle,
+	GetWorld()->GetTimerManager().SetTimer(
+		OnLifeTimerHandle,
 		FTimerDelegate::CreateLambda([this]() -> void {
-			Destroy();
-		}), 0.5f, false);
+			Destroy();}),
+		0.5f, 
+		false
+	);
 }
 
-void ALSAmmo::Fire(FVector Dir)
+void ALSAmmo::Fire(const FVector& Dir)
 {
-	ProjectileMovement->InitialSpeed = 100000.f;
-	ProjectileMovement->AddForce(Dir * 1000.0f);
-	ProjectileMovement->MaxSpeed = 200000.f;
-	ProjectileMovement->ProjectileGravityScale = 0.f;
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->InitialSpeed = 100000.0f;
+		ProjectileMovement->AddForce(Dir * 1000.0f);
+		ProjectileMovement->MaxSpeed = 200000.0f;
+		ProjectileMovement->ProjectileGravityScale = 0.0f;
+	} 
 	FireDir = Dir;
 }
 
@@ -47,6 +49,9 @@ void ALSAmmo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ProjectileMovement->AddForce(FireDir * 100000.0f);
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->AddForce(FireDir * 100000.0f);
+	}
 }
 

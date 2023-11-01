@@ -19,12 +19,16 @@ class LOOTERSHOOTER_API ULSInventoryItemSlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void TurnOn();
+
 	UFUNCTION()
 	void Print();
+
 	void Init(ULSWeaponDefinition* WeaponDefinition);
+
+protected:
+	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY()
@@ -39,12 +43,12 @@ private:
 	UPROPERTY()
 	bool bIsTurnedOn = false;
 
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UPROPERTY()
 	UMaterialInstance* MI_Rifle;
 
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UPROPERTY()
 	UMaterialInstance* MI_Shotgun;
 
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	UPROPERTY()
 	UMaterialInstance* MI_Pistol;
 };

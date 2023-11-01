@@ -30,33 +30,56 @@ class LOOTERSHOOTER_API ULSHUDWidget : public UUserWidget
 	
 public:
 	void BindCharacterStat(ULSCharacterStatComponent* CharacterStat);
+
 	void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
+
 	void BindPlayerState(ALSPlayerState* PlayerState);
+
 	void BindResourceManageComponent(ULSResourceManageComponent* ResourceManager);
+
 	void BindEquipmentComponent(ULSEquipmentComponent* EquipmentComponent);
+
 	void BindPlayer(ALSPlayer* LSPlayer);
-	// void BindDefenseComponent(ULSDefenseComponent* DefenseManager);
+	
+	void UpdateCharacterStat();
+
+	void UpdateCurrentHP();
+
+	void UpdateCurrentShield();
+
+	void UpdatePlayerState();
+
+	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
+
+	void UpdateCurrentAmmo();
+
+	void UpdateInteractProgress(float ElapsedRatio);
+
+	void ShowOrHideInteractPopup(bool Value);
+
+	void ShowReloadProgressbar(float ReloadTime);
 
 protected:
 	virtual void NativeConstruct() override;
-	void UpdateCharacterStat();
-	void UpdateCurrentHP();
-	void UpdateCurrentShield();
-	void UpdatePlayerState();
-	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
-	void UpdateCurrentAmmo();
-	void UpdateInteractProgress(float ElapsedRatio);
-	void ShowOrHideInteractPopup(bool Value);
-	void ShowReloadProgressbar(float ReloadTime);
-
+	
 private:
+	UPROPERTY()
 	TWeakObjectPtr<ULSCharacterStatComponent> CurrentCharacterStat;
+
+	UPROPERTY()
 	TWeakObjectPtr<ULSDefenseComponent> CurrentDefenseManager;
+
+	UPROPERTY()
 	TWeakObjectPtr<ALSPlayerState> CurrentPlayerState;
+
+	UPROPERTY()
 	TWeakObjectPtr<ULSEquipmentComponent> CurrentEquipmentComponent;
+
+	UPROPERTY()
 	TWeakObjectPtr<ALSPlayer> CurrentLSPlayer;
+
+	UPROPERTY()
 	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManager;
-	// TWeakObjectPtr<ULSDefenseComponent> DefenseManager;
 
 	UPROPERTY()
 	UProgressBar* HPBar;
@@ -80,43 +103,38 @@ private:
 	USizeBox* ReloadBox;
 
 	UPROPERTY()
-	UTextBlock* PlayerName;
+	UTextBlock* PlayerNameText;
 
 	UPROPERTY()
-	UTextBlock* PlayerLevel;
+	UTextBlock* PlayerLevelText;
 
 	UPROPERTY()
-	UTextBlock* CurrentExp;
+	UTextBlock* CurrentExpText;
 
 	UPROPERTY()
-	UTextBlock* NextExp;
-
-
-	UPROPERTY()
-	UTextBlock* FirstWeaponCurrentAmmo;
+	UTextBlock* NextExpText;
 
 	UPROPERTY()
-	UTextBlock* FirstWeaponRoundsRemaining;
+	UTextBlock* FirstWeaponCurrentAmmoText;
 
 	UPROPERTY()
-	UTextBlock* SecondWeaponCurrentAmmo;
+	UTextBlock* FirstWeaponRoundsRemainingText;
 
 	UPROPERTY()
-	UTextBlock* SecondWeaponRoundsRemaining;
+	UTextBlock* SecondWeaponCurrentAmmoText;
 
 	UPROPERTY()
-	UTextBlock* ThirdWeaponCurrentAmmo;
+	UTextBlock* SecondWeaponRoundsRemainingText;
 
 	UPROPERTY()
-	UTextBlock* ThirdWeaponRoundsRemaining;
+	UTextBlock* ThirdWeaponCurrentAmmoText;
 
+	UPROPERTY()
+	UTextBlock* ThirdWeaponRoundsRemainingText;
 
 	UPROPERTY()
 	ULSInventoryItemSlot* ItemSlot;
 
-
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Equipment)
+	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	TArray<UTextBlock*> RoundsRemainingTextList;
 };

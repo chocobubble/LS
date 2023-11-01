@@ -17,15 +17,16 @@ class LOOTERSHOOTER_API ALSTextPopup : public ATextRenderActor
 public:
 	ALSTextPopup();	
 
-	virtual void BeginPlay() override;
-
 	void SetPopupText(int32 PopupText);
 
-	void SetTextRotation(FVector FromVector, FVector ToVector);
+	void SetTextRotation(const FVector& FromVector, const FVector& ToVector);
 
 	FTimerHandle DisappearTimerHandle = { };
 
+protected:
+	virtual void BeginPlay() override;
+
 private:
-	UPROPERTY(EditAnywhere, Category = Popup)
-	float DisappearTimer = 1.f;
+	UPROPERTY()
+	float DisappearTimer = 1.0f;
 };

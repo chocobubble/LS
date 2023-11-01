@@ -22,8 +22,6 @@ class LOOTERSHOOTER_API ULSInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-
 	void Init(ULSInventoryComponent* InventoryComponent);
 
 	UFUNCTION()
@@ -32,19 +30,23 @@ public:
 	UFUNCTION()
 	void OnResumeClicked();
 
-	UPROPERTY(VisibleAnywhere)
+protected:
+	virtual void NativeConstruct() override;
+
+private:
+	UPROPERTY()
 	TArray<UImage*> GunImages;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TArray<UImage*> EquippedGunImages;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TArray<UButton*> EquippedGunButtons;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TArray<UButton*> InventoryItemButtons;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TArray<ULSInventoryItemButton*> LSInventoryItemButtons;
 
 	UPROPERTY()
@@ -62,11 +64,6 @@ public:
 	UPROPERTY()
 	UButton* ResumeButton;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	ULSInventoryComponent* Inventory;
-
-/*
-	struct FSlateColor* Yel;
-    struct FSlateBrush tempBrush;
-*/
 };

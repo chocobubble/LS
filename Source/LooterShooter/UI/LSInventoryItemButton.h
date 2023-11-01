@@ -18,8 +18,8 @@ class LOOTERSHOOTER_API ULSInventoryItemButton : public UButton
 {
 	GENERATED_BODY()
 
-	ULSInventoryItemButton();
 public:
+	ULSInventoryItemButton();
 
 	UFUNCTION()
 	void Selected();
@@ -27,22 +27,15 @@ public:
 	void Init(const ULSInventoryWidget* Widget, ULSWeaponDefinition* WeaponDefinition);
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Button")
+	UPROPERTY()
 	bool bIsSelected = true;
 
-	UPROPERTY(VisibleAnywhere)
-	UButton* DefaultSelectedButton = nullptr;
+	UPROPERTY()
+	UButton* DefaultSelectedButton;
 	
-	UPROPERTY(VisibleAnywhere)
-	const ULSInventoryWidget* InventoryWidget;
-
-	UPROPERTY(VisibleAnywhere)
-	ULSWeaponDefinition* Weapon;
-	//UPROPERTY(VisibleAnywhere)
-	//FButtonStyle SelectedButtonStyle;
-
-	/*
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	ULSInventoryWidget* InventoryWidget;
-*/
+
+	UPROPERTY()
+	ULSWeaponDefinition* Weapon;
 };

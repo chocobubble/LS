@@ -15,9 +15,12 @@ ULSWeaponDefinition::ULSWeaponDefinition()
 ALSWeaponInstance* ULSWeaponDefinition::InstantiateWeapon()
 {
 	ALSWeaponInstance* NewWeapon = GetWorld()->SpawnActor<ALSWeaponInstance>(FVector::ZeroVector, FRotator::ZeroRotator);
-    /** @TODO: 소유자 Player로 설정 */ 
-    NewWeapon->SetBaseWeaponDefinition(this);
-	NewWeapon->Init();
+	if (NewWeapon)
+	{
+    	/** @TODO: 소유자 Player로 설정 */ 
+    	NewWeapon->SetBaseWeaponDefinition(this);
+		NewWeapon->Init();
+	}
     return NewWeapon;
 }
 
@@ -25,12 +28,15 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 {
 	this->WeaponType = WeaponTypeParam;
 	WeaponItemLevel = WeaponLevel;
-
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	LSCHECK(LSGameInstance != nullptr);
-	WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
-	LSCHECK(WeaponBaseData != nullptr);
-	SetWeaponDefaultStats();
+	if (LSGameInstance)
+	{
+		WeaponBaseData = LSGameInstance->GetWeaponData(WeaponType, WeaponItemLevel);
+		if (WeaponBaseData)
+		{
+			SetWeaponDefaultStats();
+		}
+	}
 
 	EnhancementLevel = WeaponEnhancementLevel;
 	if (EnhancementLevel > 0)
@@ -41,11 +47,18 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 		}
 	}
 
-	WeaponAbilityComponent->EnhanceWeaponStat(this);
+	if (WeaponAbilityComponent)
+	{
+		WeaponAbilityComponent->EnhanceWeaponStat(this);
+	}
 }
 
 void ULSWeaponDefinition::SetWeaponDefaultStats()
 {
+	if (WeaponBaseData == nullptr)
+	{
+		return;
+	}
 	MagazineCapacity = WeaponBaseData->MagazineCapacity;
 	FireRate = WeaponBaseData->FireRate;
 	MovementSpeed = WeaponBaseData->MovementSpeed;
@@ -62,26 +75,22 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 
 bool ULSWeaponDefinition::TryEnhanceWeapon()
 {
-	float Rnd = FMath::FRandRange(0.f, 1.f);
+	const float Rnd = FMath::FRandRange(0.0f, 1.0f);
 	if (Rnd <= 0.5f)
 	{
-		LSLOG(Warning, TEXT("Enhance failed"));
 		SetWeaponDefaultStats();
 		return false;
 	}
 	else
 	{
-		LSLOG(Warning, TEXT("Enhance succecced"));
 		++EnhancementLevel;
 		EnhanceWeapon();
 		return true;
 	}
-	//OnWeaponStatChanged.Broadcast();
 }
 
 void ULSWeaponDefinition::EnhanceWeapon()
 {
-	//EnhancementLevel += 1;
 	MagazineCapacity = MagazineCapacity * 1.1f;
 	BulletDamage = BulletDamage * 1.1f;
 	CriticalHitChance = CriticalHitChance * 1.1f;
@@ -91,10 +100,15 @@ void ULSWeaponDefinition::EnhanceWeapon()
 
 void ULSWeaponDefinition::SetWeaponDefinitionStats()
 {
-	MagazineCapacity = WeaponBaseData->MagazineCapacity + FMath::FRandRange(-10.f, 10.f);
-	FireRate = WeaponBaseData->FireRate + FMath::FRandRange(-200.f, 200.f);
+	if (WeaponBaseData == nullptr)
+	{
+		return;
+	}
+
+	MagazineCapacity = WeaponBaseData->MagazineCapacity + FMath::FRandRange(-10.0f, 10.0f);
+	FireRate = WeaponBaseData->FireRate + FMath::FRandRange(-200.0f, 200.0f);
 	MovementSpeed = WeaponBaseData->MovementSpeed;
-	BulletDamage = WeaponBaseData->BulletDamage + FMath::FRandRange(-10.f, 10.f);
+	BulletDamage = WeaponBaseData->BulletDamage + FMath::FRandRange(-10.0f, 10.0f);
 	CriticalHitChance = WeaponBaseData->CriticalHitChance + FMath::FRandRange(-0.01f, 0.05f);
 	CriticalHitMultiplier = WeaponBaseData->CriticalHitMultiplier + FMath::FRandRange(-0.3f, 0.5f);
 	DamageReduceDistance = WeaponBaseData->DamageReduceDistance;

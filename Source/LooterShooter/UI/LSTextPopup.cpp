@@ -7,22 +7,21 @@
 
 ALSTextPopup::ALSTextPopup()
 {
-    LSLOG(Warning, TEXT("Text popup constructor"));
-    // 	#include "Components/TextRenderComponent.h"
     GetTextRender()->SetText(FText::FromString(TEXT("TEXT")));
-
-
 }
 
 void ALSTextPopup::BeginPlay()
 {
-    //Destroy();
     Super::BeginPlay();
-    GetWorld()->GetTimerManager().SetTimer(DisappearTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+
+    GetWorld()->GetTimerManager().SetTimer(
+        DisappearTimerHandle, 
+        FTimerDelegate::CreateLambda([this]()->void {
 			LSLOG(Warning, TEXT("Destroy text"));
-            Destroy();
-		}), DisappearTimer, false);
-    
+            Destroy();}),
+        DisappearTimer,
+        false
+    );
 }
 
 void ALSTextPopup::SetPopupText(int32 PopupText)
@@ -31,7 +30,7 @@ void ALSTextPopup::SetPopupText(int32 PopupText)
 }
 
 
-void ALSTextPopup::SetTextRotation(FVector FromVector, FVector ToVector)
+void ALSTextPopup::SetTextRotation(const FVector& FromVector, const FVector& ToVector)
 {
     SetActorRotation(UKismetMathLibrary::FindLookAtRotation(FromVector, ToVector));
 }

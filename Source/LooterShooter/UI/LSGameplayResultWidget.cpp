@@ -16,40 +16,41 @@ void ULSGameplayResultWidget::NativeConstruct()
     Super::NativeConstruct();
 
     EnhanceButton = Cast<UButton>(GetWidgetFromName(TEXT("btnEnhance")));
-    if (nullptr != EnhanceButton)
+    if (EnhanceButton)
     {
         EnhanceButton->OnClicked.AddDynamic(this, &ULSGameplayResultWidget::OnEnhanceClicked);
     }
-
 }
 
 
-void ULSGameplayResultWidget::BindGameState(class ALSGameState* GameState)
+void ULSGameplayResultWidget::BindGameState(ALSGameState* GameState)
 {
-    //LSCHECK(nullptr != GameState);
-    //CurrentGameState = GameState;
+    
 }
 
 void ULSGameplayResultWidget::OnEnhanceClicked()
 {
-    LSLOG(Warning, TEXT("Enhancemnet UI Open"));
-    ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    LSCHECK(nullptr != LSPlayerController);
-    LSPlayerController->OnEnhanceUIOpen();
-    LSPlayerController->SetPause(true);
-    LSPlayerController->ChangeInputMode(false);
+    LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetOwningPlayer());
+    if (LSPlayerController)
+    {
+        LSPlayerController->OnEnhanceUIOpen();
+        LSPlayerController->SetPause(true);
+        LSPlayerController->ChangeInputMode(false);
+    }
 }
 
 void ULSGameplayResultWidget::ShowEnhanceUI()
 {
-    EnhanceWidget = CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
-    LSCHECK(nullptr != EnhanceWidget);
-    ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    LSCHECK(nullptr != LSPlayerController);
-    ALSPlayer* LSPlayer = Cast<ALSPlayer>(LSPlayerController->GetPawn());
-    LSCHECK(nullptr != LSPlayer);
-    EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0),
-                        LSPlayer->GetResourceManager());
-    EnhanceWidget->AddToViewport();
-    LSPlayerController->ChangeInputMode(false);
+    EnhanceWidget = EnhanceWidget ? EnhanceWidget : CreateWidget<ULSEnhanceWidget>(this, EnhanceWidgetClass);
+    LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetOwningPlayer());
+    if (EnhanceWidget && LSPlayerController)
+    {   
+        ALSPlayer* LSPlayer = Cast<ALSPlayer>(LSPlayerController->GetPawn());
+        if (LSPlayer)
+        {
+            EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
+            EnhanceWidget->AddToViewport();
+            LSPlayerController->ChangeInputMode(false);
+        }
+    }
 }

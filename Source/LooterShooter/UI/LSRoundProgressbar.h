@@ -17,20 +17,22 @@ class LOOTERSHOOTER_API ULSRoundProgressbar : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
-	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
 public:
-////////Test////////
-	UPROPERTY(EditAnywhere)
-	float RoundPBPercent;
-
-	UFUNCTION(BlueprintCallable)
-	void SetPercentPB(float Percent); // { RoundPBPercent = Percent; }
+	UFUNCTION()
+	void SetPercentPB(float Percent);
 
 	UFUNCTION()
 	void StartReload(float GunReloadTime);
+
+protected:
+	virtual void NativeConstruct() override;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+private:
+////////Test////////
+	UPROPERTY()
+	float RoundPBPercent = 0.0f;
 
 	UPROPERTY()
 	float ReloadTime = 0.0f;

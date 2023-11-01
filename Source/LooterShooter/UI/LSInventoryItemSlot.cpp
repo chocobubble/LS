@@ -12,48 +12,48 @@
 void ULSInventoryItemSlot::NativeConstruct()
 {
     Super::NativeConstruct();
+
     SlotBorder = Cast<UBorder>(GetWidgetFromName(TEXT("border")));
-    LSCHECK(nullptr != SlotBorder);
-    GunImage = Cast<UImage>(GetWidgetFromName(TEXT("imgGun")));
-    LSCHECK(nullptr != GunImage);
-
-    //FLinearColor YellowColor(FColor::Yellow)`
-    //SlotBorder->SetBrushColor(FColor::Yellow);
-    SlotBorder->SetVisibility(ESlateVisibility::Hidden);
-
-
+    if (SlotBorder)
+    {
+        SlotBorder->SetVisibility(ESlateVisibility::Hidden);
+    }
+    
     SlotButton = Cast<UButton>(GetWidgetFromName(TEXT("btnItem")));
-    LSCHECK(nullptr != SlotButton);
-    SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::TurnOn);
-    SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::Print);
-
-    //later, delete
+    if (SlotButton)
+    {  
+        SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::TurnOn);
+        SlotButton->OnClicked.AddDynamic(this, &ULSInventoryItemSlot::Print);
+    }
+    
     ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-    LSCHECK(LSGameInstance != nullptr); 
-    LSCHECK(GunImage != nullptr);
-    GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
+    GunImage = Cast<UImage>(GetWidgetFromName(TEXT("imgGun")));
+    if (LSGameInstance && GunImage)
+    {
+        GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
+    }
 }
-
 
 void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
 {
-    LSCHECK(WeaponDefinition != nullptr);
     ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-    if (WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
+    if (LSGameInstance == nullptr)
     {
-        LSCHECK(GunImage != nullptr);
-        GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
+        return;
     }
 
-    // later delete
-    LSCHECK(GunImage != nullptr);
-    GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
+    if (WeaponDefinition && GunImage)
+    {
+        if (WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
+        {
+            GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
+        }
+    }
 }
 
 
 void ULSInventoryItemSlot::TurnOn()
 {
-    LSLOG(Warning, TEXT("Item Slot Clicked"));
     if (bIsTurnedOn)
     {
         SlotBorder->SetVisibility(ESlateVisibility::Hidden);
@@ -67,6 +67,6 @@ void ULSInventoryItemSlot::TurnOn()
 
 void ULSInventoryItemSlot::Print()
 {
-    LSLOG(Warning, TEXT("Clicked"));
+    
 }
 

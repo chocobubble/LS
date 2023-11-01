@@ -16,23 +16,22 @@ class LOOTERSHOOTER_API ALSAmmo : public AActor
 public:	
 	ALSAmmo();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	UPROPERTY(VisibleAnywhere, Category = Mesh)
-	UStaticMeshComponent* Mesh;
-private:
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	UProjectileMovementComponent* ProjectileMovement;
-
-	UPROPERTY(VisibleAnywhere)
-	FVector FireDir = FVector::ZeroVector;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	void Fire(FVector Dir);
+	void Fire(const FVector& Dir);
 
 	FTimerHandle OnLifeTimerHandle = {};
 
+protected:
+	virtual void BeginPlay() override;
+	
+	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	FVector FireDir = FVector::ZeroVector;
 };

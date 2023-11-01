@@ -11,19 +11,19 @@ void ULSGameplayWidget::NativeConstruct()
     Super::NativeConstruct();
 
     ResumeButton = Cast<UButton>(GetWidgetFromName(TEXT("btnResume")));
-    if (nullptr != ResumeButton)
+    if (ResumeButton)
     {
         ResumeButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnResumeClicked);
     }
 
     ReturnToTitleButton = Cast<UButton>(GetWidgetFromName(TEXT("btnReturnToTitle")));
-    if (nullptr != ReturnToTitleButton)
+    if (ReturnToTitleButton)
     {
         ReturnToTitleButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnReturnToTitleClicked);
     }
 
     RetryGameButton = Cast<UButton>(GetWidgetFromName(TEXT("btnRetryGame")));
-    if (nullptr != RetryGameButton)
+    if (RetryGameButton)
     {
         RetryGameButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnRetryGameClicked);
     }
@@ -31,24 +31,26 @@ void ULSGameplayWidget::NativeConstruct()
 
 void ULSGameplayWidget::OnResumeClicked()
 {
-    auto LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    LSCHECK(nullptr != LSPlayerController);
+    ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
+    if (ALSPlayerController)
+    {
+        RemoveFromParent();
 
-    RemoveFromParent();
-
-    LSPlayerController->ChangeInputMode(true);
-    LSPlayerController->SetPause(false);
+        LSPlayerController->ChangeInputMode(true);
+        LSPlayerController->SetPause(false);
+    }
 }
 
 void ULSGameplayWidget::OnReturnToTitleClicked()
 {
-    // #include "Kismet/GameplayStatics.h"
     UGameplayStatics::OpenLevel(GetWorld(), TEXT("Title"));
 }
 
 void ULSGameplayWidget::OnRetryGameClicked()
 {
-    auto LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    LSCHECK(nullptr != LSPlayerController);
-    LSPlayerController->RestartLevel();
+    ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
+    if (LSPlayerController)
+    {
+        LSPlayerController->RestartLevel();
+    }
 }
