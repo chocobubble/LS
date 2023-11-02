@@ -8,6 +8,7 @@
 
 class ULSSkill;
 class ULSDefenseComponent;
+class ULSHUDWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSSkillComponent : public UActorComponent
@@ -37,4 +38,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	ULSDefenseComponent* DefenseManager;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	ULSHUDWidget* HUD;
+
+public:
+	ULSSkill* GetFirstSkill()
+	{
+		return SkillList.Num() > 0 ? SkillList[0] : nullptr;
+	}
 };

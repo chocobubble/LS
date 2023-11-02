@@ -19,6 +19,7 @@ class ALSPlayer;
 class ULSDefenseComponent;
 class ULSRoundProgressbar;
 class ULSInventoryItemSlot;
+class ULSSkillComponent;
 class UImage;
 
 /**
@@ -40,6 +41,8 @@ public:
 
 	void BindEquipmentComponent(ULSEquipmentComponent* EquipmentComponent);
 
+	void BindSkillComponent(ULSSkillComponent* SkillComponent);
+
 	void BindPlayer(ALSPlayer* LSPlayer);
 	
 	void UpdateCharacterStat();
@@ -51,6 +54,8 @@ public:
 	void UpdateCurrentMP();
 
 	void UpdatePlayerState();
+
+	void UpdateFirstSkillCool(float CoolRate);
 
 	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
 
@@ -87,6 +92,9 @@ private:
 	TWeakObjectPtr<ULSResourceManageComponent> CurrentResourceManager;
 
 	UPROPERTY()
+	TWeakObjectPtr<ULSSkillComponent> CurrentSkillComponent;
+
+	UPROPERTY()
 	UProgressBar* HPBar;
 
 	UPROPERTY()
@@ -100,6 +108,9 @@ private:
 
 	UPROPERTY()
 	UProgressBar* InteractionProgressBar;
+
+	UPROPERTY()
+	UProgressBar* FirstSkillProgressBar;
 
 	UPROPERTY()
 	ULSRoundProgressbar* ReloadProgressbar;

@@ -243,6 +243,7 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 		{
 			DisableInput(LSPlayerController);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
+			LSPlayerController->GetHUDWidget()->BindSkillComponent(SkillManager);
 			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
 			if (LSPlayerState != nullptr && CharacterStat != nullptr)
 			{

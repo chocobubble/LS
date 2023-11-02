@@ -12,11 +12,13 @@
 #include "LooterShooter/Component/LSEquipmentComponent.h"
 #include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
+#include "LooterShooter/Component/LSSkillComponent.h"
 #include "LooterShooter/Weapon/LSWeaponInstance.h"
 #include "LooterShooter/Character/LSPlayer.h"
 #include "LSRoundProgressbar.h"
 #include "LSInventoryItemSlot.h"
 #include "Kismet/GameplayStatics.h"
+#include "LooterShooter/Skill/LSSkill.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -65,6 +67,19 @@ void ULSHUDWidget::BindEquipmentComponent(ULSEquipmentComponent* EquipmentCompon
     }
 }
 
+void ULSHUDWidget::BindSkillComponent(ULSSkillComponent* SkillComponent)
+{
+    if (SkillComponent)
+    {
+        CurrentSkillComponent = SkillComponent;
+        if (CurrentSkillComponent->GetFirstSkill())
+        {
+            CurrentSkillComponent->GetFirstSkill()->OnSkillCool.AddUObject(this, &ULSHUDWidget::UpdateFirstSkillCool);
+            LSLOG(Warning, TEXT("Bind First SKill"));
+        }
+    }
+}
+
 void ULSHUDWidget::BindPlayer(ALSPlayer* LSPlayer)
 {
     if (LSPlayer)
@@ -84,6 +99,7 @@ void ULSHUDWidget::NativeConstruct()
     ShieldBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbShield")));
     MPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbMP")));
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
+    FirstSkillProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbFirstSkill")));
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     PlayerLevelText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
     CurrentExpText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentExp")));    
@@ -157,6 +173,13 @@ void ULSHUDWidget::UpdateCurrentMP()
     }
 }
 
+void ULSHUDWidget::UpdateFirstSkillCool(float CoolRate)
+{
+    if (CurrentSkillComponent.IsValid())
+    {
+        FirstSkillProgressBar->SetPercent(CoolRate);
+    }
+}
 
 void ULSHUDWidget::UpdatePlayerState()
 {
@@ -167,6 +190,7 @@ void ULSHUDWidget::UpdatePlayerState()
         NextExpText->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetNextExp())));
     }
 }
+
 
 void ULSHUDWidget::UpdateRoundsRemaining(int32 CurrentWeaponIndex)
 {

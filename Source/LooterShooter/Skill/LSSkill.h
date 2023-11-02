@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "LSSkill.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillCoolDelegate, float);
 
 enum class ESkillState : uint8
 {
@@ -30,6 +31,8 @@ public:
 
 	virtual bool CastSkill();
 
+	FOnSkillCoolDelegate OnSkillCool;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	ALSPlayer* LSPlayer;
@@ -47,6 +50,8 @@ protected:
 
 public:
 	bool IsReady();
+
+	bool IsCool();
 
 	void SetSkillReady();
 

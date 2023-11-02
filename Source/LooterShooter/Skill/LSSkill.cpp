@@ -11,7 +11,11 @@ void ULSSkill::Tick(float DeltaTime)
 		if (ElapsedTime >= SkillCoolTime)
 		{
 			SetSkillReady();
+			OnSkillCool.Broadcast(0.0f);
+			return;
 		}
+		float CoolTimeRate = (SkillCoolTime < KINDA_SMALL_NUMBER) ? 0.0f : (ElapsedTime / SkillCoolTime);
+		OnSkillCool.Broadcast(1.0f - CoolTimeRate);
 	}
 }
 
@@ -22,6 +26,11 @@ void ULSSkill::Init(APawn* Player)
 bool ULSSkill::IsReady()
 {
 	return CurrentSkillState == ESkillState::READY;
+}
+
+bool ULSSkill::IsCool()
+{
+	return CurrentSkillState == ESkillState::COOL;
 }
 
 void ULSSkill::SetSkillReady()

@@ -5,6 +5,7 @@
 #include "LooterShooter/Skill/LSSkill.h"
 #include "LooterShooter/Skill/ThrowGrenade.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
+#include "LooterShooter/UI/LSHUDWidget.h"
 
 ULSSkillComponent::ULSSkillComponent()
 {
