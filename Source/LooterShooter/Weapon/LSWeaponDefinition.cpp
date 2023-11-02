@@ -2,6 +2,7 @@
 
 #include "LSWeaponDefinition.h"
 #include "LooterShooter/Component/LSEquipmentComponent.h"
+#include "LooterShooter/System/LSGameInstance.h"
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "LooterShooter/Component/LSWeaponAbilityComponent.h"
@@ -21,6 +22,7 @@ ALSWeaponInstance* ULSWeaponDefinition::InstantiateWeapon()
     	NewWeapon->SetBaseWeaponDefinition(this);
 		NewWeapon->Init();
 	}
+	WeaponInstance = NewWeapon;
     return NewWeapon;
 }
 
@@ -59,6 +61,7 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 	{
 		return;
 	}
+
 	MagazineCapacity = WeaponBaseData->MagazineCapacity;
 	FireRate = WeaponBaseData->FireRate;
 	MovementSpeed = WeaponBaseData->MovementSpeed;
@@ -87,6 +90,8 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 		EnhanceWeapon();
 		return true;
 	}
+	WeaponInstance->SetWeaponStats();
+
 }
 
 void ULSWeaponDefinition::EnhanceWeapon()
@@ -95,7 +100,10 @@ void ULSWeaponDefinition::EnhanceWeapon()
 	BulletDamage = BulletDamage * 1.1f;
 	CriticalHitChance = CriticalHitChance * 1.1f;
 	CriticalHitMultiplier = CriticalHitMultiplier * 1.1f;
-	OnWeaponStatChanged.Broadcast();
+	OnWeaponStatChanged.Broadcast(); 
+	//WeaponInstance->SetBaseWeaponDefinition(this);
+	//WeaponInstance->SetWeaponStats();
+	//WeaponInstance->Init();
 }
 
 void ULSWeaponDefinition::SetWeaponDefinitionStats()

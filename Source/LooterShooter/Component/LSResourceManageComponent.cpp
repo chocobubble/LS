@@ -10,6 +10,11 @@ ULSResourceManageComponent::ULSResourceManageComponent()
 	OnResourceChanged.AddUObject(this, &ULSResourceManageComponent::TestFunc);
 }
 
+void ULSResourceManageComponent::UpdateResources()
+{
+	OnResourceChanged.Broadcast();
+}
+
 void ULSResourceManageComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,6 +51,7 @@ void ULSResourceManageComponent::SetCurrentAmmo(const TMap<EAmmoType, int32>& Cu
 	{
 		SetCurrentAmmo(Elem.Key, Elem.Value);
 	}
+	OnResourceChanged.Broadcast();
 }
 
 int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
@@ -94,4 +100,8 @@ void ULSResourceManageComponent::SetGoldAmount(int32 Amount)
 void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)
 {
 
+}
+
+void ULSResourceManageComponent::TestFunc()
+{
 }

@@ -8,7 +8,6 @@
 
 class ULSDefenseComponent;
 class UProgressBar;
-class UTextBlock;
 
 /**
  * 캐릭터의 Health Bar 구현 클래스
@@ -25,8 +24,6 @@ public:
 
 	void UpdateShieldWidget();
 
-	void SetMonsterLevel(int32 Level);
-
 protected:
 	virtual void NativeConstruct() override;
 
@@ -38,10 +35,4 @@ private:
 
 	UPROPERTY()
 	UProgressBar* ShieldProgressBar;
-
-	UPROPERTY()
-	UTextBlock* LevelText;
-
-	UPROPERTY()
-	int32 MonsterLevel;
 };

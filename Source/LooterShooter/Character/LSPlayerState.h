@@ -15,6 +15,7 @@ class ALSPlayerController;
 class ULSInventoryComponent;
 class ULSGameInstance;
 class ULSResourceManageComponent;
+class ULSWeaponDefinition;
 struct FLSPlayerData;
 /**
  * 
@@ -38,6 +39,8 @@ public:
 	UFUNCTION()
 	void UpdateResourceData();
 
+	void UpdateOwnedWeaponData(int32 Idx, int32 WeaponLevel, int32 WeaponEnhancementLevel);
+
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 
 private:
@@ -53,28 +56,24 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentGold = 1000;
 
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	TMap<EAmmoType, int32> CurrentAmmoMap;
-
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	int32 CurrentWeaponLevel = 1;
-
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	int32 CurrentWeaponEnhancementLevel = 0;
+	// 무기 레벨, 무기 강화
+	TArray<TPair<int32, int32>> CurrentOwnedWeapons;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mode")
 	ULSGameInstance* LSGameInstance;
 
-	FLSPlayerData* PlayerStatData;
-
 	UPROPERTY(VisibleAnywhere)
 	ALSPlayerController* LSPlayerController;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 	ULSInventoryComponent* Inventory;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 	ULSResourceManageComponent* ResourceManger;
+
+	TMap<EAmmoType, int32> CurrentAmmoMap;
+
+	FLSPlayerData* PlayerStatData;
 
 public:
 	int32 GetCharacterLevel() const
@@ -94,19 +93,14 @@ public:
 		return CurrentGold;
 	}
 
-	TMap<EAmmoType, int32>& GetAmmoMap() const
+	TMap<EAmmoType, int32>& GetAmmoMap()
 	{
 		return CurrentAmmoMap;
 	}
 
-	int32 GetCurrentWeaponLevel() const
+	TArray<TPair<int32, int32>>& GetOwnedWeapons()
 	{
-		return CurrentWeaponLevel;
-	}
-
-	int32 GetCurrentWeaponEnhancenmentLevel() const
-	{
-		return CurrentWeaponEnhancementLevel;
+		return CurrentOwnedWeapons;
 	}
 
 	float GetExpRatio();
@@ -115,13 +109,4 @@ public:
 
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
 
-	void SetCurrentWeaponLevel(int32 WeaponLevel)
-	{
-		CurrentWeaponLevel = WeaponLevel;
-	}
-
-	void SetCurrentWeaponEnhancementLevel(int32 EnhancementLevel)
-	{
-		CurrentWeaponEnhancementLevel = EnhancementLevel;
-	}
 };

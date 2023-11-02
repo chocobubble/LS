@@ -20,7 +20,9 @@ public:
 	void ConsumeAmmo(EAmmoType AmmoType, int32 Amount);
 
 	UFUNCTION()
-	void TestFunc() {};
+	void TestFunc();
+
+	void UpdateResources();
 
 	FOnResourceChangedDelegate OnResourceChanged;
 
@@ -47,7 +49,7 @@ private:
 	int32 CurrentShotgunAmmo = 50; 
 
 	UPROPERTY(VisibleAnywhere, Category = "Resource")
-	int32 GoldAmount = 1000;
+	int32 GoldAmount = 200;
 
 public:	
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);

@@ -4,9 +4,8 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Actor.h"
-#include "LooterShooter/System/LSGameInstance.h"
-#include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Types/WeaponType.h"
+#include "LooterShooter/Types/AmmoType.h"
 #include "Curves/CurveVector.h"
 #include "LSWeaponInstance.generated.h"
 
@@ -14,8 +13,12 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FTest, FVector);
 
 class ALSCharacter;
+class ULSResourceManageComponent;
 class ULSWeaponAbilityComponent;
 class ULSWeaponDefinition;
+class UAnimationAsset;
+class ALSBullet;
+class USkeletalMeshSocket;
 
 /**
  * 장착한 무기의 액터 클래스
@@ -40,6 +43,9 @@ public:
 	/** 무기 메시 설정 */
 	void SetWeaponSkeletalMesh();
 
+	/** 무기 초기화 */
+	void Shoot(const FVector& TargetPos);
+
 	/** 사격에 따른 탄착군 계산 */
 	FVector CalculateRecoil(const FVector& AimDir, const float HalfAngle);
 	
@@ -62,25 +68,25 @@ private:
 	int32 MagazineCapacity;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float FireRate = 0.1f;
+	float FireRate;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float MovementSpeed = 300.0f;
+	float MovementSpeed;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float BulletDamage = 200.0f;
+	float BulletDamage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float CriticalHitChance = 0.5f;
+	float CriticalHitChance;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float CriticalHitMultiplier = 2.0f;
+	float CriticalHitMultiplier;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float DamageReduceDistance = 5000.0f;
+	float DamageReduceDistance;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	float ReloadTime = 5.0f;
+	float ReloadTime;
 
 	/** 
 	 * 하나의 탄약에 들어있는 총알의 수 
@@ -115,7 +121,19 @@ private:
 
 	/** 탄창내 남아 있는 탄약의 수 */
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	int32 RoundsRemaining = 0;
+	int32 RoundsRemaining;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	UAnimationAsset* ShootingAnim;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	TSubclassOf<ALSBullet> LSBulletClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	ALSBullet* Bullet;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	const USkeletalMeshSocket* EjectSocket;
 
 public:
 	float GetMaxRange() const
@@ -180,7 +198,6 @@ public:
 	{
 		return BaseWeaponDefinition;
 	}
-
 
 	/** 인벤토리 내의 base WeaponDefinition을 연결 */
 	void SetBaseWeaponDefinition(ULSWeaponDefinition* WeaponDefinition)

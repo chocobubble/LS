@@ -4,17 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "LSInteractableObejct.generated.h"
+#include "LSInteractableObject.generated.h"
 
 class UBoxComponent;
 
 UCLASS()
-class LOOTERSHOOTER_API ALSInteractableObejct : public AActor
+class LOOTERSHOOTER_API ALSInteractableObject : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	ALSInteractableObejct();
+	ALSInteractableObject();
+
+	virtual void Interact() {}
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,7 +29,6 @@ protected:
 	UFUNCTION()
 	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) {}
 
-	virtual void Interact() {}
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")

@@ -24,7 +24,7 @@ public:
 	UFUNCTION()
 	void Selected();
 
-	void Init(const ULSInventoryWidget* Widget, ULSWeaponDefinition* WeaponDefinition);
+	void Init(ULSInventoryWidget* Widget, ULSWeaponDefinition* WeaponDefinition);
 
 private:
 	UPROPERTY()

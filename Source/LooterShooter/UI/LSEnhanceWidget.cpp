@@ -8,6 +8,7 @@
 #include "LooterShooter/Weapon/LSWeaponDefinition.h"
 #include "LSRoundProgressbar.h"
 #include "LooterShooter/Component/LSResourceManageComponent.h"
+#include "LooterShooter/Character/LSPlayerController.h"
 
 void ULSEnhanceWidget::NativeConstruct()
 {
@@ -102,7 +103,7 @@ void ULSEnhanceWidget::OnWeaponStatUpdated()
 	}
 
     GoldText->SetText(FText::FromString(FString::FromInt(Resource->GetGoldAmount())));
-    EnhancementCountText->SetText(FText::FromString(FString::FromInt(Weapon->GetEnhancement())));
+    EnhancementCountText->SetText(FText::FromString(FString::FromInt(Weapon->GetEnhancementLevel())));
     DamageText->SetText(FText::FromString(FString::FromInt(Weapon->GetBulletDamage())));
     CriticalHitChanceText->SetText(FText::FromString(FString::FromInt(Weapon->GetCriticalHitChance() * 100)));
     CriticalHitMultiplierText->SetText(FText::FromString(FString::FromInt(Weapon->GetCriticalHitMultiplier() * 100)));      
@@ -110,5 +111,11 @@ void ULSEnhanceWidget::OnWeaponStatUpdated()
 
 void ULSEnhanceWidget::OnResumeClicked()
 {
+    ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
+    if (LSPlayerController)
+    {
+        LSPlayerController->SetPause(false);
+        LSPlayerController->ChangeInputMode(true);
+    }
     RemoveFromParent();
 }

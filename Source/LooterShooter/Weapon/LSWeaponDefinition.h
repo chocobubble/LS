@@ -4,13 +4,13 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "UObject/NoExportTypes.h"
-#include "LSWeaponInstance.h"
-#include "LooterShooter/System/LSGameInstance.h"
-#include "LooterShooter/GameMode/LSGameState.h"
 #include "LooterShooter/Types/WeaponType.h"
+#include "LooterSHooter/Data/WeaponBaseData.h"
 #include "LSWeaponDefinition.generated.h"
 
 class ULSWeaponAbilityComponent;
+class ALSWeaponInstance;
+class ULSPLayerState;
 
 /** 강화 등에 의해 무기 스탯 변경 시 */
 DECLARE_MULTICAST_DELEGATE(FOnWeaponStatChangedDelegate);
@@ -114,6 +114,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	TSubclassOf<ALSWeaponInstance> WeaponInstanceClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	ALSWeaponInstance* WeaponInstance;
 
 public:
 	int32 GetWeaponItemLevel() const

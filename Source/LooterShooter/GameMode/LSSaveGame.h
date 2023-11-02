@@ -32,14 +32,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 Gold = 1000;
 
+	// 무기 레벨, 무기 강화
+	//UPROPERTY()
+	TArray<TPair<int32, int32>> OwnedWeapons;
+
 	//UPROPERTY(VisibleAnywhere, Category = "State")
 	TMap<EAmmoType, int32> AmmoMap;
-
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	int32 WeaponLevel = 1;
-
-	UPROPERTY(VisibleAnywhere, Category = "State")
-	int32 WeaponEnhancementLevel = 0;
 
 public:
 	int32 GetSavedCharacterLevel() const
@@ -62,19 +60,14 @@ public:
 		return Gold;
 	}
 
+	TArray<TPair<int32, int32>>& GetSavedOwnedWeapons()
+	{
+		return OwnedWeapons;
+	}
+
 	TMap<EAmmoType, int32> GetSavedAmmoMap() const
 	{
 		return AmmoMap;
-	}
-
-	int32 GetSavedWeaponLevel() const
-	{
-		return WeaponLevel;
-	}
-
-	int32 GetSavedWeaponEnhancementLevel() const
-	{
-		return WeaponEnhancementLevel;
 	}
 
 	void SaveCharacterLevel(int32 CurrentLevel)
@@ -102,13 +95,8 @@ public:
 		AmmoMap = CurrentAmmoMap;
 	}
 
-	void SaveWeaponLevel(int32 CurrentWeaponLevel)
+	void SaveOwnedWeapons(TArray<TPair<int32, int32>>& CurrentOwnedWeapons)
 	{
-		WeaponLevel = CurrentWeaponLevel;
-	}
-
-	void SaveWeaponEnhancementLevel(int32 CurrentWeaponEnhancementLevel)
-	{
-		WeaponEnhancementLevel = CurrentWeaponEnhancementLevel;
+		OwnedWeapons = CurrentOwnedWeapons;
 	}
 };

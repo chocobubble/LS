@@ -4,19 +4,21 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Actor.h"
-#include "LSAmmo.generated.h"
+#include "LSBullet.generated.h"
 
 class UProjectileMovementComponent;
+class UParticleSystem;
+class UParticleSystemComponent;
 
 UCLASS()
-class LOOTERSHOOTER_API ALSAmmo : public AActor
+class LOOTERSHOOTER_API ALSBullet : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	ALSAmmo();
+	ALSBullet();
 
-	void Fire(const FVector& Dir);
+	void Fire();
 
 	FTimerHandle OnLifeTimerHandle = {};
 
@@ -32,6 +34,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	FVector FireDir = FVector::ZeroVector;
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+	UParticleSystem* BulletTracer;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+	UParticleSystemComponent* BulletTracerComponent;
+
+public:
+	UStaticMeshComponent* GetBulletMesh()
+	{
+		return Mesh;
+	}
 };

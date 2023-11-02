@@ -2,7 +2,6 @@
 
 #include "LSCharacterWidget.h"
 #include "Components/ProgressBar.h"
-#include "Components/TextBlock.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
 
 
@@ -36,7 +35,7 @@ void ULSCharacterWidget::NativeConstruct()
 
 void ULSCharacterWidget::UpdateHPWidget()
 {
-    if (CurrentDefenseManager.IsValid())
+    if (CurrentDefenseManager != nullptr)
     {
         if (HPProgressBar)
         {
@@ -47,22 +46,11 @@ void ULSCharacterWidget::UpdateHPWidget()
 
 void ULSCharacterWidget::UpdateShieldWidget()
 {
-    if (CurrentDefenseManager.IsValid())
+    if (CurrentDefenseManager != nullptr)
     {
         if (ShieldProgressBar)
         {
             ShieldProgressBar->SetPercent(CurrentDefenseManager->GetShieldRatio());
         }
-    }
-}
-
-void ULSCharacterWidget::SetMonsterLevel(int32 Level)
-{
-    MonsterLevel = Level;
-    LevelText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtMonsterLevel")));
-    if (LevelText)
-    {
-        LSLOG(Warning, TEXT(" Set MOnster Level %d"), MonsterLevel);
-        LevelText->SetText(FText::FromString(FString::FromInt(MonsterLevel)));
     }
 }

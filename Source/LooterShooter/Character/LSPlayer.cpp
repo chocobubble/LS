@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h"
 #include "LooterShooter/Component/LSCharacterStatComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Animation/LSPlayerAnimInstance.h"
 #include "LSPlayerController.h"
 #include "LSPlayerState.h"
@@ -20,12 +21,15 @@
 #include "Math/RotationMatrix.h"
 #include "LooterShooter/UI/LSTextPopup.h"
 #include "LooterShooter/Interaction/LSAutoLootItem.h"
+#include "LooterShooter/Interaction/LSItemBox.h"
+#include "LooterShooter/Interaction/LSInteractableObject.h"
 #include "LooterShooter/Weapon/LSWeaponInstance.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
-#include "LooterShooter/Interaction/LSItemBox.h"
 #include "LooterShooter/Weapon/LSWeaponDefinition.h"
-#include "LooterShooter/Weapon/LSAmmo.h"
 #include "DrawDebugHelpers.h"
+#include "CableComponent.h"
+#include "LooterShooter/Obstacles/CableEnd.h"
+#include "Kismet/GameplayStatics.h"
 
 ALSPlayer::ALSPlayer()
 {
@@ -38,6 +42,9 @@ ALSPlayer::ALSPlayer()
 	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
 	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
 	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
+	Cable = CreateDefaultSubobject<UCableComponent>(TEXT("CABLE"));
+	Cable->SetupAttachment(RootComponent);
+	Cable->SetVisibility(false);
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
@@ -198,6 +205,12 @@ void ALSPlayer::BeginPlay()
 	{
 		ToAimDirection = FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X);
 	}
+
+
+
+	// Default 무기 장착
+	EquipFirstWeapon();
+	OnReloadComplete();
 }
 
 void ALSPlayer::SetCharacterState(ECharacterState NewState)
@@ -273,11 +286,21 @@ void ALSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CheckHit();
+
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
 
 	// TODO : 최적화하기
 	// if(bIsInteracting) 같은 걸로
 	InteractCheck();
+
+	// 그래플링 모션 중
+	if (bIsGrapplingCasting && Cable)
+	{
+		CurrentGrapplingCastingTime += DeltaTime;
+		Cable->CableLength = FMath::FInterpTo(0.0f, 1000.0f, DeltaTime, 50.0f);
+		LSLOG(Warning, TEXT("Grappling Cast"));
+	}
 
 	// 그래플링 훅 사용한 경우
 	if (bIsGrappling)
@@ -285,6 +308,7 @@ void ALSPlayer::Tick(float DeltaTime)
 		LaunchCharacter(((GrappleToLocation - GetActorLocation()) + GetActorUpVector() * GrapplingHeightCorrection)* GrapplingMovementSpeed, true, true);
 		if ((GrappleToLocation - GetActorLocation()).Size() < GrapplingStopRange)
 		{
+			Cable->SetVisibility(false);
 			bIsGrappling = false;
 		}
 	}
@@ -381,17 +405,6 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		return;
 	}
 
-	// 총알 생성 후 발사
-	Ammo = GetWorld()->SpawnActor<ALSAmmo>(CurrentWeapon->GetTransform().GetLocation(), FRotator::ZeroRotator);
-    if (Ammo == nullptr)
-	{
-		return;
-	}
-	const FRotator Rotation = Controller->GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-	Ammo->Mesh->SetWorldRotation(Rotation);
-	Ammo->Fire(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
-
 	// 반동 시작
 	RecoilStart();
 
@@ -440,6 +453,8 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 			HitResult.GetActor()->TakeDamage(FinalAttackDamage, DamageEvent, GetController(), this);
 		}
 	}	
+
+	CurrentWeapon->Shoot(HitPos);
 }
 
 void ALSPlayer::MeleeAttack(const FInputActionValue& Value)
@@ -543,6 +558,7 @@ void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 		{
 			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 			bIsGrapplingCasting = true;
+			CurrentGrapplingCastingTime = 0.0f;
 			GetWorld()->GetTimerManager().SetTimer(
 				GrapplingTimerHandle,
 				this, 
@@ -551,7 +567,20 @@ void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 			);
 			GrappleToLocation = HitResult.Location;
 			// 그래플링 훅 케이블
-			// Cable->SetWorldLocation(GrappleToLocation);
+			Cable->bAttachEnd = true;
+			Cable->CableGravityScale = 0.0f;
+
+			AActor* TargetPos = GetWorld()->SpawnActor<ACableEnd>(GrappleToLocation, FRotator::ZeroRotator);
+			Cable->SetAttachEndTo(TargetPos, NAME_None);
+			Cable->SetVisibility(true);
+
+			/*
+			FVector Dir = GrappleToLocation - GetActorLocation();
+			Dir.Normalize();
+			LSLOG(Warning, TEXT("%f, %f, %f  - %f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z, Dir.X, Dir.Y, Dir.Z);
+			Cable->EndLocation = GetActorLocation() + (Dir * (Cable->CableLength));
+			*/
+			
 		}
 	}
 }
@@ -650,7 +679,7 @@ void ALSPlayer::EquipThirdWeapon(const FInputActionValue& Value)
 void ALSPlayer::InteractCheck()
 {
 	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
-	if (!bIsNearInteractableObject || InteractingObject != nullptr)
+	if (!bIsNearInteractableObject)// || InteractingObject != nullptr)
 	{
 		return;
 	}
@@ -668,7 +697,8 @@ void ALSPlayer::InteractCheck()
 
 	if (bResult)
 	{
-		InteractingObject = Cast<ALSInteractableObejct>(HitResult.GetActor());
+		//LSLOG(Warning, TEXT("Channel3"));
+		//InteractingObject = Cast<ALSInteractableObject>(HitResult.GetActor());
 	}
 }
 
@@ -690,6 +720,8 @@ void ALSPlayer::OnInteractButtonPressed(const FInputActionValue& Value)
 
 	if (bResult)
 	{
+		LSLOG(Warning, TEXT("Channel4"));
+		//InteractingObject = Cast<ALSInteractableObject>(HitResult.GetActor());
 		/*
 		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
 		if (ItemBox)
@@ -715,18 +747,67 @@ void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 	InteractionElapsedTime = ElapsedTime;
 	// Interact Progress Bar 업데이트 함수 호출
 	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
-	if (InteractionElapsedTime >= InteractionCompleteTime)
+	if (InteractionCompleteTime - InteractionElapsedTime <= 0.01f)
 	{
+		LSLOG(Warning, TEXT("Interact 1"));
 		InteractWithObject();
 	}
 }
 
 void ALSPlayer::InteractWithObject()
 {
-	if (ALSInteractableObejct)
+	if (InteractingObject)
 	{
-		InteractingObject->Interact(this);
+		LSLOG(Warning, TEXT("Interact 2"));
+		InteractingObject->Interact();
 	}	
+}
+
+void ALSPlayer::CheckHit()
+{
+	if (GEngine == nullptr || GEngine->GameViewport == nullptr)
+	{
+		return;
+	}
+	FVector2D ViewportSize;
+	GEngine->GameViewport->GetViewportSize(ViewportSize);
+	FVector CrosshairWorldPos, CrosshairWorldDir;
+	bool bCrosshairScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		FVector2D(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f),
+		CrosshairWorldPos,
+		CrosshairWorldDir
+	);
+
+	if (bCrosshairScreenToWorld)
+	{
+		FVector RayStartPos = CrosshairWorldPos + CrosshairWorldDir * (GetActorLocation() - CrosshairWorldPos).Size();
+		FVector RayEndPos = RayStartPos + CrosshairWorldDir * MaxCheckLength;
+		FHitResult HitResult;
+		GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			RayStartPos,
+			RayEndPos,
+			ECollisionChannel::ECC_GameTraceChannel2
+		);
+		if (HitResult.bBlockingHit)
+		{
+			DrawDebugSphere(
+				GetWorld(),
+				HitResult.ImpactPoint,
+				12.0f,
+				12,
+				FColor::Yellow
+			);
+		}
+		else
+		{
+			HitResult.ImpactPoint = RayEndPos;
+		}
+
+		HitPos = HitResult.ImpactPoint;
+
+	}
 }
 
 void ALSPlayer::TestAct(const FInputActionValue& Value)
@@ -760,9 +841,6 @@ void ALSPlayer::PostInitializeComponents()
 		// LSPlayerAnim->OnAttackHitCheck.AddUObject(this, &ALSPlayer::AttackCheck);
 		LSPlayerAnim->OnMontageEnded.AddDynamic(this, &ALSPlayer::OnAttackMontageEnded);
 	}
-
-	// Default 무기 장착
-	EquipFirstWeapon();
 }
 
 bool ALSPlayer::CanShoot(EAmmoType AmmoType)

@@ -21,9 +21,9 @@ void ULSInventoryItemButton::Selected()
     bIsSelected = !bIsSelected;
     if (bIsSelected)
     {
-        if (InventoryWidget && InventoryWidget->ItemClickedButton)
+        if (InventoryWidget && InventoryWidget->GetItemClickedButton())
         {
-            SetStyle(InventoryWidget->ItemClickedButton->GetStyle());
+            SetStyle(InventoryWidget->GetItemClickedButton()->GetStyle());
         }
     }
 }

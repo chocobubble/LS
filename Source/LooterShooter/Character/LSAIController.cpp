@@ -34,11 +34,14 @@ void ALSAIController::OnPossess(APawn* InPawn)
 
 void ALSAIController::RunAI()
 {
+    LSLOG(Warning, TEXT("Run AI"));
+
     UBlackboardComponent* BlackboardComp = Blackboard.Get();
     if (UseBlackboard(BBAsset, BlackboardComp))
     {
         this->Blackboard = BlackboardComp;
         Blackboard->SetValueAsVector(HomePosKey, GetPawn()->GetActorLocation());
+        RunBehaviorTree(BTAsset);
     }
 }
 

@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LSInteractableObejct.h"
+#include "LSInteractableObject.h"
 #include "Components/BoxComponent.h"
 
-ALSInteractableObejct::ALSInteractableObejct()
+ALSInteractableObject::ALSInteractableObject()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -14,15 +14,15 @@ ALSInteractableObejct::ALSInteractableObejct()
 	Trigger->SetCollisionProfileName(TEXT("LootItem"));
 }
 
-void ALSInteractableObejct::BeginPlay()
+void ALSInteractableObject::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ALSInteractableObejct::PostInitializeComponents()
+void ALSInteractableObject::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSInteractableObejct::OnCharacterOverlap);
-	Trigger->OnComponentEndOverlap.AddDynamic(this, &ALSInteractableObejct::OnCharacterEndOverlap);
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSInteractableObject::OnCharacterOverlap);
+	Trigger->OnComponentEndOverlap.AddDynamic(this, &ALSInteractableObject::OnCharacterEndOverlap);
 }

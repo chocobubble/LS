@@ -8,6 +8,7 @@
 
 class ULSWeaponDefinition;
 class ULSEquipmentComponent;
+class ALSPlayerState;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LOOTERSHOOTER_API ULSInventoryComponent : public UActorComponent
@@ -43,6 +44,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	int32 CurrentInventoryCapacity = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	ALSPlayerState* LSPlayerState;
 
 public:
 	void SetEquipmentComponent(ULSEquipmentComponent* EquipmentComponent)

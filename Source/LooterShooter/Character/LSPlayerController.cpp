@@ -91,17 +91,6 @@ void ALSPlayerController::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 
-	LSPlayerState = LSPlayerState ? LSPlayerState : Cast<ALSPlayerState>(PlayerState);
-	LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
-    if (LSPlayerState && LSPlayer)
-	{
-		ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
-		if (ResourceManager)
-		{
-			LSPlayerState->BindWithResourceManager(ResourceManager);
-			InitResourceManager(ResourceManager);
-		}
-	}
 }
 
 void ALSPlayerController::OnPossess(APawn* aPawn)
@@ -159,6 +148,18 @@ void ALSPlayerController::BeginPlay()
             HUDWidget->BindResourceManageComponent(LSPlayer->GetResourceManager());
             HUDWidget->BindEquipmentComponent(LSPlayer->GetEquipmentManager());
             HUDWidget->BindPlayer(LSPlayer);
+        }
+    }
+
+    LSPlayerState = LSPlayerState ? LSPlayerState : Cast<ALSPlayerState>(PlayerState);
+    LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
+    if (LSPlayerState && LSPlayer)
+    {
+        ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
+        if (ResourceManager)
+        {
+            LSPlayerState->BindWithResourceManager(ResourceManager);
+            InitResourceManager(ResourceManager);
         }
     }
 }
@@ -230,7 +231,7 @@ void ALSPlayerController::OnEnhanceUIOpen()
     	EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
 	}
     EnhanceWidget->AddToViewport();
-    SetPause(true);
+    //SetPause(true);
     ChangeInputMode(false);
 }
 

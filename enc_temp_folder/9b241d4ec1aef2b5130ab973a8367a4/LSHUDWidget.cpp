@@ -16,7 +16,6 @@
 #include "LooterShooter/Character/LSPlayer.h"
 #include "LSRoundProgressbar.h"
 #include "LSInventoryItemSlot.h"
-#include "Kismet/GameplayStatics.h"
 
 void ULSHUDWidget::BindCharacterStat(ULSCharacterStatComponent* CharacterStat)
 {
@@ -99,24 +98,7 @@ void ULSHUDWidget::NativeConstruct()
     CrosshairRight = Cast<UImage>(GetWidgetFromName(TEXT("imgCrosshairRight")));
     CrosshairTop = Cast<UImage>(GetWidgetFromName(TEXT("imgCrosshairTop")));
     CrosshairBottom = Cast<UImage>(GetWidgetFromName(TEXT("imgCrosshairBottom")));
-    
-    if (GEngine == nullptr || GEngine->GameViewport == nullptr)
-    {
-        return;
-    }
-    FVector2D ViewportSize;
-    GEngine->GameViewport->GetViewportSize(ViewportSize);
-    FVector CrosshairWorldPos, CrosshairWorldDir;
-    bool bCrosshairScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
-        UGameplayStatics::GetPlayerController(this, 0),
-        FVector2D(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f),
-        CrosshairWorldPos,
-        CrosshairWorldDir
-    );
-    FWidgetTransform WTF = CrosshairCenter->GetRenderTransform();
-    WTF.Translation.X = CrosshairWorldPos.X;
-    WTF.Translation.Y = CrosshairWorldPos.Y;
-    CrosshairCenter->SetRenderTransform(WTF);
+    //CrosshairCenter->
 
     RoundsRemainingTextList.Add(FirstWeaponRoundsRemainingText);
     RoundsRemainingTextList.Add(SecondWeaponRoundsRemainingText);

@@ -61,7 +61,6 @@ public:
 	void ShowReloadProgressbar(float ReloadTime);
 
 	void DrawCrosshairs();
-
 protected:
 	virtual void NativeConstruct() override;
 	

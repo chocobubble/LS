@@ -20,48 +20,48 @@ void ULSInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	WeaponList.Init(nullptr, MaxInventoryCapacity);
-	SetDefaultWeapon();
-}
 
-void ULSInventoryComponent::SetDefaultWeapon()
-{
-	int32 DefaultWeaponLevel = 1;
-	int32 DefaultWeaponEnhancementLevel = 0;
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn)
 	{
 		AController* Controller = Cast<AController>(OwnerPawn->GetController());
 		if (Controller)
 		{
-			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
-			if (LSPlayerState)
-			{
-				DefaultWeaponLevel = LSPlayerState->GetCurrentWeaponLevel();
-				DefaultWeaponEnhancementLevel = LSPlayerState->GetCurrentWeaponEnhancenmentLevel();
-			}
+			LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
 		}
 	}
-	int32 TempNum;
-	TempNum = GetEmptyIndex();
+
+	if (LSPlayerState == nullptr || LSPlayerState->GetOwnedWeapons().Num() == 0)
+	{
+		SetDefaultWeapon();
+	}
+	else
+	{
+		for (auto& Elem : LSPlayerState->GetOwnedWeapons())
+		{
+			int32 TempNum = GetEmptyIndex();
+			WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
+			WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, Elem.Key, Elem.Value);
+			EquipItem(TempNum);
+			++CurrentInventoryCapacity;
+			WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
+		}
+	}
+}
+
+void ULSInventoryComponent::SetDefaultWeapon()
+{
+	int32 DefaultWeaponLevel = 2;
+	int32 DefaultWeaponEnhancementLevel = 1;
+	int32 TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
 	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
 	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
 	WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
-
-	// TODO: 무기 칸 세개까지 늘리기
-/*  
-	TempNum = GetEmptyIndex();
-	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::SHOTGUN, 3);
-	EquipItem(TempNum);
-	++CurrentInventoryCapacity;
-	TempNum = GetEmptyIndex();
-	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-	WeaponList[TempNum]-> SetWeaponDefinitionData(EWeaponType::PISTOL, 3);
-	EquipItem(TempNum);
-	++CurrentInventoryCapacity;
-*/
+	
+	// 무기 상태 업데이트
+	LSPlayerState->UpdateOwnedWeaponData(0, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
 }
 
 int32 ULSInventoryComponent::GetEmptyIndex()
@@ -110,12 +110,10 @@ void ULSInventoryComponent::UpdateWeaponDefinition()
 		AController* Controller = Cast<AController>(OwnerPawn->GetController());
 		if (Controller)
 		{
-			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
+			LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
 			if (LSPlayerState)
 			{
-				// TODO : list
-				LSPlayerState->SetCurrentWeaponLevel(WeaponList[0]->GetWeaponItemLevel());
-				LSPlayerState->SetCurrentWeaponEnhancementLevel(WeaponList[0]->GetEnhancement());
+				LSPlayerState->UpdateOwnedWeaponData(0, WeaponList[0]->GetWeaponItemLevel(), WeaponList[0]->GetEnhancementLevel());
 			}
 		}
 	}

@@ -5,6 +5,7 @@
 #include "LooterShooter/Character/LSPlayer.h"
 #include "LooterShooter/Component/LSCharacterStatComponent.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Types/LootItemType.h"
 
 ALSAutoLootItem::ALSAutoLootItem()

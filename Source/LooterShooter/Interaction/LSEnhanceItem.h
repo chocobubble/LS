@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LSInteractableObejct.h"
+#include "LSInteractableObject.h"
 #include "LSEnhanceItem.generated.h"
 
 class UBoxComponent;
@@ -12,7 +12,7 @@ class ALSPlayer;
  * 
  */
 UCLASS()
-class LOOTERSHOOTER_API ALSEnhanceItem : public ALSInteractableObejct
+class LOOTERSHOOTER_API ALSEnhanceItem : public ALSInteractableObject
 {
 	GENERATED_BODY()
 

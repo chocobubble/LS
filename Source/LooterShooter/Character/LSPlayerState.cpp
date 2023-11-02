@@ -26,8 +26,7 @@ void ALSPlayerState::InitPlayerData()
     SetCharacterLevel(LSSaveGame->GetSavedCharacterLevel());
     CurrentExp = LSSaveGame->GetSavedCharacterExp();
 	CurrentGold = LSSaveGame->GetSavedGold();
-	CurrentWeaponLevel = LSSaveGame->GetSavedWeaponLevel();
-	CurrentWeaponEnhancementLevel = LSSaveGame->GetSavedWeaponEnhancementLevel();
+	CurrentOwnedWeapons = LSSaveGame->GetSavedOwnedWeapons();
 	CurrentAmmoMap[EAmmoType::RIFLE] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::RIFLE];
 
     SavePlayerData();
@@ -40,8 +39,7 @@ void ALSPlayerState::SavePlayerData()
     NewPlayerData->SaveCharacterLevel(CharacterLevel);
     NewPlayerData->SaveCharacterExp(CurrentExp);
 	NewPlayerData->SaveGold(CurrentGold);
-	NewPlayerData->SaveWeaponLevel(CurrentWeaponLevel);
-	NewPlayerData->SaveWeaponEnhancementLevel(CurrentWeaponEnhancementLevel);
+	NewPlayerData->SaveOwnedWeapons(CurrentOwnedWeapons);
 	NewPlayerData->SaveAmmoMap(CurrentAmmoMap);
 
     if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
@@ -68,8 +66,18 @@ void ALSPlayerState::UpdateResourceData()
 	CurrentGold = ResourceManger->GetGoldAmount();
 	// CurrentAmmoMap 업데이트
 	// TODO : 다른 타입 총알도 적용
-	EAmmoType CurrentAmmoType = EAmmoType::RIFLE
+	EAmmoType CurrentAmmoType = EAmmoType::RIFLE;
 	SetCurrentAmmo(CurrentAmmoType, ResourceManger->GetCurrentAmmo(CurrentAmmoType));
+
+	SavePlayerData();
+}
+
+void ALSPlayerState::UpdateOwnedWeaponData(int32 Idx, int32 WeaponLevel, int32 WeaponEnhancementLevel)
+{
+	CurrentOwnedWeapons[Idx].Key = WeaponLevel;
+	CurrentOwnedWeapons[Idx].Value = WeaponEnhancementLevel;
+
+	SavePlayerData();
 }
 
 int32 ALSPlayerState::GetNextExp() 

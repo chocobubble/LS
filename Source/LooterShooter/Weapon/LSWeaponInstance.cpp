@@ -4,7 +4,11 @@
 #include "LSWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "LooterShooter/Component/LSWeaponAbilityComponent.h"
+#include "LooterShooter/Component/LSResourceManageComponent.h"
+#include "LooterShooter/System/LSGameInstance.h"
+#include "LooterShooter/Weapon/LSBullet.h"
 #include "LSWeaponDefinition.h"
+#include "Engine/SkeletalMeshSocket.h"
 
 ALSWeaponInstance::ALSWeaponInstance()
 {
@@ -12,6 +16,14 @@ ALSWeaponInstance::ALSWeaponInstance()
 
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPONMESH"));
 	RootComponent = WeaponSkeletalMesh;
+
+	static ConstructorHelpers::FObjectFinder<UAnimationAsset> AA_FIRE(TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
+	if (AA_FIRE.Succeeded())
+	{
+		ShootingAnim = AA_FIRE.Object;
+	}
+
+	LSBulletClass = ALSBullet::StaticClass();
 }
 
 void ALSWeaponInstance::BeginPlay()
@@ -23,27 +35,25 @@ void ALSWeaponInstance::Init()
 {
 	SetWeaponStats();
 	SetWeaponSkeletalMesh();
-	RoundsRemaining = MagazineCapacity;
+	RoundsRemaining = MagazineCapacity; 
 }
 
 void ALSWeaponInstance::SetWeaponStats()
 {
 	if (BaseWeaponDefinition)
 	{
-		return;
+		GunType = BaseWeaponDefinition->GetWeaponType();
+		MagazineCapacity = BaseWeaponDefinition->GetMagazineCapacity();
+		FireRate = BaseWeaponDefinition->GetFireRate();
+		MovementSpeed = BaseWeaponDefinition->GetMovementSpeed();
+		BulletDamage = BaseWeaponDefinition->GetBulletDamage();
+		CriticalHitChance = BaseWeaponDefinition->GetCriticalHitChance();
+		CriticalHitMultiplier = BaseWeaponDefinition->GetCriticalHitMultiplier();
+		DamageReduceDistance = BaseWeaponDefinition->GetDamageReduceDistance();
+		ReloadTime = BaseWeaponDefinition->GetReloadTime();
+		BulletsPerCatridge = BaseWeaponDefinition->GetBulletsPerCatridge();
+		MaxRange = BaseWeaponDefinition->GetMaxRange();
 	}
-
-	GunType = BaseWeaponDefinition->GetWeaponType();
-	MagazineCapacity = BaseWeaponDefinition->GetMagazineCapacity();
-	FireRate = BaseWeaponDefinition->GetFireRate();
-	MovementSpeed = BaseWeaponDefinition->GetMovementSpeed();
-	BulletDamage = BaseWeaponDefinition->GetBulletDamage();
-	CriticalHitChance = BaseWeaponDefinition->GetCriticalHitChance();
-	CriticalHitMultiplier = BaseWeaponDefinition->GetCriticalHitMultiplier();
-	DamageReduceDistance = BaseWeaponDefinition->GetDamageReduceDistance();
-	ReloadTime = BaseWeaponDefinition->GetReloadTime();
-	BulletsPerCatridge = BaseWeaponDefinition->GetBulletsPerCatridge();
-	MaxRange = BaseWeaponDefinition->GetMaxRange();
 }
 
 void ALSWeaponInstance::SetWeaponSkeletalMesh()
@@ -81,6 +91,43 @@ void ALSWeaponInstance::SetWeaponSkeletalMesh()
 				WeaponSkeletalMesh->SetCollisionProfileName(TEXT("NoCollision"));
 			}
 			break;
+		}
+	}
+}
+
+void ALSWeaponInstance::Shoot(const FVector& TargetPos)
+{
+	if (WeaponSkeletalMesh == nullptr)
+	{
+		return;
+	}
+
+	if (ShootingAnim)
+	{
+		LSLOG(Warning, TEXT("Play SHoot Amin"));
+		WeaponSkeletalMesh->PlayAnimation(ShootingAnim, false);
+	}
+
+	if (LSBulletClass)
+	{
+		EjectSocket = WeaponSkeletalMesh->GetSocketByName(FName("AmmoEject"));
+	}
+
+	const FTransform EjectSocketTransform = EjectSocket->GetSocketTransform(WeaponSkeletalMesh);
+	const FVector EjectSocketPos = EjectSocketTransform.GetLocation();
+
+	// 총알 생성 후 발사
+	if (GetWorld())
+	{
+		Bullet = GetWorld()->SpawnActor<ALSBullet>(
+			LSBulletClass,
+			EjectSocketPos,
+			//EjectSocketTransform.GetRotation().Rotator()
+			(TargetPos - EjectSocketPos).Rotation()
+		);
+		if (Bullet)
+		{
+			Bullet->Fire();
 		}
 	}
 }

@@ -32,7 +32,7 @@ void ULSGameplayWidget::NativeConstruct()
 void ULSGameplayWidget::OnResumeClicked()
 {
     ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
-    if (ALSPlayerController)
+    if (LSPlayerController)
     {
         RemoveFromParent();
 

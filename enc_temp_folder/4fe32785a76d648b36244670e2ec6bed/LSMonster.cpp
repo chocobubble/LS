@@ -50,7 +50,7 @@ ALSMonster::ALSMonster()
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 	
-	if (HPBarWidget)
+	if (HPBarWidget != nullptr)
 	{
 		HPBarWidget->SetupAttachment(GetMesh());	
 		HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
@@ -60,7 +60,7 @@ ALSMonster::ALSMonster()
 		if (UI_HUD.Succeeded())
 		{
 			HPBarWidget->SetWidgetClass(UI_HUD.Class);
-			HPBarWidget->SetDrawSize(FVector2D(100.0f, 50.0f));
+			HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 		}
 	}
 
@@ -115,7 +115,6 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 			if (CharacterWidget && DefenseManager)
 			{				
 				CharacterWidget->BindDefenseComponent(DefenseManager);
-				CharacterWidget->SetMonsterLevel(MonsterLevel);
 			}
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();

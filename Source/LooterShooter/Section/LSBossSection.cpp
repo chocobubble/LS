@@ -4,6 +4,7 @@
 #include "LooterShooter/Character/LSMonster.h"
 #include "LooterShooter/Obstacles/LSDoor.h"
 #include "LooterShooter/Character/LSPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void ALSBossSection::BeginPlay()
 {
@@ -55,9 +56,12 @@ void ALSBossSection::SectionClear()
     Super::SectionClear();
 
     GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
+/*
     if (LSPlayerController)
     {
         DisableInput(LSPlayerController);
         LSPlayerController->ShowResultUI();
     }
+*/
+    UGameplayStatics::OpenLevel(GetWorld(), TEXT("LS_Level_1"));
 }

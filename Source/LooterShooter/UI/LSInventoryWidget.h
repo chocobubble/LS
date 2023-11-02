@@ -66,4 +66,10 @@ private:
 
 	UPROPERTY()
 	ULSInventoryComponent* Inventory;
+
+public:
+	UButton* GetItemClickedButton()
+	{
+		return ItemClickedButton;
+	}
 };
