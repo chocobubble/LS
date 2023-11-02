@@ -9,6 +9,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnShieldChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnMPChangedDelegate);
 
 /**
  * 캐릭터의 HP, Shield, MP, Defense 관리 컴포넌트
@@ -65,25 +66,39 @@ public:
 
 	void SetMaxShield(float NewMaxShield);
 
+	void SetMaxMP(float NewMaxMP);
+
 	void SetDamage(float NewDamage);
 
 	void SetHP(float NewHP);
 
 	void SetShield(float NewShield);
 
+	void SetMP(float NewMP);
+
 	float GetHPRatio() const
 	{
-		return (CurrentHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
+		return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP);
 	}
 
 	float GetShieldRatio() const
 	{
-		return (CurrentShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+		return (MaxShield < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentShield / MaxShield);
+	}
+
+	float GetMPRatio() const
+	{
+		return (MaxMP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentMP / MaxMP);
 	}
 
 	float GetCurrentHP() const
 	{
 		return CurrentHP;
+	}
+
+	float GetCurrentMP() const
+	{
+		return CurrentMP;
 	}
 	
 	FOnHPIsZeroDelegate OnHPIsZero;
@@ -91,4 +106,6 @@ public:
 	FOnHPChangedDelegate OnHPChanged;
 
 	FOnShieldChangedDelegate OnShieldChanged;
+
+	FOnMPChangedDelegate OnMPChanged;
 };

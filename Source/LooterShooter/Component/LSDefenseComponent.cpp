@@ -44,6 +44,12 @@ void ULSDefenseComponent::SetMaxShield(float NewMaxShield)
 	CurrentShield = NewMaxShield;
 }
 
+void ULSDefenseComponent::SetMaxMP(float NewMaxMP)
+{
+	MaxMP = NewMaxMP;
+	CurrentMP = NewMaxMP;
+}
+
 void ULSDefenseComponent::SetHP(float NewHP)
 {
 	CurrentHP = NewHP;
@@ -67,6 +73,12 @@ void ULSDefenseComponent::SetShield(float NewShield)
 	{
 		CurrentShield = 0.0f;
 	}
+}
+
+void ULSDefenseComponent::SetMP(float NewMP)
+{
+	CurrentMP = NewMP;
+	OnMPChanged.Broadcast();
 }
 
 void ULSDefenseComponent::SetDamage(float NewDamage)

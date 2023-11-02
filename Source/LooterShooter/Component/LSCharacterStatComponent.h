@@ -46,7 +46,7 @@ protected:
 	virtual void InitializeComponent() override;	
 
 private:
-	struct FLSPlayerData* CurrentStatData = nullptr;
+	struct FLSPlayerData* CurrentStatData;
 
 	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 Level;

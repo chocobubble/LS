@@ -5,6 +5,7 @@
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Character.h"
 #include "LooterShooter/Types/AmmoType.h"
+#include "LooterShooter/Data/PlayerBaseData.h"
 
 //////// recoil
 #include "Curves/CurveVector.h"
@@ -34,9 +35,11 @@ class UInputTriggerPulse;
 class ALSInteractableObject;
 class ULSResourceManageComponent;
 class UCableComponent;
+class ULSSkillComponent;
 struct FInputActionValue;
 struct FInputActionInstance;
 struct FStreamableHandle;
+struct FLSPlayerData;
 
 /** 공격 종료 후 호출 델리게이트 */
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
@@ -82,6 +85,10 @@ public:
 	
 	void CheckHit();
 
+	void PlayThrowGrenadeMontage();
+
+	void InitPlayerData();
+
 	TSharedPtr<FStreamableHandle> AssetStreamingHandle;
 
 	FTimerHandle FireTimer = { };
@@ -107,8 +114,6 @@ protected:
 
 private:
 ///// Input 관련 메서드들 ////////////////////////////
-	void JumpAct(const FInputActionValue& Value);
-
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
@@ -138,6 +143,8 @@ private:
 	void OnInteractButtonDown(const FInputActionInstance& ActionInstance);
 
 	void OnInteractButtonPressed(const FInputActionValue& Value);
+
+	void UseFirstSkill();
 
 	/** enhanced input 시스템 테스트 용 */
 	void TestAct(const FInputActionValue& Value);
@@ -188,6 +195,9 @@ private:
 	UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* FirstSkillAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* TestAction;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
@@ -218,6 +228,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	ULSInventoryComponent* InventoryManager;
 
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	ULSSkillComponent* SkillManager;
+
 	/** 캐릭터의 레벨, 경험치 등 저장되어야 하는 스탯 관리 컴포넌트 */
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	ULSCharacterStatComponent* CharacterStat;
@@ -234,6 +247,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Animation")
 	ULSPlayerAnimInstance* LSPlayerAnim;
+
+	UPROPERTY(VisibleAnywhere, Category = "Animation")
+	UAnimMontage* ThrowGrenadeMontage;
 	
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	ECharacterState CurrentState;
@@ -317,6 +333,8 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
 	FVector ToAimDirection;
+
+	FLSPlayerData* PlayerData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
 	float CurrentRecoilTest = 0.0f;

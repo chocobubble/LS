@@ -48,6 +48,8 @@ public:
 
 	void UpdateCurrentShield();
 
+	void UpdateCurrentMP();
+
 	void UpdatePlayerState();
 
 	void UpdateRoundsRemaining(int32 CurrentWeaponIndex);
@@ -92,6 +94,9 @@ private:
 
 	UPROPERTY()
 	UProgressBar* ShieldBar;
+
+	UPROPERTY()
+	UProgressBar* MPBar;
 
 	UPROPERTY()
 	UProgressBar* InteractionProgressBar;

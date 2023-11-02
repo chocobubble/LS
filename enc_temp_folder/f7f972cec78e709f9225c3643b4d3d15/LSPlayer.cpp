@@ -224,7 +224,6 @@ void ALSPlayer::BeginPlay()
 	// Default 무기 장착
 	EquipFirstWeapon();
 	OnReloadComplete();
-
 }
 
 void ALSPlayer::SetCharacterState(ECharacterState NewState)
@@ -554,6 +553,19 @@ void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 		Params
 	);
 
+#if ENABLE_DRAW_DEBUG
+	DrawDebugLine(
+		GetWorld(),
+		SpringArm->GetComponentLocation(),
+		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * GrapplingHookRange)), //AttackRange,
+		bResult ? FColor::Green : FColor::White,
+		false,
+		1.0f,
+		0,
+		1.f
+	);
+#endif
+
 	if (bResult)
 	{
 		if (HitResult.HasValidHitObjectHandle())
@@ -881,11 +893,6 @@ void ALSPlayer::PostInitializeComponents()
 		}
 		// LSPlayerAnim->OnAttackHitCheck.AddUObject(this, &ALSPlayer::AttackCheck);
 		LSPlayerAnim->OnMontageEnded.AddDynamic(this, &ALSPlayer::OnAttackMontageEnded);
-	}
-
-	if (SkillManager && DefenseManager)
-	{
-		SkillManager->Init(DefenseManager);
 	}
 }
 

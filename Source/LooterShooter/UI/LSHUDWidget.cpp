@@ -34,6 +34,7 @@ void ULSHUDWidget::BindDefenseComponent(ULSDefenseComponent* DefenseManager)
         CurrentDefenseManager = DefenseManager;
         CurrentDefenseManager->OnHPChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentHP);
         CurrentDefenseManager->OnShieldChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentShield);
+        CurrentDefenseManager->OnMPChanged.AddUObject(this, &ULSHUDWidget::UpdateCurrentMP);
     }
 }
 
@@ -81,6 +82,7 @@ void ULSHUDWidget::NativeConstruct()
 
     HPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbHP")));
     ShieldBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbShield")));
+    MPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbMP")));
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     PlayerLevelText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
@@ -144,6 +146,14 @@ void ULSHUDWidget::UpdateCurrentShield()
     if (CurrentDefenseManager.IsValid())
     {
         ShieldBar->SetPercent(CurrentDefenseManager->GetShieldRatio());
+    }
+}
+
+void ULSHUDWidget::UpdateCurrentMP()
+{
+    if (CurrentDefenseManager.IsValid())
+    {
+        MPBar->SetPercent(CurrentDefenseManager->GetMPRatio());
     }
 }
 
