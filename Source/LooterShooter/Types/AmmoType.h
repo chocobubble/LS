@@ -2,7 +2,8 @@
 
 enum class EAmmoType
 {
-	RIFLE,
-	PISTOL,
-	SHOTGUN
+	EAT_Default,
+	EAT_Rifle,
+	EAT_Pistol,
+	EAT_Shotgun
 };

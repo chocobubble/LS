@@ -35,9 +35,9 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UBehaviorTree* BTAsset;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UBlackboardData* BBAsset;
 };

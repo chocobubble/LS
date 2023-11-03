@@ -113,7 +113,7 @@ private:
 
 ///////////////////////////////////////////
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	EWeaponType GunType = EWeaponType::RIFLE;
+	EWeaponType GunType = EWeaponType::EWT_Rifle;
 
 	/** 현재 탄착군의 크기 */
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")

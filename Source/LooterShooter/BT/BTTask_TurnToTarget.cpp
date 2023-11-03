@@ -16,13 +16,13 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
     EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
     APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-    if (nullptr == ControllingPawn)
+    if (ControllingPawn == nullptr)
     {
         return EBTNodeResult::Failed;
     }
 
     auto Target = Cast<ALSPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ALSAIController::TargetKey));
-    if (nullptr == Target)
+    if (Target == nullptr)
     {
         return EBTNodeResult::Failed;
     }

@@ -11,9 +11,10 @@ class ALSPlayerController;
 
 enum class ESectionState : uint8
 {
-	READY = 0,
-	BATTLE,
-	COMPLETE
+	ESS_Default,
+	ESS_Ready,
+	ESS_Battle,
+	ESS_Complete
 };
 
 /**
@@ -59,15 +60,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bNoBattle = false;
 
-	//UPROPERTY(VisibleAnywhere, Category = "State")	
-	ESectionState CurrentState = ESectionState::READY;
-
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")
 	float EnemySpawnTime = 5.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")
 	float ItemBoxSpawnTime = 5.0f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	int32 MonsterLevel = 1;
+
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 	ALSPlayerController* LSPlayerController;
+
+	ESectionState CurrentState = ESectionState::ESS_Default;
 };

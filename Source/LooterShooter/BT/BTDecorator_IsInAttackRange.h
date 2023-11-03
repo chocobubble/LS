@@ -6,8 +6,8 @@
 #include "BehaviorTree/BTDecorator.h"
 #include "BTDecorator_IsInAttackRange.generated.h"
 
-
 class UBehaviorTreeComponent;
+
 /**
  * AI 입장에서 플레이어가 공격 범위 안에 있는 지 체크하는 BTDecorator
  */

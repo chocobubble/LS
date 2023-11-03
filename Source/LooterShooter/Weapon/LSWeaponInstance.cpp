@@ -65,7 +65,7 @@ void ALSWeaponInstance::SetWeaponSkeletalMesh()
 	}
 	switch(GunType) 
 	{
-		case EWeaponType::RIFLE:
+		case EWeaponType::EWT_Rifle:
 		{
 			if (LSGameInstance->GetRifleMesh()) 
 			{
@@ -74,7 +74,7 @@ void ALSWeaponInstance::SetWeaponSkeletalMesh()
 			}
 			break;
 		}
-		case EWeaponType::SHOTGUN:
+		case EWeaponType::EWT_Shotgun:
 		{
 			if (LSGameInstance->GetShotgunMesh()) 
 			{	
@@ -83,7 +83,7 @@ void ALSWeaponInstance::SetWeaponSkeletalMesh()
 			}
 			break;
 		}
-		case EWeaponType::PISTOL:
+		case EWeaponType::EWT_Pistol:
 		{
 			if (LSGameInstance->GetPistolMesh()) 
 			{
@@ -178,18 +178,18 @@ EAmmoType ALSWeaponInstance::GetAmmoType()
 {
 	switch(GunType)
 	{
-		case EWeaponType::RIFLE:
+		case EWeaponType::EWT_Rifle:
 		{
-			return EAmmoType::RIFLE;
+			return EAmmoType::EAT_Rifle;
 		}
-		case EWeaponType::SHOTGUN:
+		case EWeaponType::EWT_Shotgun:
 		{
-			return EAmmoType::SHOTGUN;
+			return EAmmoType::EAT_Shotgun;
 		}
-		case EWeaponType::PISTOL:
+		case EWeaponType::EWT_Pistol:
 		{
-			return EAmmoType::PISTOL; 
+			return EAmmoType::EAT_Pistol; 
 		}
 	}
-	return EAmmoType::RIFLE;
+	return EAmmoType::EAT_Rifle;
 }

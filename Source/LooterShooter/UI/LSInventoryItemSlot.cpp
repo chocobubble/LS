@@ -44,7 +44,7 @@ void ULSInventoryItemSlot::Init(ULSWeaponDefinition* WeaponDefinition)
 
     if (WeaponDefinition && GunImage)
     {
-        if (WeaponDefinition->GetWeaponType() == EWeaponType::RIFLE) 
+        if (WeaponDefinition->GetWeaponType() == EWeaponType::EWT_Rifle) 
         {
             GunImage->SetBrushFromMaterial(LSGameInstance->GetMIRifle());
         }

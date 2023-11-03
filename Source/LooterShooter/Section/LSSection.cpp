@@ -43,16 +43,16 @@ void ALSSection::SetState(ESectionState NewState)
 
 	switch (NewState)
 	{
-		case ESectionState::READY:
+		case ESectionState::ESS_Ready:
 			Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
 			break;
 		
-		case ESectionState::BATTLE:
+		case ESectionState::ESS_Battle:
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 			BattleStart();
 			break;
 		
-		case ESectionState::COMPLETE:
+		case ESectionState::ESS_Complete:
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 			SectionClear();
 			break;
@@ -65,26 +65,25 @@ void ALSSection::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	SetState(bNoBattle ? ESectionState::COMPLETE : ESectionState::READY);
+	SetState(bNoBattle ? ESectionState::ESS_Complete : ESectionState::ESS_Ready);
 }
 
 void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (CurrentState == ESectionState::READY)
+	if (CurrentState == ESectionState::ESS_Ready)
 	{
-		SetState(ESectionState::BATTLE);
+		SetState(ESectionState::ESS_Battle);
 	}
 	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
 	if (LSPlayer)
 	{
 		LSPlayerController = Cast<ALSPlayerController>(LSPlayer->GetController());
+		MonsterLevel = LSPlayer->GetPlayerLevel();
 	}
 }
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
-//	ALSGameMode* LSGameMode = Cast<ALSGameMode>(GetWorld()->GetAuthGameMode());
-
 }
 
 void ALSSection::BattleStart() {}

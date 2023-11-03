@@ -2,11 +2,9 @@
 
 #pragma once
 
-//#include "LSGameMode.h"
 #include "Animation/AnimInstance.h"
 #include "LSAnimInstance.generated.h"
 
-// DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 
 /**
  * 애니메이션 블루프린트를 다루는 클래스
@@ -20,28 +18,26 @@ class LOOTERSHOOTER_API ULSAnimInstance : public UAnimInstance
 public:
 	ULSAnimInstance();
 
-	// FOnAttackHitCheckDelegate OnAttackHitCheck;
-
 protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", Meta = (AllowPrivateAccess = "true"))
 	float CurrentPawnSpeed = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	bool IsInAir = false;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	bool bIsDead = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	bool bIsAiming = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	bool bIsReloading = false;
 	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AttackMontage;
 
 public:

@@ -32,8 +32,6 @@ ALSBullet::ALSBullet()
 	{
 		BulletTracerComponent->SetTemplate(BulletTracer);
 	}
-
-   
 }
 
 void ALSBullet::BeginPlay()
@@ -51,20 +49,8 @@ void ALSBullet::BeginPlay()
 
 void ALSBullet::Fire()
 {
-	/*
 	if (ProjectileMovement)
 	{
-		ProjectileMovement->InitialSpeed = 100000.0f;
-		ProjectileMovement->AddForce(Dir * 1000.0f);
-		ProjectileMovement->MaxSpeed = 200000.0f;
-		ProjectileMovement->ProjectileGravityScale = 0.0f;
-	} 
-	FireDir = Dir;
-	*/
-
-	if (ProjectileMovement)
-	{
-		//InitialVelocity = GetActorForwardVector() * BulletInitialSpeed;
 	}
 }
 

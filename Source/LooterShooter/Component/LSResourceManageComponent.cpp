@@ -26,17 +26,17 @@ void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount
 {
 	switch (AmmoType)
 	{
-		case EAmmoType::RIFLE:
+		case EAmmoType::EAT_Rifle:
 		{
 			CurrentRifleAmmo = Amount;
 			break;
 		}
-		case EAmmoType::PISTOL:
+		case EAmmoType::EAT_Pistol:
 		{
 			CurrentPistolAmmo = Amount;
 			break;
 		}
-		case EAmmoType::SHOTGUN:
+		case EAmmoType::EAT_Shotgun:
 		{
 			CurrentShotgunAmmo = Amount;
 			break;
@@ -58,15 +58,15 @@ int32 ULSResourceManageComponent::GetCurrentAmmo(EAmmoType AmmoType) const
 {
 	switch (AmmoType)
 	{
-		case EAmmoType::RIFLE:
+		case EAmmoType::EAT_Rifle:
 		{
 			return CurrentRifleAmmo;
 		}
-		case EAmmoType::PISTOL:
+		case EAmmoType::EAT_Pistol:
 		{
 			return CurrentPistolAmmo;
 		}
-		case EAmmoType::SHOTGUN:
+		case EAmmoType::EAT_Shotgun:
 		{
 			return CurrentShotgunAmmo;
 		}
@@ -78,13 +78,13 @@ int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 {
 	switch (AmmoType)
 	{
-		case EAmmoType::RIFLE:
+		case EAmmoType::EAT_Rifle:
 			return MaxRifleAmmo;
 		
-		case EAmmoType::PISTOL:
+		case EAmmoType::EAT_Pistol:
 			return MaxPistolAmmo;
 		
-		case EAmmoType::SHOTGUN:
+		case EAmmoType::EAT_Shotgun:
 			return MaxShotgunAmmo;
 		
 	}

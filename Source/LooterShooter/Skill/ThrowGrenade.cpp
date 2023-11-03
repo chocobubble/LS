@@ -8,7 +8,7 @@ UThrowGrenade::UThrowGrenade()
 {
 	SkillCoolTime = 5.0f;
 	MPCost = 10.0f;
-	CurrentSkillState = ESkillState::READY;
+	CurrentSkillState = ESkillState::ESS_Ready;
 }
 
 void UThrowGrenade::Tick(float DeltaTime)
@@ -19,18 +19,16 @@ void UThrowGrenade::Tick(float DeltaTime)
 void UThrowGrenade::Init(APawn* Player)
 {
 	Super::Init(Player);
-	if (Player == nullptr)
+
+	if (Player)
 	{
-		LSLOG(Warning, TEXT("Wrong"));
+		LSPlayer = Cast<ALSPlayer>(Player);
 	}
-	LSPlayer = Cast<ALSPlayer>(Player);
 }
 
 bool UThrowGrenade::CastSkill()
 {
 	Super::CastSkill();
-
-	LSLOG(Warning, TEXT("Cast Skill"));
 
 	if (LSPlayer)
 	{

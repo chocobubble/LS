@@ -10,9 +10,10 @@ void ALSBossSection::BeginPlay()
 {
     Super::BeginPlay();
 
-    DoorSpawnPoint = FVector(1320.f, 5230.f, 190.f);
-    MonsterSpawnPoint = FVector(1390.f, 7260.f, 0.f);
+    DoorSpawnPoint = FVector(1320.0f, 5230.0f, 190.0f);
+    MonsterSpawnPoint = FVector(1390.0f, 7260.0f, 0.0f);
     EnemySpawnTime = 1.0f;
+    MonsterLevel = 10; // 보스 몬스터 레벨 
 }
 
 void ALSBossSection::BattleStart()
@@ -26,7 +27,7 @@ void ALSBossSection::BattleStart()
         false
     );
 
-    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.f, 180.f, 0.f));
+    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.0f, 180.0f, 0.0f));
 }
 
 void ALSBossSection::OnMonsterSpawn()
@@ -34,7 +35,7 @@ void ALSBossSection::OnMonsterSpawn()
 	ALSMonster* Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
     if (Monster)
     {
-        Monster->SetMonsterLevel(10);
+        Monster->SetMonsterLevel(MonsterLevel);
         Monster->OnDestroyed.AddDynamic(this, &ALSBossSection::OnMonsterDestroyed);
     }
 }
@@ -45,7 +46,7 @@ void ALSBossSection::OnMonsterDestroyed(AActor* DestroyedActor)
     GetWorld()->GetTimerManager().SetTimer(
         ClearTimerHandle,
         FTimerDelegate::CreateLambda([this]() -> void {
-            SetState(ESectionState::COMPLETE);}),
+            SetState(ESectionState::ESS_Complete); }),
         EnemySpawnTime,
         false
     );
@@ -56,12 +57,5 @@ void ALSBossSection::SectionClear()
     Super::SectionClear();
 
     GetWorld()->GetTimerManager().ClearTimer(SpawnNPCTimerHandle);
-/*
-    if (LSPlayerController)
-    {
-        DisableInput(LSPlayerController);
-        LSPlayerController->ShowResultUI();
-    }
-*/
     UGameplayStatics::OpenLevel(GetWorld(), TEXT("LS_Level_1"));
 }

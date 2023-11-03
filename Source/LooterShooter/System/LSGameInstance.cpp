@@ -135,21 +135,21 @@ FLSWeaponBaseData* ULSGameInstance::GetWeaponData(EWeaponType WeaponType, int32 
 {
     switch(WeaponType)
     {
-        case EWeaponType::RIFLE:
+        case EWeaponType::EWT_Rifle:
             if (LSRifleDataTable)
             {
                 return LSRifleDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
             }
             break;
             
-        case EWeaponType::SHOTGUN:
+        case EWeaponType::EWT_Shotgun:
             if (LSShotgunDataTable)
             {
                 return LSShotgunDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
             }
             break;
 
-        case EWeaponType::PISTOL:
+        case EWeaponType::EWT_Pistol:
             if (LSPistolDataTable)
             {
                 return LSPistolDataTable->FindRow<FLSWeaponBaseData>(*FString::FromInt(ItemLevel), TEXT(""));
@@ -169,27 +169,27 @@ void ULSGameInstance::SpawnAutoLootItem(FVector SpawnLocation, ELootItemType Loo
     AutoLootItem->SetAutoLootItem(LootedItemType, Amount);
     switch(LootedItemType)
 	{
-		case ELootItemType::GOLD:
+		case ELootItemType::ELIT_Gold:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(GoldMesh);
 			break;
 
-        case ELootItemType::HP:
+        case ELootItemType::ELIT_HP:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(HPMesh);
 			break;
 
-        case ELootItemType::MP:
+        case ELootItemType::ELIT_MP:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(MPMesh);
 			break;
 
-        case ELootItemType::RIFLEAMMO:
+        case ELootItemType::ELIT_RifleAmmo:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(RifleAmmoMesh);
 			break;
 
-        case ELootItemType::SHOTGUNAMMO:
+        case ELootItemType::ELIT_ShotgunAmmo:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(ShotgunAmmoMesh);
 			break;
 
-        case ELootItemType::PISTOLAMMO:
+        case ELootItemType::ELIT_PistolAmmo:
 			AutoLootItem->GetItemMesh()->SetStaticMesh(PistolAmmoMesh);
 			break;
 

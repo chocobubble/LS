@@ -10,9 +10,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillCoolDelegate, float);
 
 enum class ESkillState : uint8
 {
-	DEFAULT,
-	COOL,
-	READY
+	ESS_Default,
+	ESS_Cool,
+	ESS_Ready
 };
 
 class ALSPlayer;
@@ -46,7 +46,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Skill")
 	float MPCost;
 
-	ESkillState CurrentSkillState = ESkillState::READY;
+	ESkillState CurrentSkillState = ESkillState::ESS_Ready;
 
 public:
 	bool IsReady();

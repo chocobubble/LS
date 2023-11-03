@@ -6,7 +6,7 @@
 ULSSaveGame::ULSSaveGame()
 {
     PlayerName = TEXT("Guest");
-	AmmoMap.Add(EAmmoType::RIFLE, 100);
+	AmmoMap.Add(EAmmoType::EAT_Rifle, 100);
 	if (OwnedWeapons.Num() == 0)
 	{
 		OwnedWeapons.Emplace(TPair<int32, int32>(2, 1));

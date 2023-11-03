@@ -27,7 +27,7 @@ ALSLootItem::ALSLootItem()
 	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EFFECT"));
 	Effect->SetupAttachment(RootComponent);
 	
-	LootItemType = ELootItemType::DEFAULT;
+	LootItemType = ELootItemType::ELIT_Default;
 }
 
 void ALSLootItem::BeginPlay()

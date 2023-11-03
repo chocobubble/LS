@@ -152,52 +152,52 @@ private:
 
 private:
 	/// @brief Enhanced Input ///
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputMappingContext* InputMapping;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* MoveAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* JumpAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* LookAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* ShootAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* MeleeAttackAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* AutoRunAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* AimAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* GrapplingHookAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* ReloadAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* EquipFirstWeaponAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* EquipSecondWeaponAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* EquipThirdWeaponAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* InteractAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* FirstSkillAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enhanced Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
 	UInputAction* TestAction;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced Input")
@@ -232,7 +232,7 @@ private:
 	ULSSkillComponent* SkillManager;
 
 	/** 캐릭터의 레벨, 경험치 등 저장되어야 하는 스탯 관리 컴포넌트 */
-	UPROPERTY(VisibleAnywhere, Category = Stat)
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	ULSCharacterStatComponent* CharacterStat;
 /////////////////////
 
@@ -258,129 +258,128 @@ private:
 	ALSInteractableObject* InteractingObject;
 
 	/** For Test */
-	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	TObjectPtr<ULSWeaponDefinition> WeaponDefinition;
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	bool bIsMeleeAttacking = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bIsReloading = false;
 
 	/** 그래플링 훅 도달 지점으로 이동 중 여부 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	bool bIsGrappling = false;
 
 	/** 그래플링 훅 발동 캐스팅 중인지 여부 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	bool bIsGrapplingCasting = false;
 
 	/** Interact 가능한 물체와 overlap 하고 있는 지 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	bool bIsNearInteractableObject = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float DeadTimer = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float TestTimer = 0.1f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	float ArmLengthTo = 0.0f;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleInstanceOnly, Category = "State")
 	float ArmLengthOnAiming = 200.0f;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleInstanceOnly, Category = "State")
 	float ArmLengthOnIdle = 450.0f;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleInstanceOnly, Category = "State")
 	float ArmLengthChangingSpeed = 3.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Interact")
 	float DefaultAttackRange = 1000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interact", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Interact")
 	float InteractRange = 800.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float DefaultJumpHeight = 450.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float JumpHeight = 450.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float DefaultWalkSpeed = 510.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float WalkSpeedOnAiming = 240.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float DefaultRunningSpeed = 800.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float MaxCheckLength = 10000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	FVector HitPos;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float InteractionElapsedTime = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "State")
 	float InteractionCompleteTime = 1.0f;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleInstanceOnly, Category = "State")
 	FVector ToAimDirection;
 
 	FLSPlayerData* PlayerData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float CurrentRecoilTest = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float RecoilTest = -2.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float InterpolateTime = 3.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float CurrentRemainElapsedTime = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float RemainElapsedTime = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float Acceleration = 10.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Test, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	float InterpolateSpeed = 5.0f;
 	
 /////////// 
 	/** 그래플링 훅 관련 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingHookRange = 5000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingStopRange = 500.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingMovementSpeed = 3.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingJumpHeight = 500.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingHeightCorrection = 150.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float GrapplingCastingTime = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float CurrentGrapplingCastingTime = 0.0f;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Grapple", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleInstanceOnly, Category = "Grapple")
 	FVector GrappleToLocation;
 
 	FTimerHandle GrapplingTimerHandle = { };
@@ -421,10 +420,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Recoil")
 	FRotator Del;
 
-	UPROPERTY(EditAnywhere, Category = "Recoil", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Recoil")
 	float RecoveryTime = 1.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Recoil", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Recoil")
 	float RecoverySpeed = 10.0f;
 
 	// 사격 시 호출되는 반동 시작 함수
@@ -453,7 +452,7 @@ public:
 	// TODO: 위 아래 합치기
 	void SetCharacterStateDead()
 	{
-		SetCharacterState(ECharacterState::DEAD);
+		SetCharacterState(ECharacterState::ECS_Dead);
 	}
 	
 	ECharacterState GetCharacterState() const
@@ -463,7 +462,6 @@ public:
 
 	bool CanSetWeapon()
 	{
-		// TODO: (nullptr == CurrentWeapon);
 		return true; 
 	}
 
@@ -517,4 +515,5 @@ public:
 		return InteractionElapsedTime / InteractionCompleteTime;
 	}
 
+	int32 GetPlayerLevel() const;
 };

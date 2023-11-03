@@ -43,10 +43,13 @@ void ULSCharacterStatComponent::SetNewLevel(int32 NewLevel)
 
 void ULSCharacterStatComponent::SetDamage(float NewDamage)
 {
-	LSCHECK(nullptr != CurrentStatData);
+	if (CurrentStatData == nullptr)
+	{
+		return;
+	}
 	
 	CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP);
-	if ( CurrentHP <= 0.0f )
+	if (CurrentHP <= 0.0f)
 	{
 		OnHPIsZero.Broadcast();
 	}
@@ -75,7 +78,13 @@ void ULSCharacterStatComponent::SetHP(float NewHP)
 
 float ULSCharacterStatComponent::GetHPRatio()
 {
-	LSCHECK(nullptr != CurrentStatData, 0.0f);
-
-	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
+	if (CurrentStatData)
+	{
+		return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
+	}
+	else
+	{
+		return 0.0f;
+	}
+	
 }

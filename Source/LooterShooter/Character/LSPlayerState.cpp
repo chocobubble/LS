@@ -12,7 +12,7 @@
 ALSPlayerState::ALSPlayerState()
 {
     SaveSlotName = TEXT("Player");
-	CurrentAmmoMap.Add(EAmmoType::RIFLE, 0);
+	CurrentAmmoMap.Add(EAmmoType::EAT_Rifle, 0);
 }
 
 void ALSPlayerState::InitPlayerData()
@@ -27,7 +27,7 @@ void ALSPlayerState::InitPlayerData()
     CurrentExp = LSSaveGame->GetSavedCharacterExp();
 	CurrentGold = LSSaveGame->GetSavedGold();
 	CurrentOwnedWeapons = LSSaveGame->GetSavedOwnedWeapons();
-	CurrentAmmoMap[EAmmoType::RIFLE] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::RIFLE];
+	CurrentAmmoMap[EAmmoType::EAT_Rifle] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::EAT_Rifle];
 
     SavePlayerData();
 }
@@ -66,7 +66,7 @@ void ALSPlayerState::UpdateResourceData()
 	CurrentGold = ResourceManger->GetGoldAmount();
 	// CurrentAmmoMap 업데이트
 	// TODO : 다른 타입 총알도 적용
-	EAmmoType CurrentAmmoType = EAmmoType::RIFLE;
+	EAmmoType CurrentAmmoType = EAmmoType::EAT_Rifle;
 	SetCurrentAmmo(CurrentAmmoType, ResourceManger->GetCurrentAmmo(CurrentAmmoType));
 
 	SavePlayerData();

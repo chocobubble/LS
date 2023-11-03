@@ -5,7 +5,7 @@
 
 void ULSSkill::Tick(float DeltaTime)
 {
-	if (CurrentSkillState == ESkillState::COOL)
+	if (CurrentSkillState == ESkillState::ESS_Cool)
 	{
 		ElapsedTime += DeltaTime;
 		if (ElapsedTime >= SkillCoolTime)
@@ -25,28 +25,28 @@ void ULSSkill::Init(APawn* Player)
 
 bool ULSSkill::IsReady()
 {
-	return CurrentSkillState == ESkillState::READY;
+	return CurrentSkillState == ESkillState::ESS_Ready;
 }
 
 bool ULSSkill::IsCool()
 {
-	return CurrentSkillState == ESkillState::COOL;
+	return CurrentSkillState == ESkillState::ESS_Cool;
 }
 
 void ULSSkill::SetSkillReady()
 {
-	CurrentSkillState = ESkillState::READY;
+	CurrentSkillState = ESkillState::ESS_Ready;
 	ElapsedTime = 0.0f;
 }
 
 bool ULSSkill::CastSkill()
 {
-	if (CurrentSkillState != ESkillState::READY)
+	if (CurrentSkillState != ESkillState::ESS_Ready)
 	{
 		return false;
 	}
 
-	CurrentSkillState = ESkillState::COOL;
+	CurrentSkillState = ESkillState::ESS_Cool;
 
 	return true;
 }

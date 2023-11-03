@@ -13,7 +13,7 @@ void ALSStartBattleSection::BattleStart()
 {
     Super::BattleStart();
 
-    SetState(ESectionState::COMPLETE);
+    SetState(ESectionState::ESS_Complete);
 }
 
 void ALSStartBattleSection::SectionClear()

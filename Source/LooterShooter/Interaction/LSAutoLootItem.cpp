@@ -28,44 +28,43 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 	
 	switch(LootItemType)
 	{
-		case ELootItemType::GOLD:
+		case ELootItemType::ELIT_Gold:
 		{
 			LSPlayer->GetResourceManager()->SetGoldAmount(LootingAmount);
 			break;
 		}
-		case ELootItemType::HP:
+		case ELootItemType::ELIT_HP:
 		{
 			LSPlayer->GetDefenseManager()->SetHP(LSPlayer->GetDefenseManager()->GetCurrentHP() + LootingAmount);
 			break;
 		}	
-		case ELootItemType::MP:
+		case ELootItemType::ELIT_MP:
 		{
 			break;
 		}
-		case ELootItemType::RIFLEAMMO:
+		case ELootItemType::ELIT_RifleAmmo:
 		{
 			ULSResourceManageComponent* ResourceManager = LSPlayer->GetResourceManager();
 			if (ResourceManager)
 			{
-				int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(EAmmoType::RIFLE);
-				int32 MaxAmmo = ResourceManager->GetMaxAmmo(EAmmoType::RIFLE);
+				int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(EAmmoType::EAT_Rifle);
+				int32 MaxAmmo = ResourceManager->GetMaxAmmo(EAmmoType::EAT_Rifle);
 				int32 FinalAmmo = (CurrentAmmo + LootingAmount) > MaxAmmo ? MaxAmmo : (CurrentAmmo + LootingAmount);
-				ResourceManager->SetCurrentAmmo(EAmmoType::RIFLE, FinalAmmo);
+				ResourceManager->SetCurrentAmmo(EAmmoType::EAT_Rifle, FinalAmmo);
 			}
 			break;
 		}
-		case ELootItemType::SHOTGUNAMMO:
+		case ELootItemType::ELIT_ShotgunAmmo:
 		{
 			// TODO
-			LSLOG(Warning, TEXT("Shotgun Ammo gain"));
 			break;
 		}
-		case ELootItemType::PISTOLAMMO:
+		case ELootItemType::ELIT_PistolAmmo:
 		{
 			// TODO
-			LSLOG(Warning, TEXT("Pistol Ammo gain"));
 			break;
 		}
 	}	
+
     Destroy();
 }

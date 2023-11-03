@@ -27,6 +27,5 @@ void ULSPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void ULSPlayerAnimInstance::PlayAttackMontage()
 {
-    LSLOG(Warning, TEXT("Play Attack Montage"));
     //Montage_Play(AttackMontage, 1.0f);
 }

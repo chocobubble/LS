@@ -42,7 +42,10 @@ public:
 	
 	void Init(int32 Level);
 
-	/** 몬스터 사망 시 아이템 드롭 */
+	/** 
+	 * 몬스터 사망 시 아이템 드랍
+	 * TODO: Data 이용해서 드랍 확률 정하기 
+	*/
 	void DropItem();
 
 ///////
@@ -56,17 +59,14 @@ protected:
 	virtual void PostInitializeComponents() override;
 	
 private:
-	//FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
-	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
-
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	ECharacterState CurrentState;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 	ALSAIController* LSAIController;
 
 	/** 캐릭터가 죽고 나서 애니메이션 재생 및 아이템 드랍 까지의 시간*/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "State")
 	float DeadTimer = 1.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Animation")
@@ -109,6 +109,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	int32 MonsterLevel = 2;
 
+	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+
 	FTimerHandle DeadTimerHandle = { };
 
 public:
@@ -122,7 +124,6 @@ public:
 	{
 		return CurrentState;
 	}
-
 
 	void SetCharacterStateDead();
 

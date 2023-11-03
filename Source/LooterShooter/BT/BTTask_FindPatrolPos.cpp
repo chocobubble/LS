@@ -29,8 +29,8 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 
     FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(ALSAIController::HomePosKey);
     FNavLocation NextPatrol;
-    FVector TestVector = FVector(1390.f, 4300.f, 0.f);
-    // 맵 넘어가면 제대로 작동이 안함..
+    FVector TestVector = FVector(1390.0f, 4300.0f, 0.0f);
+
     if (NavSystem->GetRandomPointInNavigableRadius(Origin, 1000.0f, NextPatrol))
     //if (NavSystem->GetRandomPointInNavigableRadius(TestVector, 1000.0f, NextPatrol))
     {

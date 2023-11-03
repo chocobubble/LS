@@ -45,7 +45,7 @@ void ALSItemBox::BeginPlay()
 
 	WeaponItem = NewObject<ULSWeaponDefinition>(Cast<ULSGameInstance>(GetGameInstance()), WeaponItemClass);
 	// 테스트 용도
-	WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 1, 1);
+	WeaponItem->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, 1, 1);
 }
 
 void ALSItemBox::PostInitializeComponents()
@@ -102,7 +102,7 @@ void ALSItemBox::SetWeaponItem(ALSPlayer* LSPlayer)
 	if (WeaponItem)
 	{
 		WeaponItem = NewObject<ULSWeaponDefinition>(LSPlayer);
-		WeaponItem->SetWeaponDefinitionData(EWeaponType::RIFLE, 1, 1);
+		WeaponItem->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, 1, 1);
 	}
 }
 

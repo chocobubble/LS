@@ -17,8 +17,8 @@ void ALSFirstSection::BeginPlay()
     KilledMonsterCount = 0;
     ClearCondition = 2;
     EnemySpawnTime = 5.0f;
-    MonsterSpawnPoint = FVector(1390.f, 3200.f, 0.f);
-    DoorSpawnPoint = FVector(1320.f, 5200.f, 190.f);
+    MonsterSpawnPoint = FVector(1390.0f, 3200.0f, 0.0f);
+    DoorSpawnPoint = FVector(1320.0f, 5200.0f, 190.0f);
 }
 
 void ALSFirstSection::BattleStart()
@@ -32,7 +32,7 @@ void ALSFirstSection::BattleStart()
         true
     );
 
-    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.f, 180.f, 0.f));
+    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.0f, 180.0f, 0.0f));
 }
 
 void ALSFirstSection::OnMonsterSpawn()
@@ -40,7 +40,6 @@ void ALSFirstSection::OnMonsterSpawn()
 	ALSMonster* Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
 	if (Monster)
 	{
-        int32 MonsterLevel = 1;
         Monster->Init(MonsterLevel);
 		Monster->OnDestroyed.AddDynamic(this, &ALSFirstSection::OnMonsterDestroyed);
         MonsterArray.Push(Monster);
@@ -56,7 +55,7 @@ void ALSFirstSection::OnMonsterDestroyed(AActor* DestroyedActor)
     ++KilledMonsterCount;
     if (KilledMonsterCount >= ClearCondition)
     {
-        SetState(ESectionState::COMPLETE);
+        SetState(ESectionState::ESS_Complete);
     }
 }
 
@@ -69,7 +68,7 @@ void ALSFirstSection::SectionClear()
     {
         if (LiveMonster)
         {
-            LiveMonster->SetCharacterState(ECharacterState::DEAD);
+            LiveMonster->SetCharacterState(ECharacterState::ECS_Dead);
         }
     }
     if (LSDoor)

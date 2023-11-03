@@ -41,7 +41,7 @@ void ULSInventoryComponent::BeginPlay()
 		{
 			int32 TempNum = GetEmptyIndex();
 			WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-			WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, Elem.Key, Elem.Value);
+			WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, Elem.Key, Elem.Value);
 			EquipItem(TempNum);
 			++CurrentInventoryCapacity;
 			WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
@@ -55,7 +55,7 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	int32 DefaultWeaponEnhancementLevel = 1;
 	int32 TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::RIFLE, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
+	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
 	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
 	WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);

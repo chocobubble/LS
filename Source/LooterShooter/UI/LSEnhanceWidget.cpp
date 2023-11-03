@@ -76,7 +76,7 @@ void ULSEnhanceWidget::OnEnhanceButtonClicked()
     GetWorld()->GetTimerManager().SetTimer(
 		EnhancementTimerHandle,
 		FTimerDelegate::CreateUObject(this, &ULSEnhanceWidget::Enhance),
-        2.f,
+        2.0f,
 		false
 	);
 }

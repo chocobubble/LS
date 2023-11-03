@@ -37,26 +37,34 @@ ALSPlayer::ALSPlayer()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
-	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
-	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
-	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
-	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
-	Cable = CreateDefaultSubobject<UCableComponent>(TEXT("CABLE"));
-	Cable->SetupAttachment(RootComponent);
-	Cable->SetVisibility(false);
-	SkillManager = CreateDefaultSubobject<ULSSkillComponent>(TEXT("SKILL"));
-
 	SpringArm->SetupAttachment(GetCapsuleComponent());
-	Camera->SetupAttachment(SpringArm);
 	ArmLengthTo = ArmLengthOnIdle; // 450.0f
 	SpringArm->TargetArmLength = ArmLengthTo;
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetRelativeLocation(FVector(0.0f, 45.0f, 90.0f));
 
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	Camera->SetupAttachment(SpringArm);
+
+	CharacterStat = CreateDefaultSubobject<ULSCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+
+	ResourceManager = CreateDefaultSubobject<ULSResourceManageComponent>(TEXT("RESOURCEMANAGER"));
+
+	DefenseManager = CreateDefaultSubobject<ULSDefenseComponent>(TEXT("DEFENSEMANAGER"));
+
+	EquipmentManager = CreateDefaultSubobject<ULSEquipmentComponent>(TEXT("EQUIPMENT"));
+
+	InventoryManager = CreateDefaultSubobject<ULSInventoryComponent>(TEXT("INVENTORY"));
+
+	Cable = CreateDefaultSubobject<UCableComponent>(TEXT("CABLE"));
+	Cable->SetupAttachment(RootComponent);
+	Cable->SetVisibility(false);
+
+	SkillManager = CreateDefaultSubobject<ULSSkillComponent>(TEXT("SKILL"));
+
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn"));
 	{
@@ -75,11 +83,10 @@ ALSPlayer::ALSPlayer()
 		ThrowGrenadeMontage = AM_THROWGRENADE.Object;
 	}
 
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 	SetActorHiddenInGame(true);
 	SetCanBeDamaged(false);
 
-	///////////////////////// Input ///////////////////////////////
+///////////////////////// Input ///////////////////////////////
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC_DEFAULT_KBM(TEXT("/Game/LS/Input/IMC_Default_KBM.IMC_Default_KBM"));
 	if (IMC_DEFAULT_KBM.Succeeded())
 	{
@@ -192,7 +199,7 @@ ALSPlayer::ALSPlayer()
 	{
 		TestAction = IA_TEST.Object;
 	}
-	///////////////////////////////////////////
+/////////////////////////////////////////////////
 }
 
 void ALSPlayer::BeginPlay()
@@ -207,7 +214,7 @@ void ALSPlayer::BeginPlay()
 	CharacterAssetToLoad.SetPath(TEXT("/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn"));
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSPlayer::OnAssetLoadCompleted));
 	
-	SetCharacterState(ECharacterState::LOADING);
+	SetCharacterState(ECharacterState::ECS_Loading);
 
 	if (DefenseManager)
 	{
@@ -224,7 +231,6 @@ void ALSPlayer::BeginPlay()
 	// Default 무기 장착
 	EquipFirstWeapon();
 	OnReloadComplete();
-
 }
 
 void ALSPlayer::SetCharacterState(ECharacterState NewState)
@@ -239,13 +245,13 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 	switch (CurrentState)
 	{
 		// 캐릭터 비동기 로딩 상태
-		case ECharacterState::LOADING:
+		case ECharacterState::ECS_Loading:
 		{
 			DisableInput(LSPlayerController);
 			LSPlayerController->GetHUDWidget()->BindDefenseComponent(DefenseManager);
 			LSPlayerController->GetHUDWidget()->BindSkillComponent(SkillManager);
 			ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
-			if (LSPlayerState != nullptr && CharacterStat != nullptr)
+			if (LSPlayerState && CharacterStat)
 			{
 				CharacterStat->SetNewLevel(LSPlayerState->GetCharacterLevel());
 			}
@@ -254,21 +260,17 @@ void ALSPlayer::SetCharacterState(ECharacterState NewState)
 			break;
 		}
 		// 캐릭터 로딩이 완료되어 씬 상에 표현되고 동작 가능한 상태
-		case ECharacterState::READY:
+		case ECharacterState::ECS_Ready:
 		{
 			SetActorHiddenInGame(false);
 			SetCanBeDamaged(true);
-			/*
-			CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
-				SetCharacterState(ECharacterState::DEAD); });
-			*/
 			GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 			GetCharacterMovement()->JumpZVelocity = DefaultJumpHeight;
 			EnableInput(LSPlayerController);
 			break;
 		}
 		// 캐릭터의 HP가 0 이하가 되어 죽은 상태
-		case ECharacterState::DEAD:
+		case ECharacterState::ECS_Dead:
 		{
 			SetActorEnableCollision(false);
 			GetMesh()->SetHiddenInGame(false);
@@ -294,7 +296,7 @@ void ALSPlayer::OnAssetLoadCompleted()
 	{
 		GetMesh()->SetSkeletalMesh(AssetLoaded);
 	}
-	SetCharacterState(ECharacterState::READY);
+	SetCharacterState(ECharacterState::ECS_Ready);
 }
 
 void ALSPlayer::Tick(float DeltaTime)
@@ -306,7 +308,7 @@ void ALSPlayer::Tick(float DeltaTime)
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthChangingSpeed);
 
 	// TODO : 최적화하기
-	// if(bIsInteracting) 같은 걸로
+	// if (bIsInteracting) 같은 걸로
 	InteractCheck();
 
 	// 그래플링 모션 중
@@ -394,7 +396,7 @@ void ALSPlayer::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator Rotation = Controller->GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+	const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
@@ -416,7 +418,7 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 		return;
 	}
 	// TODO : ammo type 늘리기
-	if (!CanShoot(EAmmoType::RIFLE))
+	if (!CanShoot(EAmmoType::EAT_Rifle))
 	{
 		return;
 	}
@@ -438,10 +440,10 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	// 사격 후 소지 총알 감소
 	int32 CurrentRoundsRemaining = EquipmentManager->DecreaseRoundsRemaining();
 	LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetController());
-	if(LSPlayerController && LSPlayerController->GetPlayerState())
+	if (LSPlayerController && LSPlayerController->GetPlayerState())
 	{
 		// TODO: EAmmoType 다양하게
-		LSPlayerController->GetPlayerState()->SetCurrentAmmo(EAmmoType::RIFLE, CurrentRoundsRemaining);
+		LSPlayerController->GetPlayerState()->SetCurrentAmmo(EAmmoType::EAT_Rifle, CurrentRoundsRemaining);
 	}
 	
 	
@@ -478,7 +480,7 @@ void ALSPlayer::MeleeAttack(const FInputActionValue& Value)
 	if (bIsMeleeAttacking == false)
 	{
 		LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
-		if (LSPlayerAnim != nullptr)
+		if (LSPlayerAnim)
 		{
 			LSPlayerAnim->PlayAttackMontage();
 		}
@@ -510,32 +512,32 @@ void ALSPlayer::EndRunning(const FInputActionValue& Value)
 
 void ALSPlayer::OnAiming(const FInputActionValue& Value)
 {
-	if (SpringArm != nullptr)
+	if (SpringArm)
 	{
 		ArmLengthTo = ArmLengthOnAiming;
 	}
 	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
-	if (LSPlayerAnim != nullptr)
+	if (LSPlayerAnim)
 	{
 		LSPlayerAnim->SetAimAnim(true);
 	}
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedOnAiming; //240.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeedOnAiming; // 240.0f;
 }
 
 void ALSPlayer::EndAiming(const FInputActionValue& Value)
 {
-	if (SpringArm != nullptr)
+	if (SpringArm)
 	{
 		ArmLengthTo = ArmLengthOnIdle;
 	}
 	
 	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
-	if (LSPlayerAnim != nullptr)
+	if (LSPlayerAnim)
 	{
 		LSPlayerAnim->SetAimAnim(false);
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed; //510.f;
+	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed; // 510.0f;
 }
 
 void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
@@ -604,7 +606,7 @@ void ALSPlayer::Reload(const FInputActionValue& Value)
 	bIsReloading = true;
 
 	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
-	if (LSPlayerAnim != nullptr)
+	if (LSPlayerAnim)
 	{
 		LSPlayerAnim->SetReloadAnim(true);
 	}
@@ -636,7 +638,7 @@ void ALSPlayer::OnReloadComplete()
 	EquipmentManager->SetRoundsRemaining(CurrentWeapon->GetMagazineCapacity());
 	ResourceManager->SetCurrentAmmo(CurrentAmmoType, CurrentAmmo);
 	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
-	if (LSPlayerAnim != nullptr)
+	if (LSPlayerAnim)
 	{
 		LSPlayerAnim->SetReloadAnim(false);
 	}
@@ -682,7 +684,7 @@ void ALSPlayer::EquipThirdWeapon(const FInputActionValue& Value)
 void ALSPlayer::InteractCheck()
 {
 	// TODO: 1. interact UI 팝업, 2. interact progress bar 구현
-	if (!bIsNearInteractableObject)// || InteractingObject != nullptr)
+	if (!bIsNearInteractableObject)// || InteractingObject)
 	{
 		return;
 	}
@@ -854,7 +856,7 @@ void ALSPlayer::InitPlayerData()
 
 void ALSPlayer::TestAct(const FInputActionValue& Value)
 {
-	if (InventoryManager != nullptr)
+	if (InventoryManager)
 	{
 		InventoryManager->SetDefaultWeapon();
 	}
@@ -922,12 +924,12 @@ float ALSPlayer::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent,
 	
 	//LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
 	
-	if (DefenseManager != nullptr)
+	if (DefenseManager)
 	{
 		DefenseManager->SetDamage(FinalDamage);
 	}
 
-	if (CurrentState == ECharacterState::DEAD)
+	if (CurrentState == ECharacterState::ECS_Ready)
 	{
 		// TODO
 	}
@@ -941,7 +943,7 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 	{
 		return;
 	}
-	if (CurrentWeapon != nullptr)
+	if (CurrentWeapon)
 	{
 		// TODO: 무기 장착 해제 관련 메서드 호출
 		CurrentWeapon->SetActorHiddenInGame(true);
@@ -958,7 +960,7 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 		NewWeapon->SetOwner(this);
 		CurrentWeapon = NewWeapon;
 		// fire rate 설정
-		SetShootInputInterval(0.2f);//(CurrentWeapon->GetFireRate() / 1800.f);
+		SetShootInputInterval(0.2f);//(CurrentWeapon->GetFireRate() / 1800.0f);
 
 		LSPlayerAnim = Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 		if (LSPlayerAnim && CurrentWeapon->GetBaseWeaponDefinition())
@@ -968,7 +970,6 @@ void ALSPlayer::SetWeapon(ALSWeaponInstance* NewWeapon)
 	}
 }
 
-// montage test 
 void ALSPlayer::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	bIsMeleeAttacking = false;
@@ -1004,18 +1005,17 @@ void ALSPlayer::ShowDebugLine(FVector Dir)
 	DrawDebugLine(
 		GetWorld(),
 		SpringArm->GetComponentLocation(),
-		(SpringArm->GetComponentLocation() + Dir * 1000.f), //AttackRange,
+		(SpringArm->GetComponentLocation() + Dir * 1000.0f), 
 		FColor::Red,
 		false,
 		1.0f,
 		0,
-		1.f
+		1.0f
 	);	
 }
 
 void ALSPlayer::SetIsNearInteractableObject(bool Value)
 {
-	// LSLOG(Warning, TEXT("Player is overlapping with interactable object"));
 	// TODO: 두 개 이상의 상호작용 물체와 겹치고 있는 경우 고려하기
 	bIsNearInteractableObject = Value;
 	OnEnableToInteract.Broadcast(bIsNearInteractableObject);
@@ -1033,7 +1033,7 @@ void ALSPlayer::RecoilStart()
 	RecoilDeltaRot = FRotator(0.0f, 0.0f, 0.0f);
 	Del = FRotator(0.0f, 0.0f, 0.0f);
 	LSPlayerController = (LSPlayerController == nullptr) ? Cast<ALSPlayerController>(GetController()) : LSPlayerController;
-	if (LSPlayerController != nullptr)
+	if (LSPlayerController)
 	{
 		RecoilStartRot = LSPlayerController->GetControlRotation();
 	}
@@ -1055,7 +1055,6 @@ void ALSPlayer::RecoilStart()
 void ALSPlayer::RecoilStop()
 {
 	bIsFiring = false;
-	// GetWorld()->GetTimerManager().SetTimer(RecoveryTimer, this, &ALSPlayer::RecoveryTimerFunction, 1.0f, false);
 }
 
 void ALSPlayer::RecoveryStart()
@@ -1104,7 +1103,7 @@ void ALSPlayer::RecoilTick(float DeltaTime)
 		LSPlayerController->SetControlRotation(RecoilStartRot + PlayerDeltaRot + Del);
 		RecoilDeltaRot = Del;
 
-		if (bIsFiring)// (!bIsFiring)
+		if (bIsFiring)
 		{
 			// 반동 시작되고 나서 시간이 탄창 내 탄약을 모두 소비하는 시간 보다 더 지난 경우
 			if (Recoiltime > FireRate)
@@ -1139,16 +1138,21 @@ float ALSPlayer::GetFinalAttackRange() const
 
 void ALSPlayer::SetShootInputInterval(const float InputInterval)
 {
-	if(ShootInputTriggerPulse)
+	if (ShootInputTriggerPulse)
 	{
 		ShootInputTriggerPulse->Interval = InputInterval;
 	}
 }
 
-/*
-void ALSPlayer::SetShootInputInterval(float InputInterval)
+int32 ALSPlayer::GetPlayerLevel() const
 {
-	LSCHECK(ShootInputTriggerPulse != nullptr);
-	ShootInputTriggerPulse->Interval = InputInterval;
-	LSLOG(Warning, TEXT("Shoot Input Interval : %f"), ShootInputTriggerPulse->Interval);
-}*/
+	ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
+	if (LSPlayerState)
+	{
+		return LSPlayerState->GetCharacterLevel();
+	}
+	else
+	{
+		return 1;
+	}
+}

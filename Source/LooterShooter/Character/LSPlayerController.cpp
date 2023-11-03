@@ -175,14 +175,14 @@ void ALSPlayerController::SetupInputComponent()
     Super::SetupInputComponent();
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (Subsystem != nullptr)
+	if (Subsystem)
 	{
 		Subsystem->ClearAllMappings();
 		Subsystem->AddMappingContext(InputMapping, 0);
 	}
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInputComponent != nullptr) 
+	if (EnhancedInputComponent) 
 	{
 		EnhancedInputComponent->BindAction(GamePause, ETriggerEvent::Triggered, this, &ALSPlayerController::OnGamePause);
 		EnhancedInputComponent->BindAction(OpenInventory, ETriggerEvent::Triggered, this, &ALSPlayerController::OnInventoryOpen);
@@ -226,12 +226,11 @@ void ALSPlayerController::OnEnhanceUIOpen()
 		return;
 	}
     LSPlayer = LSPlayer ? LSPlayer : Cast<ALSPlayer>(GetPawn());
-	if(LSPlayer && LSPlayer->GetInventoryManager() && LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0) && LSPlayer->GetResourceManager())
+	if (LSPlayer && LSPlayer->GetInventoryManager() && LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0) && LSPlayer->GetResourceManager())
 	{
     	EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
 	}
     EnhanceWidget->AddToViewport();
-    //SetPause(true);
     ChangeInputMode(false);
 }
 
@@ -254,7 +253,7 @@ void ALSPlayerController::ShowResultUI()
     //ALSGameState* LSGameState = Cast<ALSGameState>(UGameplayStatics::GetGameState(this));
     //ResultWidget->BindGameState(LSGameState);
 
-    if (ResultWidget != nullptr)
+    if (ResultWidget)
     {
         ResultWidget->AddToViewport(0);
     }

@@ -56,9 +56,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	int32 CurrentGold = 1000;
 
-	// 무기 레벨, 무기 강화
-	TArray<TPair<int32, int32>> CurrentOwnedWeapons;
-
 	UPROPERTY(VisibleAnywhere, Category = "Mode")
 	ULSGameInstance* LSGameInstance;
 
@@ -72,6 +69,9 @@ private:
 	ULSResourceManageComponent* ResourceManger;
 
 	TMap<EAmmoType, int32> CurrentAmmoMap;
+
+	// 무기 레벨, 무기 강화
+	TArray<TPair<int32, int32>> CurrentOwnedWeapons;
 
 	FLSPlayerData* PlayerStatData;
 
@@ -108,5 +108,4 @@ public:
 	void SetCharacterLevel(int32 NewCharacterLevel);
 
 	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
-
 };

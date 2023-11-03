@@ -8,10 +8,10 @@ void ALSUIPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (UIWidgetClass != nullptr)
+    if (UIWidgetClass)
 	{
     	UIWidgetInstance = CreateWidget<UUserWidget>(this, UIWidgetClass);
-		if (UIWidgetInstance != nullptr)
+		if (UIWidgetInstance)
 		{
     		UIWidgetInstance->AddToViewport();
     		FInputModeUIOnly Mode;

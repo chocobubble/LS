@@ -20,8 +20,6 @@ class ULSInventoryWidget;
 class ULSRoundProgressbar;
 class ULSEnhanceWidget;
 class ULSResourceManageComponent;
-
-// test
 class UMaterialInstance;
 
 /**
@@ -120,7 +118,6 @@ private:
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;
-
 
 //////////////test///////
 	UPROPERTY(VisibleAnywhere, Category = "TEST")

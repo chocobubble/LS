@@ -24,7 +24,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		return;
 	} 
     UWorld* World = ControllingPawn->GetWorld();
-    if (nullptr == World) 
+    if (World == nullptr) 
 	{
 		return;
 	}

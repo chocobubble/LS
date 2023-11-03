@@ -7,10 +7,11 @@
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-    PREINIT,
-    LOADING,
-    READY,
-    DEAD
+    ECS_Default,
+    ECS_PreInit,
+    ECS_Loading,
+    ECS_Ready,
+    ECS_Dead
 };
 
 /** 디버깅용 로그 매크로 */
