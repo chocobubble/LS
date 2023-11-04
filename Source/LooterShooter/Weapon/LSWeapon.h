@@ -4,14 +4,15 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "GameFramework/Actor.h"
-#include "LooterShooter/System/LSGameInstance.h"
-#include "LooterShooter/GameMode/LSGameState.h"
+#include "LooterShooter/Data/WeaponBaseData.h"
 #include "LSWeapon.generated.h"
 
+class UAnimationAsset;
+class ALSBullet;
+
 /**
- * 이전 버전.
- * @deprecated 사용하지 않는 클래스
- * ULSWeaponDefinition 사용할 것
+ * 몬스터 용 무기
+ * 플레이어 무기는 LSWeaponDefinition, LSWeaponInstance 사용
  */
 
 UCLASS()
@@ -20,28 +21,31 @@ class LOOTERSHOOTER_API ALSWeapon : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ALSWeapon();
 
-	float GetMaxRange() const;
-	float GetBulletDamage() const;
-	float GetFinalDamage() const;
-	float GetReloadTime() const;
-	float GetMagazineCapacity() const;
-	// float GetAttackModifier() const;
+	void FireBullet();
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	USkeletalMeshComponent* RifleWeapon;
-
-protected:
 
 private:
 	FLSWeaponBaseData* CurrentWeaponData;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	int32 Level = 1;
+	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	int32 WeaponLevel = 1;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	USkeletalMeshComponent* WeaponMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	UAnimationAsset* ShootingAnim;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	TSubclassOf<ALSBullet> LSBulletClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	ALSBullet* Bullet;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	const USkeletalMeshSocket* EjectSocket;
 };

@@ -3,52 +3,68 @@
 
 #include "LSWeapon.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Engine/SkeletalMeshSocket.h"
+#include "LooterShooter/Weapon/LSBullet.h"
 
 ALSWeapon::ALSWeapon()
 {
  	PrimaryActorTick.bCanEverTick = false;
 
-	RifleWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RIFLEWEAPON"));
-	RootComponent = RifleWeapon;
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPONMesh"));
+	RootComponent = WeaponMesh;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
 	if (SK_RIFLE.Succeeded())
 	{
-		RifleWeapon->SetSkeletalMesh(SK_RIFLE.Object);
+		WeaponMesh->SetSkeletalMesh(SK_RIFLE.Object);
 	}
 
-	RifleWeapon->SetCollisionProfileName(TEXT("NoCollision"));
+	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+
+	LSBulletClass = ALSBullet::StaticClass();
+
+	static ConstructorHelpers::FObjectFinder<UAnimationAsset> AA_FIRE(TEXT("/Game/MilitaryWeapSilver/Weapons/Animations/Fire_Rifle_W.Fire_Rifle_W"));
+	if (AA_FIRE.Succeeded())
+	{
+		ShootingAnim = AA_FIRE.Object;
+	}
 }
 
-float ALSWeapon::GetMaxRange() const
+void ALSWeapon::FireBullet()
 {
-	return CurrentWeaponData->MaxRange;
+	if (WeaponMesh == nullptr)
+	{
+		return;
+	}
+
+	if (ShootingAnim)
+	{
+		WeaponMesh->PlayAnimation(ShootingAnim, false);
+	}
+
+	if (LSBulletClass)
+	{
+		EjectSocket = WeaponMesh->GetSocketByName(FName("AmmoEject"));
+	}
+
+	const FTransform EjectSocketTransform = EjectSocket->GetSocketTransform(WeaponSkeletalMesh);
+	const FVector EjectSocketPos = EjectSocketTransform.GetLocation();
+
+	// 총알 생성 후 발사
+	if (GetWorld())
+	{
+		Bullet = GetWorld()->SpawnActor<ALSBullet>(
+			LSBulletClass,
+			EjectSocketPos,
+			(TargetPos - EjectSocketPos).Rotation()
+		);
+		if (Bullet)
+		{
+			Bullet->Fire();
+		}
+	}
 }
 
-float ALSWeapon::GetBulletDamage() const
-{
-	return CurrentWeaponData->BulletDamage;
-}
-
-float ALSWeapon::GetFinalDamage() const
-{
-	float FinalDamage = CurrentWeaponData->BulletDamage;
-	float DamageMultiplier = (FMath::RandRange(0.0f, 1.0f) <= CurrentWeaponData->CriticalHitChance) ? CurrentWeaponData->CriticalHitMultiplier : 1.0f;
-	FinalDamage *= DamageMultiplier;
-	return FinalDamage;
-}
-
-float ALSWeapon::GetReloadTime() const
-{
-	return CurrentWeaponData->ReloadTime;
-}
-
-float ALSWeapon::GetMagazineCapacity() const
-{
-	return CurrentWeaponData->MagazineCapacity;
-}
- 
 void ALSWeapon::BeginPlay()
 {
 	Super::BeginPlay();

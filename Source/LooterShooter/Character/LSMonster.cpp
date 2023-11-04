@@ -289,6 +289,11 @@ void ALSMonster::Attack()
 			HitResult.GetActor()->TakeDamage(FinalAttackDamage, DamageEvent, GetController(), this);
 		}
 	}
+
+	if (MonsterWeapon)
+	{
+		MonsterWeapon->FireBullet();
+	}
 }
 
 FVector ALSMonster::CalculateRecoil(const FVector& AimDir, const float SpreadAngle)
