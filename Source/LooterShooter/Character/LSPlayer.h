@@ -87,6 +87,8 @@ public:
 
 	void PlayThrowGrenadeMontage();
 
+	void PlayRifleShootMontage();
+
 	void InitPlayerData();
 
 	TSharedPtr<FStreamableHandle> AssetStreamingHandle;
@@ -250,6 +252,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Animation")
 	UAnimMontage* ThrowGrenadeMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Animation")
+	UAnimMontage* RifleShootMontage;
 	
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	ECharacterState CurrentState;
@@ -516,4 +521,11 @@ public:
 	}
 
 	int32 GetPlayerLevel() const;
+
+	FVector GetThrowSocketPos() const;
+
+	FVector GetHitPos() const
+	{
+		return HitPos;
+	}
 };

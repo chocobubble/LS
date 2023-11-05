@@ -48,11 +48,11 @@ public:
 	*/
 	void DropItem();
 
+	virtual float TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
 ///////
 protected:
 	virtual void BeginPlay() override;
-
-	virtual float TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 	
 	virtual void Tick(float DeltaTime) override;
 

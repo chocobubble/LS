@@ -6,6 +6,7 @@
 #include "LSSkill.h"
 #include "ThrowGrenade.generated.h"
 
+class ALSGrenade;
 /**
  * 
  */
@@ -17,9 +18,17 @@ class LOOTERSHOOTER_API UThrowGrenade : public ULSSkill
 public:
 	UThrowGrenade();
 
-	virtual void Tick(float DeltaTime) override;
+	virtual bool CastSkill() override;
 
 	virtual void Init(APawn* Player) override;
 
-	virtual bool CastSkill() override;
+protected:
+	virtual void Tick(float DeltaTime) override;
+	
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Grenade")
+	TSubclassOf<ALSGrenade> LSGrenadeClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Grenade")
+	ALSGrenade* Grenade;
 };

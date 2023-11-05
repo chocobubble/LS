@@ -3,12 +3,15 @@
 
 #include "ThrowGrenade.h"
 #include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/Skill/LSGrenade.h"
 
 UThrowGrenade::UThrowGrenade()
 {
 	SkillCoolTime = 5.0f;
 	MPCost = 10.0f;
 	CurrentSkillState = ESkillState::ESS_Ready;
+
+	LSGrenadeClass = ALSGrenade::StaticClass();
 }
 
 void UThrowGrenade::Tick(float DeltaTime)
@@ -30,10 +33,28 @@ bool UThrowGrenade::CastSkill()
 {
 	Super::CastSkill();
 
-	if (LSPlayer)
+	if (GetWorld() == nullptr || LSPlayer == nullptr|| LSGrenadeClass == nullptr)
 	{
-		LSPlayer->PlayThrowGrenadeMontage();
+		return false;
 	}
+
+	FVector ThrowSocketPos = LSPlayer->GetThrowSocketPos();
+	Grenade = GetWorld()->SpawnActor<ALSGrenade>(
+		LSGrenadeClass,
+		ThrowSocketPos,
+		(LSPlayer->GetHitPos() - ThrowSocketPos).Rotation()
+	);
+
+	if (Grenade)
+	{
+		if (LSPlayer)
+		{
+			Grenade->Init(LSPlayer);
+		}
+		Grenade->Throw();
+	}
+
+	LSPlayer->PlayThrowGrenadeMontage();
 
 	return true;
 }

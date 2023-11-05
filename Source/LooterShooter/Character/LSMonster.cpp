@@ -31,12 +31,6 @@ ALSMonster::ALSMonster()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_CharM_Ram(TEXT("/Game/LS/Meshes/SK_CharM_Ram.SK_CharM_Ram"));
-	if (SKM_CharM_Ram.Succeeded())
-	{
-		GetMesh()->SetSkeletalMesh(SKM_CharM_Ram.Object);
-	}
-
 	static ConstructorHelpers::FClassFinder<UAnimInstance> MONSTER_ANIM(TEXT("/Game/LS/Animations/RifleAnimBlueprint.RifleAnimBlueprint_C"));
 	if (MONSTER_ANIM.Succeeded())
 	{
@@ -48,7 +42,7 @@ ALSMonster::ALSMonster()
 
 	LSWeaponInstanceClass = ALSWeapon::StaticClass();
 
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	
 	if (HPBarWidget)
 	{
@@ -225,7 +219,7 @@ void ALSMonster::DropItem()
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
 	if (RandomNumber < 0.3f)
 	{
-		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::GOLD, 100);
+		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_Gold, 100);
 	}
 	else if (RandomNumber < 0.6f)
 	{
@@ -292,7 +286,7 @@ void ALSMonster::Attack()
 
 	if (MonsterWeapon)
 	{
-		MonsterWeapon->FireBullet();
+		MonsterWeapon->FireBullet(ShootDir);
 	}
 }
 

@@ -31,6 +31,7 @@
 #include "CableComponent.h"
 #include "LooterShooter/Obstacles/CableEnd.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/SkeletalMeshSocket.h"
 
 ALSPlayer::ALSPlayer()
 {
@@ -82,6 +83,13 @@ ALSPlayer::ALSPlayer()
 	{
 		ThrowGrenadeMontage = AM_THROWGRENADE.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> AM_RIFLEFIRE(TEXT("/Game/LS/Animations/Montage/AM_Rifle_Fire.AM_Rifle_Fire"));
+	if (AM_RIFLEFIRE.Succeeded())
+	{
+		RifleShootMontage = AM_RIFLEFIRE.Object;
+	}
+
 
 	SetActorHiddenInGame(true);
 	SetCanBeDamaged(false);
@@ -473,6 +481,8 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	}	
 
 	CurrentWeapon->Shoot(HitPos);
+
+	PlayRifleShootMontage();
 }
 
 void ALSPlayer::MeleeAttack(const FInputActionValue& Value)
@@ -836,6 +846,17 @@ void ALSPlayer::PlayThrowGrenadeMontage()
 	}
 }
 
+void ALSPlayer::PlayRifleShootMontage()
+{
+	if (LSPlayerAnim)
+	{
+		LSLOG(Warning, TEXT("Play Shooting Montage"));
+		LSPlayerAnim->Montage_Play(RifleShootMontage);
+		//FName MontageSectionName = FName("Default");
+		//LSPlayerAnim->Montage_JumpToSection(MontageSectionName);
+	}
+}
+
 void ALSPlayer::InitPlayerData()
 {
 	LSLOG(Warning, TEXT("Init Player Data"));
@@ -1155,4 +1176,22 @@ int32 ALSPlayer::GetPlayerLevel() const
 	{
 		return 1;
 	}
+}
+
+
+FVector ALSPlayer::GetThrowSocketPos() const
+{
+	if (GetMesh())
+	{
+		const USkeletalMeshSocket* ThrowSocket = GetMesh()->GetSocketByName(FName("weapon_l_throw"));
+		if (ThrowSocket)
+		{
+			const FTransform ThrowSocketTransform = ThrowSocket->GetSocketTransform(GetMesh());
+			const FVector ThrowSocketPos = ThrowSocketTransform.GetLocation();
+			return ThrowSocketPos;
+		}
+	}
+
+	LSLOG(Warning, TEXT("ZeroVector Pos"));
+	return FVector::ZeroVector;
 }

@@ -30,7 +30,7 @@ ALSWeapon::ALSWeapon()
 	}
 }
 
-void ALSWeapon::FireBullet()
+void ALSWeapon::FireBullet(const FVector& TargetPos)
 {
 	if (WeaponMesh == nullptr)
 	{
@@ -47,20 +47,22 @@ void ALSWeapon::FireBullet()
 		EjectSocket = WeaponMesh->GetSocketByName(FName("AmmoEject"));
 	}
 
-	const FTransform EjectSocketTransform = EjectSocket->GetSocketTransform(WeaponSkeletalMesh);
-	const FVector EjectSocketPos = EjectSocketTransform.GetLocation();
+	if (EjectSocket) {
+		const FTransform EjectSocketTransform = EjectSocket->GetSocketTransform(WeaponMesh);
+		const FVector EjectSocketPos = EjectSocketTransform.GetLocation();
 
-	// 총알 생성 후 발사
-	if (GetWorld())
-	{
-		Bullet = GetWorld()->SpawnActor<ALSBullet>(
-			LSBulletClass,
-			EjectSocketPos,
-			(TargetPos - EjectSocketPos).Rotation()
-		);
-		if (Bullet)
+		// 총알 생성 후 발사
+		if (GetWorld())
 		{
-			Bullet->Fire();
+			Bullet = GetWorld()->SpawnActor<ALSBullet>(
+				LSBulletClass,
+				EjectSocketPos,
+				(TargetPos - EjectSocketPos).Rotation()
+			);
+			if (Bullet)
+			{
+				Bullet->Fire();
+			}
 		}
 	}
 }

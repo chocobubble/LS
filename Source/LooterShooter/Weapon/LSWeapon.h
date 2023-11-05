@@ -23,7 +23,7 @@ class LOOTERSHOOTER_API ALSWeapon : public AActor
 public:	
 	ALSWeapon();
 
-	void FireBullet();
+	void FireBullet(const FVector& TargetPos);
 
 protected:
 	virtual void BeginPlay() override;
