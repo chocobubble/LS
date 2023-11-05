@@ -24,9 +24,11 @@ ALSGrenade::ALSGrenade()
 	}
 	GrenadeMeshComponent->SetCollisionProfileName(TEXT("Ragdoll"));	
 	GrenadeMeshComponent->SetSimulatePhysics(true);
-	GrenadeMeshComponent->SetEnableGravity(true);;
+	GrenadeMeshComponent->SetEnableGravity(true);
 
 	GrenadeMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("GRENADEMOVECOMP"));
+	GrenadeMovementComponent->bRotationFollowsVelocity = true;
+	GrenadeMovementComponent->bShouldBounce = true;
 
 	static ConstructorHelpers::FObjectFinder<USoundCue> SC_EXPLODE(TEXT("/Game/MilitaryWeapSilver/Sound/GrenadeLauncher/Cues/GrenadeLauncher_Explosion_Cue.GrenadeLauncher_Explosion_Cue"));
 	if (SC_EXPLODE.Succeeded())
@@ -136,6 +138,8 @@ void ALSGrenade::BeginPlay()
 				false
 		);
 	}
+
+	ProjectileMovementComponent->OnProjectileBounce.AddDynamic(this, &ALSGrenade::OnBounce);
 }
 
 void ALSGrenade::Tick(float DeltaTime)
@@ -148,6 +152,17 @@ void ALSGrenade::Tick(float DeltaTime)
 	}
 }
 
+void ALSGrenade::OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity)
+{
+	if (BounceSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this,
+			BounceSound,
+			GetActorLocation()
+		);
+	}
+}
 
 
 

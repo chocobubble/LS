@@ -52,4 +52,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	APawn* Player;
+
+	UFUNCTION()
+	void OnBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity);
+private:
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* BounceSound;
 };
