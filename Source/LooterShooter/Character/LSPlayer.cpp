@@ -557,46 +557,18 @@ void ALSPlayer::GrapplingHook(const FInputActionValue& Value)
 		return;
 	}
 
-	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
+		HookHitResult,
 		SpringArm->GetComponentLocation(),
 		(SpringArm->GetComponentLocation() + (FRotationMatrix(Camera->GetComponentRotation()).GetUnitAxis(EAxis::X) * GrapplingHookRange)),
 		ECollisionChannel::ECC_GameTraceChannel1,
 		Params
 	);
 
-	if (bResult)
+	if (bResult && HookHitResult.HasValidHitObjectHandle() && SkillManager)
 	{
-		if (HitResult.HasValidHitObjectHandle())
-		{
-			LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
-			bIsGrapplingCasting = true;
-			CurrentGrapplingCastingTime = 0.0f;
-			GetWorld()->GetTimerManager().SetTimer(
-				GrapplingTimerHandle,
-				this, 
-				&ALSPlayer::GrappleBegin, 
-				GrapplingCastingTime
-			);
-			GrappleToLocation = HitResult.Location;
-			// 그래플링 훅 케이블
-			Cable->bAttachEnd = true;
-			Cable->CableGravityScale = 0.0f;
-
-			AActor* TargetPos = GetWorld()->SpawnActor<ACableEnd>(GrappleToLocation, FRotator::ZeroRotator);
-			Cable->SetAttachEndTo(TargetPos, NAME_None);
-			Cable->SetVisibility(true);
-
-			/*
-			FVector Dir = GrappleToLocation - GetActorLocation();
-			Dir.Normalize();
-			LSLOG(Warning, TEXT("%f, %f, %f  - %f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z, Dir.X, Dir.Y, Dir.Z);
-			Cable->EndLocation = GetActorLocation() + (Dir * (Cable->CableLength));
-			*/
-			
-		}
+		SkillManager->CastGrapplingHook();
 	}
 }
 
@@ -714,6 +686,38 @@ void ALSPlayer::InteractCheck()
 	{
 		//LSLOG(Warning, TEXT("Channel3"));
 		//InteractingObject = Cast<ALSInteractableObject>(HitResult.GetActor());
+	}
+}
+
+void ALSPlayer::ThrowHook()
+{
+	if (HookHitResult.HasValidHitObjectHandle())
+	{
+		LSLOG(Warning, TEXT("Hit Actor : %s"), *HookHitResult.GetActor()->GetName());
+		bIsGrapplingCasting = true;
+		CurrentGrapplingCastingTime = 0.0f;
+		GetWorld()->GetTimerManager().SetTimer(
+			GrapplingTimerHandle,
+			this,
+			&ALSPlayer::GrappleBegin,
+			GrapplingCastingTime
+		);
+		GrappleToLocation = HookHitResult.Location;
+		// 그래플링 훅 케이블
+		Cable->bAttachEnd = true;
+		Cable->CableGravityScale = 0.0f;
+
+		AActor* TargetPos = GetWorld()->SpawnActor<ACableEnd>(GrappleToLocation, FRotator::ZeroRotator);
+		Cable->SetAttachEndTo(TargetPos, NAME_None);
+		Cable->SetVisibility(true);
+
+		/*
+		FVector Dir = GrappleToLocation - GetActorLocation();
+		Dir.Normalize();
+		LSLOG(Warning, TEXT("%f, %f, %f  - %f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z, Dir.X, Dir.Y, Dir.Z);
+		Cable->EndLocation = GetActorLocation() + (Dir * (Cable->CableLength));
+		*/
+
 	}
 }
 

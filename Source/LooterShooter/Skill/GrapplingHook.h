@@ -4,35 +4,31 @@
 
 #include "CoreMinimal.h"
 #include "LSSkill.h"
-#include "ThrowGrenade.generated.h"
+#include "GrapplingHook.generated.h"
 
-class ALSGrenade;
 /**
  * 
  */
 UCLASS()
-class LOOTERSHOOTER_API UThrowGrenade : public ULSSkill
+class LOOTERSHOOTER_API UGrapplingHook : public ULSSkill
 {
 	GENERATED_BODY()
 
 public:
-	UThrowGrenade();
+	UGrapplingHook();
 
 	virtual bool CastSkill() override;
 
 	virtual void Init(APawn* Player) override;
 
-	void ThrowGrenade();
-
 	FTimerHandle ThrowTimerHandle = {};
 
 protected:
 	virtual void Tick(float DeltaTime) override;
-	
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Grenade")
-	TSubclassOf<ALSGrenade> LSGrenadeClass;
 
-	UPROPERTY(VisibleAnywhere, Category = "Grenade")
-	ALSGrenade* Grenade;
+private:
+	UPROPERTY(VisibleAnywhere, Category = "GrapplingHook")
+	int32 RemainingHookCount = 2;
+
+	
 };

@@ -77,6 +77,12 @@ void ULSHUDWidget::BindSkillComponent(ULSSkillComponent* SkillComponent)
             CurrentSkillComponent->GetFirstSkill()->OnSkillCool.AddUObject(this, &ULSHUDWidget::UpdateFirstSkillCool);
             LSLOG(Warning, TEXT("Bind First SKill"));
         }
+
+        ULSSkill* GrapplingHook = CurrentSkillComponent->GetGrapplingHookSkill();
+        if (GrapplingHook)
+        {
+            GrapplingHook->OnSkillCoolTwoParam.AddUObject(this, &ULSHUDWidget::UpdateGrapplingHookCool);
+        }
     }
 }
 
@@ -99,6 +105,7 @@ void ULSHUDWidget::NativeConstruct()
     ShieldBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbShield")));
     MPBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbMP")));
     InteractionProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbInteract")));
+    GrapplingHookProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbGrapplingHook")));
     FirstSkillProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("pbFirstSkill")));
     InteractBox = Cast<UVerticalBox>(GetWidgetFromName(TEXT("InteractBox")));
     PlayerLevelText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtLevel")));
@@ -110,6 +117,7 @@ void ULSHUDWidget::NativeConstruct()
     SecondWeaponRoundsRemainingText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_1")));
     ThirdWeaponCurrentAmmoText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtCurrentAmmo_2")));
     ThirdWeaponRoundsRemainingText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtRoundsRemaining_2")));
+    GrapplingHookRemainingText = Cast<UTextBlock>(GetWidgetFromName(TEXT("txtGrapplingHook")));
     ReloadProgressbar = Cast<ULSRoundProgressbar>(GetWidgetFromName(TEXT("WB_RoundProgressbar")));
     ItemSlot = Cast<ULSInventoryItemSlot>(GetWidgetFromName(TEXT("UI_InventoryItemSlot")));
     CrosshairCenter = Cast<UImage>(GetWidgetFromName(TEXT("imgCrosshairCenter")));
@@ -173,12 +181,15 @@ void ULSHUDWidget::UpdateCurrentMP()
     }
 }
 
+void ULSHUDWidget::UpdateGrapplingHookCool(float CoolRate, int32 Count)
+{      
+    GrapplingHookProgressBar->SetPercent(CoolRate);
+    GrapplingHookRemainingText->SetText(FText::FromString(FString::FromInt(Count)));
+}
+
 void ULSHUDWidget::UpdateFirstSkillCool(float CoolRate)
 {
-    if (CurrentSkillComponent.IsValid())
-    {
-        FirstSkillProgressBar->SetPercent(CoolRate);
-    }
+    FirstSkillProgressBar->SetPercent(CoolRate);
 }
 
 void ULSHUDWidget::UpdatePlayerState()
@@ -190,7 +201,6 @@ void ULSHUDWidget::UpdatePlayerState()
         NextExpText->SetText(FText::FromString(FString::FromInt(CurrentPlayerState->GetNextExp())));
     }
 }
-
 
 void ULSHUDWidget::UpdateRoundsRemaining(int32 CurrentWeaponIndex)
 {

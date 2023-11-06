@@ -4,6 +4,7 @@
 #include "LSSkillComponent.h"
 #include "LooterShooter/Skill/LSSkill.h"
 #include "LooterShooter/Skill/ThrowGrenade.h"
+#include "LooterShooter/Skill/GrapplingHook.h"
 #include "LooterShooter/Component/LSDefenseComponent.h"
 #include "LooterShooter/UI/LSHUDWidget.h"
 
@@ -13,9 +14,25 @@ ULSSkillComponent::ULSSkillComponent()
 
 }
 
-void ULSSkillComponent::CastFirstSkill()
+void ULSSkillComponent::CastGrapplingHook()
 {
 	if (SkillList.Num() >= 1)
+	{
+		LSLOG(Warning, TEXT("Cast Grappling Hook"));
+		ULSSkill* FirstSkill = SkillList[0];
+		if (FirstSkill)
+		{
+			if (FirstSkill->CastSkill())
+			{
+				LSLOG(Warning, TEXT("Cast Grappling Hook Success"));
+			}
+		}
+	}
+}
+
+void ULSSkillComponent::CastFirstSkill()
+{
+	if (SkillList.Num() >= 2)
 	{
 		LSLOG(Warning, TEXT("Cast First SKill"));
 		if (DefenseManager == nullptr)
@@ -24,7 +41,7 @@ void ULSSkillComponent::CastFirstSkill()
 		}
 
 		float CurrentMP = DefenseManager->GetCurrentMP();
-		ULSSkill* FirstSkill = SkillList[0];
+		ULSSkill* FirstSkill = SkillList[1];
 		if (FirstSkill && CurrentMP >= FirstSkill->GetMPCost())
 		{
 			if (FirstSkill->CastSkill())
@@ -54,6 +71,10 @@ void ULSSkillComponent::Init(ULSDefenseComponent* DefenseComponent)
 void ULSSkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ULSSkill* SkillGrapplingHook = NewObject<UGrapplingHook>(this, UGrapplingHook::StaticClass());
+	SkillGrapplingHook->Init(Cast<APawn>(GetOwner()));
+	AddSkill(SkillGrapplingHook);
 
 	ULSSkill* SkillThrowGrenade = NewObject<UThrowGrenade>(this, UThrowGrenade::StaticClass());
 	SkillThrowGrenade->Init(Cast<APawn>(GetOwner()));

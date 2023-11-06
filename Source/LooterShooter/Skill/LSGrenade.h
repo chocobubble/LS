@@ -25,6 +25,7 @@ public:
 	void Init(APawn* Pawn);
 
 	FTimerHandle OnLifeTimerHandle = {};
+	FTimerHandle DestroyTimerHandle = {};
 
 protected:
 	virtual void BeginPlay() override;

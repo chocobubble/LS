@@ -18,6 +18,8 @@ class LOOTERSHOOTER_API ULSSkillComponent : public UActorComponent
 public:	
 	ULSSkillComponent();
 
+	void CastGrapplingHook();
+
 	void CastFirstSkill();
 
 	void AddSkill(ULSSkill* Skill);
@@ -43,8 +45,13 @@ private:
 	ULSHUDWidget* HUD;
 
 public:
-	ULSSkill* GetFirstSkill()
+	ULSSkill* GetGrapplingHookSkill()
 	{
 		return SkillList.Num() > 0 ? SkillList[0] : nullptr;
+	}
+
+	ULSSkill* GetFirstSkill()
+	{
+		return SkillList.Num() > 1 ? SkillList[1] : nullptr;
 	}
 };

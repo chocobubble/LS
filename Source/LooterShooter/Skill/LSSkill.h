@@ -7,6 +7,7 @@
 #include "LSSkill.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillCoolDelegate, float);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSkillCoolTwoParamDelegate, float, int32);
 
 enum class ESkillState : uint8
 {
@@ -32,6 +33,8 @@ public:
 	virtual bool CastSkill();
 
 	FOnSkillCoolDelegate OnSkillCool;
+
+	FOnSkillCoolTwoParamDelegate OnSkillCoolTwoParam;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player")

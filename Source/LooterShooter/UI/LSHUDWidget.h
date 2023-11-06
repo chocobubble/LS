@@ -53,6 +53,8 @@ public:
 
 	void UpdateCurrentMP();
 
+	void UpdateGrapplingHookCool(float CoolRate, int32 Count);
+
 	void UpdatePlayerState();
 
 	void UpdateFirstSkillCool(float CoolRate);
@@ -110,6 +112,9 @@ private:
 	UProgressBar* InteractionProgressBar;
 
 	UPROPERTY()
+	UProgressBar* GrapplingHookProgressBar;
+
+	UPROPERTY()
 	UProgressBar* FirstSkillProgressBar;
 
 	UPROPERTY()
@@ -150,6 +155,9 @@ private:
 
 	UPROPERTY()
 	UTextBlock* ThirdWeaponRoundsRemainingText;
+
+	UPROPERTY()
+	UTextBlock* GrapplingHookRemainingText;
 
 	UPROPERTY()
 	ULSInventoryItemSlot* ItemSlot;

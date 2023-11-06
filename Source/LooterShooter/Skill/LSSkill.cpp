@@ -12,6 +12,7 @@ void ULSSkill::Tick(float DeltaTime)
 		{
 			SetSkillReady();
 			OnSkillCool.Broadcast(0.0f);
+			LSLOG(Warning, TEXT("SKill On"));
 			return;
 		}
 		float CoolTimeRate = (SkillCoolTime < KINDA_SMALL_NUMBER) ? 0.0f : (ElapsedTime / SkillCoolTime);
@@ -41,12 +42,5 @@ void ULSSkill::SetSkillReady()
 
 bool ULSSkill::CastSkill()
 {
-	if (CurrentSkillState != ESkillState::ESS_Ready)
-	{
-		return false;
-	}
-
-	CurrentSkillState = ESkillState::ESS_Cool;
-
-	return true;
+	return false;
 }

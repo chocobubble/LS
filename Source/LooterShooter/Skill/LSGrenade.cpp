@@ -36,13 +36,20 @@ ALSGrenade::ALSGrenade()
 		ExplodeSound = SC_EXPLODE.Object;
 	}
 	
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_EXPLODE(TEXT("/Game/MilitaryWeapSilver/Sound/GrenadeLauncher/Wavs/GrenadeLauncher_Explosion03.GrenadeLauncher_Explosion03"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS_EXPLODE(TEXT("/Game/MilitaryWeapSilver/FX/P_Grenade_Explosion_01.P_Grenade_Explosion_01"));
 	if (PS_EXPLODE.Succeeded())
 	{
 		ExplodeImpact = PS_EXPLODE.Object;
 	}
 
 	ExplodeParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EXPLODE"));
+
+	if (GrenadeMovementComponent)
+	{
+		GrenadeMovementComponent->AddForce(GetActorForwardVector() * 1000.0f);
+		GrenadeMovementComponent->InitialSpeed = 1000.0f;
+		GrenadeMovementComponent->MaxSpeed = 1000.0f;
+	}
 }
 
 void ALSGrenade::Throw()
@@ -115,8 +122,21 @@ void ALSGrenade::Explode()
 		LSLOG(Warning, TEXT("NO t explode"));
 	}
 
-
 	Destroy();
+/*
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			DestroyTimerHandle,
+			FTimerDelegate::CreateLambda([this]() -> void {
+				Destroy(); }),
+				1.0f, // 던지는 시간
+				false
+				);
+		
+			
+	}
+*/
 }
 
 void ALSGrenade::Init(APawn* Pawn)
@@ -138,8 +158,7 @@ void ALSGrenade::BeginPlay()
 				false
 		);
 	}
-
-	ProjectileMovementComponent->OnProjectileBounce.AddDynamic(this, &ALSGrenade::OnBounce);
+	GrenadeMovementComponent->OnProjectileBounce.AddDynamic(this, &ALSGrenade::OnBounce);
 }
 
 void ALSGrenade::Tick(float DeltaTime)

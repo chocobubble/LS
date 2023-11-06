@@ -33,9 +33,39 @@ bool UThrowGrenade::CastSkill()
 {
 	Super::CastSkill();
 
-	if (GetWorld() == nullptr || LSPlayer == nullptr|| LSGrenadeClass == nullptr)
+	if (CurrentSkillState != ESkillState::ESS_Ready)
 	{
 		return false;
+	}
+
+	if (GetWorld() == nullptr || LSPlayer == nullptr || LSGrenadeClass == nullptr)
+	{
+		return false;
+	}
+
+	LSPlayer->PlayThrowGrenadeMontage();
+
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			ThrowTimerHandle,
+			FTimerDelegate::CreateLambda([this]() -> void {
+				ThrowGrenade(); }),
+				0.5f, // 던지는 시간
+				false
+				);
+	}
+
+	CurrentSkillState = ESkillState::ESS_Cool;
+
+	return true;
+}
+
+void UThrowGrenade::ThrowGrenade()
+{
+	if (GetWorld() == nullptr || LSPlayer == nullptr || LSGrenadeClass == nullptr)
+	{
+		return;
 	}
 
 	FVector ThrowSocketPos = LSPlayer->GetThrowSocketPos();
@@ -54,7 +84,5 @@ bool UThrowGrenade::CastSkill()
 		Grenade->Throw();
 	}
 
-	LSPlayer->PlayThrowGrenadeMontage();
 
-	return true;
 }

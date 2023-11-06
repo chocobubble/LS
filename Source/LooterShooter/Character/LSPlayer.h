@@ -75,6 +75,8 @@ public:
 
 	void InteractCheck();
 
+	void ThrowHook();
+
 	void GrappleBegin();
 
 	void OnAssetLoadCompleted();
@@ -384,8 +386,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	float CurrentGrapplingCastingTime = 0.0f;
 
-	UPROPERTY(VisibleInstanceOnly, Category = "Grapple")
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
 	FVector GrappleToLocation;
+
+	UPROPERTY(VisibleAnywhere, Category = "Grapple")
+	FHitResult HookHitResult;
 
 	FTimerHandle GrapplingTimerHandle = { };
 
