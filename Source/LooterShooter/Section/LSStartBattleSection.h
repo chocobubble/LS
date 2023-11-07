@@ -14,10 +14,11 @@ class LOOTERSHOOTER_API ALSStartBattleSection : public ALSSection
 {
 	GENERATED_BODY()
 
+	virtual void BattleStart() override;
+
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void BattleStart() override;
 	
 	virtual void SectionClear() override;
 

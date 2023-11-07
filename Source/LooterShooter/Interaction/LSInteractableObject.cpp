@@ -3,6 +3,7 @@
 
 #include "LSInteractableObject.h"
 #include "Components/BoxComponent.h"
+#include "LooterShooter/Character/LSPlayer.h"
 
 ALSInteractableObject::ALSInteractableObject()
 {
@@ -29,5 +30,19 @@ void ALSInteractableObject::PostInitializeComponents()
 
 void ALSInteractableObject::Interact()
 {
-	OnCompleteInteraction.Broadcast();
+	//OnCompleteInteraction.Execute();
+}
+
+void ALSInteractableObject::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	
+	LSLOG(Warning, TEXT("Overlap"));
+	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
+	if (OverlappedCharacter)
+	{
+		OverlappedCharacter->SetInteractingObject(this);
+		OverlappedCharacter->SetIsNearInteractableObject(true);
+		OverlappedCharacter->SetCanInteract(true);
+	}
+
 }

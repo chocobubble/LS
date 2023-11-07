@@ -264,6 +264,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Interact")
 	ALSInteractableObject* InteractingObject;
 
+	UPROPERTY(VisibleAnywhere, Category = "Interact")
+	bool bCanInteract = false;
+
 	/** For Test */
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	TObjectPtr<ULSWeaponDefinition> WeaponDefinition;
@@ -523,6 +526,16 @@ public:
 	float GetInteractionElapsedRatio() const
 	{
 		return InteractionElapsedTime / InteractionCompleteTime;
+	}
+
+	bool CanInteract() const
+	{
+		return bCanInteract;
+	}
+
+	void SetCanInteract(bool Value)
+	{
+		bCanInteract = Value;
 	}
 
 	int32 GetPlayerLevel() const;

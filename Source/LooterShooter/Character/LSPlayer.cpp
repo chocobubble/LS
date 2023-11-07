@@ -764,7 +764,7 @@ void ALSPlayer::UseFirstSkill()
 
 void ALSPlayer::OnInteractButtonDown(const FInputActionInstance& ActionInstance)
 {
-	if (!bIsNearInteractableObject)
+	if (!bIsNearInteractableObject || !bCanInteract)
 	{
 		return;
 	}
@@ -780,6 +780,7 @@ void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 	{
 		LSLOG(Warning, TEXT("Interact 1"));
 		InteractWithObject();
+		bCanInteract = false;
 	}
 }
 

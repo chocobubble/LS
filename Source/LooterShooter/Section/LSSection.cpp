@@ -8,7 +8,7 @@
 #include "LooterShooter/GameMode/LSGameMode.h"
 #include "LooterShooter/Character/LSPlayerController.h"
 #include "LooterShooter/Character/LSPlayer.h"
-#include "LooterShooter/Interaction/LSInteractableObject.h"
+#include "LooterShooter/Interaction/LSSectionStarter.h"
 
 ALSSection::ALSSection()
 {
@@ -28,26 +28,32 @@ ALSSection::ALSSection()
 	Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSSection::OnTriggerBeginOverlap);
 
-	if (GetWorld())
-	{
-		InteractableObject = 
-			GetWorld()->SpawnActor<ALSInteractableObject>(
-				ALSInteractableObject::StaticClass,
-			GetLocation(),
-			GetRotation
-		);
-
-		if (InteractableObject)
-		{
-			BindInteractableObject(InteractableObject);
-		}
-	}
 }
 
 void ALSSection::BeginPlay()
 {
 	Super::BeginPlay();
-	
+/*
+	if (GetWorld() && SectionStarter == nullptr)
+	{
+		//FActorSpawnParameters SpawnParameters;
+		//SpawnParameters.Owner = this;
+		SectionStarter = GetWorld()->SpawnActor<ALSSectionStarter>(
+			ALSSectionStarter::StaticClass(),
+			GetActorLocation(),
+			GetActorRotation()
+			//SpawnParameters
+		);
+
+		if (SectionStarter)
+		{
+			SectionStarter->SetOwner(this);
+			SectionStarter->SetActorTransform(GetActorTransform());
+			BindInteractableObject();
+			SectionStarter->Init(this);
+		}
+	}
+*/
 }
 
 void ALSSection::SetState(ESectionState NewState)
@@ -62,22 +68,24 @@ void ALSSection::SetState(ESectionState NewState)
 		case ESectionState::ESS_Ready:
 		{
 			Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
+			CurrentState = NewState;
 			break;
 		}
 		case ESectionState::ESS_Battle:
 		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
+			CurrentState = NewState;
 			BattleStart();
 			break;
 		}
 		case ESectionState::ESS_Complete:
 		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
+			CurrentState = NewState;
 			SectionClear();
 			break;
 		}
 	}
-	CurrentState = NewState;
 }
 
 void ALSSection::OnConstruction(const FTransform& Transform)
@@ -89,36 +97,40 @@ void ALSSection::OnConstruction(const FTransform& Transform)
 
 void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*
+	
 	if (CurrentState == ESectionState::ESS_Ready)
 	{
 		SetState(ESectionState::ESS_Battle);
 	}
+	
 	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
 	if (LSPlayer)
 	{
 		LSPlayerController = Cast<ALSPlayerController>(LSPlayer->GetController());
 		MonsterLevel = LSPlayer->GetPlayerLevel();
 	}
-	*/
 }
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
 }
 
-void ALSSection::BindInteractableObject(ALSInteractableObject* InteractableObject)
+void ALSSection::BindInteractableObject()
 {
-	if (InteractableObject)
+	LSLOG(Warning, TEXT("Bind Interactable Object"));
+	if (SectionStarter)
 	{
-		InteractableObject->OnCompleteInteraction.AddDynamic(this, &ALSSection::BattleStart);
+		LSLOG(Warning, TEXT("Bind Interactable Object"));
+		//SectionStarter->OnCompleteInteraction.BindUObject(this, &ALSSection::BattleStart);
 	}
 }
 
-void ALSSection::BattleStart() 
+void ALSSection::BattleStart()
 {
+	LSLOG(Warning, TEXT("%s , before start battle"), *GetName());
 	if (CurrentState == ESectionState::ESS_Ready)
 	{
+		LSLOG(Warning, TEXT("start battle"));
 		SetState(ESectionState::ESS_Battle);
 	}
 }

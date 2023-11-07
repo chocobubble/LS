@@ -15,10 +15,11 @@ void ALSFirstSection::BeginPlay()
     Super::BeginPlay();
 
     KilledMonsterCount = 0;
-    ClearCondition = 2;
+    ClearCondition = 3;
     EnemySpawnTime = 5.0f;
     DoorSpawnPoint = FVector(1320.0f, 5200.0f, 190.0f);
 
+    //MonsterSpawnPoint = FVector(1390.0f, 3200.0f, 0.0f);
     MonsterSpawnPoints.Add(FVector(1390.0f, 3200.0f, 0.0f));
     MonsterSpawnPoints.Add(FVector(1590.0f, 3400.0f, 0.0f));
     MonsterSpawnPoints.Add(FVector(1590.0f, 3000.0f, 0.0f));
@@ -29,21 +30,18 @@ void ALSFirstSection::BattleStart()
 {
     Super::BattleStart();
 
+    /*
     GetWorld()->GetTimerManager().SetTimer(
         SpawnMonsterTimerHandle,
         FTimerDelegate::CreateUObject(this, &ALSFirstSection::OnMonsterSpawn),
         EnemySpawnTime, 
         true
     );
+    */
 
+    OnMonsterSpawn();
     LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.0f, 180.0f, 0.0f));
     
-	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
-	if (LSPlayer)
-	{
-		LSPlayerController = Cast<ALSPlayerController>(LSPlayer->GetController());
-		MonsterLevel = LSPlayer->GetPlayerLevel();
-	}
 }
 
 void ALSFirstSection::OnMonsterSpawn()
@@ -57,7 +55,7 @@ void ALSFirstSection::OnMonsterSpawn()
         ALSMonster* Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
     	if (Monster)
     	{
-         `  Monster->Init(MonsterLevel);
+            Monster->Init(MonsterLevel);
     		Monster->OnDestroyed.AddDynamic(this, &ALSFirstSection::OnMonsterDestroyed);
             MonsterArray.Push(Monster);
             if (MonsterArray.Num() >= 3) // 몬스터 3 생성 시 스폰 중단

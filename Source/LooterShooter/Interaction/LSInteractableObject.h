@@ -6,9 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "LSInteractableObject.generated.h"
 
+class ALSPlayer;
 class UBoxComponent;
 
-DECLARE_MULTICAST_DELEGATE(FOnCompleteInteractionDelegate);
+DECLARE_DELEGATE(FOnCompleteInteractionDelegate);
 
 UCLASS()
 class LOOTERSHOOTER_API ALSInteractableObject : public AActor
@@ -28,7 +29,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
-	virtual void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {}
+	virtual void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) {}
@@ -36,6 +37,9 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	UBoxComponent* Trigger;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	ALSPlayer* OverlappedCharacter;
 
 private:
 

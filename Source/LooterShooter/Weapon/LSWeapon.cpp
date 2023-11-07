@@ -57,7 +57,7 @@ void ALSWeapon::FireBullet(const FVector& TargetPos)
 			Bullet = GetWorld()->SpawnActor<ALSBullet>(
 				LSBulletClass,
 				EjectSocketPos,
-				(TargetPos - EjectSocketPos).Rotation()
+				(TargetPos).Rotation()
 			);
 			if (Bullet)
 			{

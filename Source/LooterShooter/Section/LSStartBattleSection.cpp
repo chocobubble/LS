@@ -18,7 +18,5 @@ void ALSStartBattleSection::BattleStart()
 
 void ALSStartBattleSection::SectionClear()
 {
-    Super::SectionClear();
-
     UGameplayStatics::OpenLevel(GetWorld(), TEXT("step4"));
 }

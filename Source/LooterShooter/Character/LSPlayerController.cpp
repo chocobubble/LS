@@ -126,7 +126,7 @@ void ALSPlayerController::BeginPlay()
     HUDWidget = CreateWidget<ULSHUDWidget>(this, HUDWidgetClass);
     if (HUDWidget)
     {
-        HUDWidget->AddToViewport(1);
+        HUDWidget->AddToViewport(3);
     }
     
     ResultWidget = CreateWidget<ULSGameplayResultWidget>(this, ResultWidgetClass);
@@ -230,7 +230,7 @@ void ALSPlayerController::OnEnhanceUIOpen()
 	{
     	EnhanceWidget->Init(LSPlayer->GetInventoryManager()->GetWeaponDefinitionInList(0), LSPlayer->GetResourceManager());
 	}
-    EnhanceWidget->AddToViewport();
+    EnhanceWidget->AddToViewport(10);
     ChangeInputMode(false);
 }
 

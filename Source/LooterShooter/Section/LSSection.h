@@ -8,7 +8,7 @@
 
 class UBoxComponent;
 class ALSPlayerController;
-class ALSInteractableObject;
+class ALSSectionStarter;
 
 enum class ESectionState : uint8
 {
@@ -33,23 +33,24 @@ public:
 	void SetState(ESectionState NewState);
 
 	UFUNCTION()
-	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnKeyNPCDestroyed(AActor* DestroyedActor);	
 
-	void BindInteractableObject(ALSInteractableObject* InteractableObject);
+	void BindInteractableObject();
 	
 	FTimerHandle SpawnNPCTimerHandle = {};
 
 	FTimerHandle SpawnItemBoxTimerHandle = {};
 
+	UFUNCTION()
+	virtual void BattleStart();
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-	virtual void BattleStart();
 	
 	virtual void SectionClear(); 
 
@@ -73,7 +74,7 @@ protected:
 	int32 MonsterLevel = 1;
 
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")
-	ALSInteractableObject* InteractableObject;
+	ALSSectionStarter* SectionStarter;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 	ALSPlayerController* LSPlayerController;

@@ -77,10 +77,6 @@ void ALSMonster::BeginPlay()
 	AssetStreamingHandle = LSGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &ALSMonster::OnAssetLoadCompleted));
 	SetCharacterState(ECharacterState::ECS_Loading);
 
-	// TODO : default 로 생성되게 바꾸기
-	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator); 
-	EquipWeapon();
-
 	if (DefenseManager)
 	{
 		DefenseManager->OnHPIsZero.AddUObject(this, &ALSMonster::SetCharacterStateDead);
@@ -111,6 +107,9 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 				CharacterWidget->BindDefenseComponent(DefenseManager);
 				CharacterWidget->SetMonsterLevel(MonsterLevel);
 			}
+			// TODO : default 로 생성되게 바꾸기
+			MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+			EquipWeapon();
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();
 			break;
@@ -120,7 +119,11 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 			SetActorEnableCollision(false);
 			GetMesh()->SetHiddenInGame(false);
 			HPBarWidget->SetHiddenInGame(true);
-			LSMonsterAnim->SetDeadAnim();
+			LSMonsterAnim = Cast<ULSAnimInstance>(GetMesh()->GetAnimInstance());
+			if (LSMonsterAnim)
+			{
+				LSMonsterAnim->SetDeadAnim();
+			}
 			SetCanBeDamaged(false);
 
 			LSAIController->StopAI();
@@ -273,6 +276,7 @@ void ALSMonster::Attack()
 		2.0f
 	);
 #endif
+
 
 	if (bResult)
 	{

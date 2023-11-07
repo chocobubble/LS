@@ -38,6 +38,9 @@ private:
 	UPROPERTY()
 	TArray<FVector> MonsterSpawnPoints;
 
+	//UPROPERTY()
+	//FVector MonsterSpawnPoint;
+
 	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	int32 KilledMonsterCount;
 

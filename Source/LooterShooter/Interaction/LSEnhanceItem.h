@@ -34,6 +34,8 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 private:
+	/*
 	UPROPERTY(VisibleAnywhere, Category = "Character")
 	ALSPlayer* OverlappedCharacter;
+	*/
 };
