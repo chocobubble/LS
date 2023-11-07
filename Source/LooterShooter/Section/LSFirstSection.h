@@ -35,8 +35,8 @@ protected:
 	virtual void SectionClear() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Monster")
-	FVector MonsterSpawnPoint;
+	UPROPERTY()
+	TArray<FVector> MonsterSpawnPoints;
 
 	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	int32 KilledMonsterCount;

@@ -8,6 +8,7 @@
 
 class UBoxComponent;
 class ALSPlayerController;
+class ALSInteractableObject;
 
 enum class ESectionState : uint8
 {
@@ -36,6 +37,8 @@ public:
 
 	UFUNCTION()
 	void OnKeyNPCDestroyed(AActor* DestroyedActor);	
+
+	void BindInteractableObject(ALSInteractableObject* InteractableObject);
 	
 	FTimerHandle SpawnNPCTimerHandle = {};
 
@@ -68,6 +71,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")
 	int32 MonsterLevel = 1;
+
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	ALSInteractableObject* InteractableObject;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 	ALSPlayerController* LSPlayerController;

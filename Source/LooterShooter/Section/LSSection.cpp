@@ -8,6 +8,7 @@
 #include "LooterShooter/GameMode/LSGameMode.h"
 #include "LooterShooter/Character/LSPlayerController.h"
 #include "LooterShooter/Character/LSPlayer.h"
+#include "LooterShooter/Interaction/LSInteractableObject.h"
 
 ALSSection::ALSSection()
 {
@@ -26,6 +27,21 @@ ALSSection::ALSSection()
 	Trigger->SetBoxExtent(FVector(200.0f, 100.0f, 25.0f));
 	Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSSection::OnTriggerBeginOverlap);
+
+	if (GetWorld())
+	{
+		InteractableObject = 
+			GetWorld()->SpawnActor<ALSInteractableObject>(
+				ALSInteractableObject::StaticClass,
+			GetLocation(),
+			GetRotation
+		);
+
+		if (InteractableObject)
+		{
+			BindInteractableObject(InteractableObject);
+		}
+	}
 }
 
 void ALSSection::BeginPlay()
@@ -44,19 +60,22 @@ void ALSSection::SetState(ESectionState NewState)
 	switch (NewState)
 	{
 		case ESectionState::ESS_Ready:
+		{
 			Trigger->SetCollisionProfileName(TEXT("LSTrigger"));
 			break;
-		
+		}
 		case ESectionState::ESS_Battle:
+		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 			BattleStart();
 			break;
-		
+		}
 		case ESectionState::ESS_Complete:
+		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 			SectionClear();
 			break;
-		
+		}
 	}
 	CurrentState = NewState;
 }
@@ -70,6 +89,7 @@ void ALSSection::OnConstruction(const FTransform& Transform)
 
 void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	/*
 	if (CurrentState == ESectionState::ESS_Ready)
 	{
 		SetState(ESectionState::ESS_Battle);
@@ -80,13 +100,28 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		LSPlayerController = Cast<ALSPlayerController>(LSPlayer->GetController());
 		MonsterLevel = LSPlayer->GetPlayerLevel();
 	}
+	*/
 }
 
 void ALSSection::OnKeyNPCDestroyed(AActor* DestroyedActor)
 {
 }
 
-void ALSSection::BattleStart() {}
+void ALSSection::BindInteractableObject(ALSInteractableObject* InteractableObject)
+{
+	if (InteractableObject)
+	{
+		InteractableObject->OnCompleteInteraction.AddDynamic(this, &ALSSection::BattleStart);
+	}
+}
+
+void ALSSection::BattleStart() 
+{
+	if (CurrentState == ESectionState::ESS_Ready)
+	{
+		SetState(ESectionState::ESS_Battle);
+	}
+}
 
 void ALSSection::SectionClear() {}
 

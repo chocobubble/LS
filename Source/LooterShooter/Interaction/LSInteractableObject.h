@@ -8,6 +8,8 @@
 
 class UBoxComponent;
 
+DECLARE_MULTICAST_DELEGATE(FOnCompleteInteractionDelegate);
+
 UCLASS()
 class LOOTERSHOOTER_API ALSInteractableObject : public AActor
 {
@@ -16,7 +18,9 @@ class LOOTERSHOOTER_API ALSInteractableObject : public AActor
 public:	
 	ALSInteractableObject();
 
-	virtual void Interact() {}
+	virtual void Interact();
+
+	FOnCompleteInteractionDelegate OnCompleteInteraction;
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,7 +32,6 @@ protected:
 
 	UFUNCTION()
 	virtual	void OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp,	int32 OtherBodyIndex) {}
-
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")

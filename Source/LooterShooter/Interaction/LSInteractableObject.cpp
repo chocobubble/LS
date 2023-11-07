@@ -26,3 +26,8 @@ void ALSInteractableObject::PostInitializeComponents()
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ALSInteractableObject::OnCharacterOverlap);
 	Trigger->OnComponentEndOverlap.AddDynamic(this, &ALSInteractableObject::OnCharacterEndOverlap);
 }
+
+void ALSInteractableObject::Interact()
+{
+	OnCompleteInteraction.Broadcast();
+}
