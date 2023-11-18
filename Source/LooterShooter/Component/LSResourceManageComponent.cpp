@@ -24,21 +24,22 @@ void ULSResourceManageComponent::BeginPlay()
 
 void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
 {
+	int MaxAmmo = GetMaxAmmo(AmmoType);
 	switch (AmmoType)
 	{
 		case EAmmoType::EAT_Rifle:
 		{
-			CurrentRifleAmmo = Amount;
+			CurrentRifleAmmo = FMath::Clamp(Amount, 0, MaxAmmo);
 			break;
 		}
 		case EAmmoType::EAT_Pistol:
 		{
-			CurrentPistolAmmo = Amount;
+			CurrentPistolAmmo = FMath::Clamp(Amount, 0, MaxAmmo);;
 			break;
 		}
 		case EAmmoType::EAT_Shotgun:
 		{
-			CurrentShotgunAmmo = Amount;
+			CurrentShotgunAmmo = FMath::Clamp(Amount, 0, MaxAmmo);;
 			break;
 		}
 	}	

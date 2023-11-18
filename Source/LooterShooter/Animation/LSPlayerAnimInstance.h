@@ -27,6 +27,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", Meta = (AllowPrivateAccess = "true"))
 	float CurrentPawnSpeed = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", Meta = (AllowPrivateAccess = "true"))
+	float AOPitch = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	bool IsInAir = false;
 	
@@ -41,6 +44,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	EWeaponType EquippedWeaponType;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	FTransform LHandTF;
 
 public:
 	void SetAimAnim(bool IsAiming)
@@ -61,5 +67,15 @@ public:
 	void SetDeadAnim() 
 	{
 		bIsDead = true;
+	}
+
+	void SetAOPitch(float AimOffsetPitch)
+	{
+		AOPitch = FMath::Clamp(AimOffsetPitch * 3.0f, -90.0f, 90.0f);
+	}
+
+	void SetLeftHandTransform(FTransform& LeftHandTransform)
+	{
+		LHandTF = LeftHandTransform;
 	}
 };

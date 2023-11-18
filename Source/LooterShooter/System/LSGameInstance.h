@@ -5,7 +5,7 @@
 #include "LooterShooter/LooterShooter.h"
 #include "Engine/GameInstance.h"
 #include "Engine/StreamableManager.h"
-#include "LooterShooter/Interaction/LSAutoLootItem.h"
+#include "LooterShooter/Loot/AutoLoot/LSAutoLootItem.h"
 #include "LooterShooter/Data/WeaponBaseData.h"
 #include "LooterShooter/Data/PlayerBaseData.h"
 #include "LooterShooter/Data/MonsterBaseData.h"

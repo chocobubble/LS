@@ -19,6 +19,8 @@ public class LooterShooter : ModuleRules
 			"NavigationSystem",
 			"AIModule",
 			"GameplayTasks",
-			"CableComponent" });
+			"CableComponent",
+			"Niagara",
+			"MultiplayerSessions", "OnlineSubsystem", "OnlineSubsystemSteam"});
 	}
 }

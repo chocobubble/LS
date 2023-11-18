@@ -2,7 +2,7 @@
 
 
 #include "LSLootItem.h"
-#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -10,8 +10,8 @@ ALSLootItem::ALSLootItem()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TRIGGER"));
-	Trigger->SetBoxExtent(FVector(20.0f, 20.0f, 20.0f));
+	Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("TRIGGER"));
+	Trigger->SetSphereRadius(TriggerRange);
 	Trigger->SetCollisionProfileName(TEXT("LootItem"));
 	RootComponent = Trigger;
 	
@@ -24,7 +24,7 @@ ALSLootItem::ALSLootItem()
 	}
 	ItemMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
-	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("EFFECT"));
+	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PARTICLE"));
 	Effect->SetupAttachment(RootComponent);
 	
 	LootItemType = ELootItemType::ELIT_Default;

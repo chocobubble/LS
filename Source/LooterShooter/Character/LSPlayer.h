@@ -460,6 +460,9 @@ private:
 	void RecoilTick(float DeltaTime);
 ///////////// end recoil
 
+	UPROPERTY(EditAnywhere, Category = "AimOffset")
+	float AOPitch = 0.0f;
+
 public:
 	void SetCharacterState(ECharacterState NewState);
 	// TODO: 위 아래 합치기

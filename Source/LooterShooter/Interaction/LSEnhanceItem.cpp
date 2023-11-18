@@ -25,28 +25,13 @@ void ALSEnhanceItem::PostInitializeComponents()
 void ALSEnhanceItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnCharacterOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-
-	LSLOG(Warning, TEXT("Overlap"));
-/*
-	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
-	if (OverlappedCharacter)
-	{
-		OverlappedCharacter->SetInteractingObject(this);
-		OverlappedCharacter->SetIsNearInteractableObject(true);
-	}
-*/
 }
 
 void ALSEnhanceItem::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	LSLOG(Warning, TEXT("Overlap end"));
+	Super::OnCharacterEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 
-	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
-	if (OverlappedCharacter)
-	{
-		OverlappedCharacter->SetIsNearInteractableObject(false);
-	}
-	//OverlappedCharacter = nullptr;
+	SetActorEnableCollision(true);
 }
 
 void ALSEnhanceItem::Interact()

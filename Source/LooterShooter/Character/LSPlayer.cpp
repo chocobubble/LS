@@ -20,7 +20,7 @@
 #include "LooterShooter/Component/LSEquipmentComponent.h"
 #include "Math/RotationMatrix.h"
 #include "LooterShooter/UI/LSTextPopup.h"
-#include "LooterShooter/Interaction/LSAutoLootItem.h"
+#include "LooterShooter/Loot/AutoLoot/LSAutoLootItem.h"
 #include "LooterShooter/Interaction/LSItemBox.h"
 #include "LooterShooter/Interaction/LSInteractableObject.h"
 #include "LooterShooter/Weapon/LSWeaponInstance.h"
@@ -68,6 +68,7 @@ ALSPlayer::ALSPlayer()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("LSCharacter"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SKM_QUINN(TEXT("/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn"));
+	if (SKM_QUINN.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SKM_QUINN.Object);
 	}
@@ -353,6 +354,22 @@ void ALSPlayer::Tick(float DeltaTime)
 
 	// 반동 tick
 	RecoilTick(DeltaTime);
+
+	FVector OutPos;
+	FRotator OutRot;
+	if (CurrentWeapon && CurrentWeapon->GetWeaponMeshComponent())
+	{
+		FTransform LHandTF = CurrentWeapon->GetWeaponMeshComponent()->GetSocketTransform(FName("hand_l"), ERelativeTransformSpace::RTS_World);
+		GetMesh()->TransformToBoneSpace(FName("hand_r"), LHandTF.GetLocation(), FRotator::ZeroRotator, OutPos, OutRot);
+		LHandTF.SetLocation(OutPos);
+		LHandTF.SetRotation(FQuat(OutRot));
+		if (LSPlayerAnim)
+		{
+			LSPlayerAnim->SetLeftHandTransform(LHandTF);
+		}
+	}
+	
+	
 }
 
 void ALSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -416,6 +433,14 @@ void ALSPlayer::Look(const FInputActionValue& Value)
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+
+	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
+	if (LSPlayerAnim)
+	{
+		LSLOG(Warning, TEXT("%f"), LookAxisVector.Y);
+		AOPitch = FMath::Clamp(AOPitch - LookAxisVector.Y, -30.0f, 30.0f);
+		LSPlayerAnim->SetAOPitch(AOPitch);
+	}
 }
 
 void ALSPlayer::Shoot(const FInputActionValue& Value)
@@ -776,7 +801,7 @@ void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 	InteractionElapsedTime = ElapsedTime;
 	// Interact Progress Bar 업데이트 함수 호출
 	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
-	if (InteractionCompleteTime - InteractionElapsedTime <= 0.01f)
+	if (InteractionCompleteTime - InteractionElapsedTime <= 0.1f)
 	{
 		LSLOG(Warning, TEXT("Interact 1"));
 		InteractWithObject();

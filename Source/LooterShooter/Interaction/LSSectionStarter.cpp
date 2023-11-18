@@ -19,35 +19,30 @@ void ALSSectionStarter::Init(ALSSection* Section)
 void ALSSectionStarter::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnCharacterOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	/*
+	
+/*
 	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
 	if (OverlappedCharacter)
 	{
 		OverlappedCharacter->SetInteractingObject(this);
 		OverlappedCharacter->SetIsNearInteractableObject(true);
 	}
-	*/
+*/
 }
 
 void ALSSectionStarter::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
-	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
-	if (OverlappedCharacter)
-	{
-		OverlappedCharacter->SetIsNearInteractableObject(false);
-	}
-	//OverlappedCharacter = nullptr;
+	Super::OnCharacterEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);	
 }
 
 void ALSSectionStarter::Interact()
 {
 	LSLOG(Warning, TEXT("Interact"));
-	//OnCompleteInteraction.Execute();
 	if (StartBattleSection && bIsSectionReady)
 	{
 		LSLOG(Warning, TEXT("Start Battle"));
-		StartBattleSection->BattleStart();
+		OnCompleteInteraction.Execute();
+		//StartBattleSection->BattleStart();
 		bIsSectionReady = false;
 	}
 }

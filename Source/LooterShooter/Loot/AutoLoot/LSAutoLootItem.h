@@ -2,8 +2,11 @@
 
 #pragma once
 
-#include "LSLootItem.h"
+#include "LooterShooter/Loot/LSLootItem.h"
 #include "LSAutoLootItem.generated.h"
+
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 /**
  * 캐릭터와 겹치면 자동으로 룻되는 아이템 클래스
@@ -22,8 +25,14 @@ public:
 protected:
 	virtual void OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 
-private:
+protected:
 	/** 드롭되는 아이템의 양 */
 	UPROPERTY(EditAnywhere, Category = "Loot", meta = (AllowPrivateAccess = "true"))
-	int32 LootingAmount = 0;
+	int32 DropAmount = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	UNiagaraComponent* EffectComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	UNiagaraSystem* DestroyEffect;
 };

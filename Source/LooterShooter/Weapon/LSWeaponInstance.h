@@ -218,4 +218,9 @@ public:
 	{
 		return GunType;
 	}
+
+	USkeletalMeshComponent* GetWeaponMeshComponent() const
+	{
+		return WeaponSkeletalMesh;
+	}
 };

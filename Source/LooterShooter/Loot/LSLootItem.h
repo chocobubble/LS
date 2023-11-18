@@ -7,7 +7,8 @@
 #include "LooterShooter/Types/LootItemType.h"
 #include "LSLootItem.generated.h"
 
-class UBoxComponent;
+class USoundCue;
+class USphereComponent;
 class UStaticMeshComponent;
 class UParticleSystemComponent;
 
@@ -32,7 +33,7 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
-	UBoxComponent* Trigger;
+	USphereComponent* Trigger;
 
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	UStaticMeshComponent* ItemMesh;
@@ -42,6 +43,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Loot")
 	ELootItemType LootItemType;
+
+	UPROPERTY(VisibleAnywhere, category = "Sound")
+	USoundCue* LootSound;
+
+	UPROPERTY(EditAnywhere, category = "Collision", meta = (AllowPrivateAccess = "true"))
+	float TriggerRange = 100.0f;
 
 public:
 	UStaticMeshComponent* GetItemMesh()

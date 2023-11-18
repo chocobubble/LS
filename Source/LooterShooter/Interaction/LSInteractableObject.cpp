@@ -11,7 +11,7 @@ ALSInteractableObject::ALSInteractableObject()
 
 	Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TRIGGER"));
 	RootComponent = Trigger;
-	Trigger->SetBoxExtent(FVector(20.0f, 20.0f, 20.0f));
+	Trigger->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
 	Trigger->SetCollisionProfileName(TEXT("LootItem"));
 }
 
@@ -45,4 +45,14 @@ void ALSInteractableObject::OnCharacterOverlap(UPrimitiveComponent* OverlappedCo
 		OverlappedCharacter->SetCanInteract(true);
 	}
 
+}
+
+void ALSInteractableObject::OnCharacterEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	OverlappedCharacter = Cast<ALSPlayer>(OtherActor);
+	if (OverlappedCharacter)
+	{
+		OverlappedCharacter->SetIsNearInteractableObject(false);
+	}
+	OverlappedCharacter = nullptr;
 }

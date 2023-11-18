@@ -2,24 +2,25 @@
 
 
 #include "LSAutoLootItem.h"
-#include "LooterShooter/Character/LSPlayer.h"
-#include "LooterShooter/Component/LSCharacterStatComponent.h"
-#include "LooterShooter/Component/LSDefenseComponent.h"
-#include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Types/LootItemType.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 ALSAutoLootItem::ALSAutoLootItem()
 {	
+	EffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EFFECT"));
+	EffectComponent->SetupAttachment(RootComponent);
 }
 
 void ALSAutoLootItem::SetAutoLootItem(ELootItemType LootedItemType, int32 Amount)
 {
-	LootingAmount = Amount;
+	DropAmount = Amount;
 	LootItemType = LootedItemType;
 }
 
 void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,	const FHitResult& SweepResult)
 {
+	/*
 	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
 	if (LSPlayer == nullptr)
 	{
@@ -30,12 +31,12 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 	{
 		case ELootItemType::ELIT_Gold:
 		{
-			LSPlayer->GetResourceManager()->SetGoldAmount(LootingAmount);
+			LSPlayer->GetResourceManager()->SetGoldAmount(DropAmount);
 			break;
 		}
 		case ELootItemType::ELIT_HP:
 		{
-			LSPlayer->GetDefenseManager()->SetHP(LSPlayer->GetDefenseManager()->GetCurrentHP() + LootingAmount);
+			LSPlayer->GetDefenseManager()->SetHP(LSPlayer->GetDefenseManager()->GetCurrentHP() + DropAmount);
 			break;
 		}	
 		case ELootItemType::ELIT_MP:
@@ -49,7 +50,7 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 			{
 				int32 CurrentAmmo = ResourceManager->GetCurrentAmmo(EAmmoType::EAT_Rifle);
 				int32 MaxAmmo = ResourceManager->GetMaxAmmo(EAmmoType::EAT_Rifle);
-				int32 FinalAmmo = (CurrentAmmo + LootingAmount) > MaxAmmo ? MaxAmmo : (CurrentAmmo + LootingAmount);
+				int32 FinalAmmo = (CurrentAmmo + DropAmount) > MaxAmmo ? MaxAmmo : (CurrentAmmo + DropAmount);
 				ResourceManager->SetCurrentAmmo(EAmmoType::EAT_Rifle, FinalAmmo);
 			}
 			break;
@@ -65,6 +66,7 @@ void ALSAutoLootItem::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AA
 			break;
 		}
 	}	
+	*/
 
     Destroy();
 }

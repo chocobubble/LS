@@ -19,6 +19,9 @@
 #include "LooterShooter/Weapon/LSWeapon.h"
 #include "LooterShooter/GameMode/LSGameMode.h"
 #include "LSPlayerController.h"
+#include "LooterShooter/Loot/AutoLoot/HPAutoLootItem.h"
+#include "LooterShooter/Loot/AutoLoot/GoldAutoLootItem.h"
+#include "LooterShooter/Loot/AutoLoot/AmmoAutoLootItem.h"
 
 ALSMonster::ALSMonster()
 {
@@ -108,7 +111,6 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 				CharacterWidget->SetMonsterLevel(MonsterLevel);
 			}
 			// TODO : default 로 생성되게 바꾸기
-			MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 			EquipWeapon();
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			LSAIController->RunAI();
@@ -196,6 +198,8 @@ float ALSMonster::TakeDamage(const float DamageAmount, const FDamageEvent& Damag
 void ALSMonster::EquipWeapon()
 {
 	FName WeaponSocket(TEXT("weapon_r_socket"));
+	FRotator rot(0.0, 0.0, 90.0);
+	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, rot);
 	if (MonsterWeapon)
 	{
 		MonsterWeapon->AttachToComponent(
@@ -222,15 +226,18 @@ void ALSMonster::DropItem()
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
 	if (RandomNumber < 0.3f)
 	{
-		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_Gold, 100);
+		GetWorld()->SpawnActor<AGoldAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_Gold, 100);
 	}
 	else if (RandomNumber < 0.6f)
 	{
-		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_HP, 100);
+		GetWorld()->SpawnActor<AHPAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_HP, 100);
 	}
 	else if (RandomNumber < 1.0f)
 	{
-		LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_RifleAmmo, 100);
+		GetWorld()->SpawnActor<AAmmoAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_RifleAmmo, 100);
 	}
 }
 
@@ -263,7 +270,7 @@ void ALSMonster::Attack()
 		ECollisionChannel::ECC_GameTraceChannel1,
 		Params
 	);
-
+/*
 #if ENABLE_DRAW_DEBUG
 	DrawDebugLine(
 		GetWorld(),
@@ -276,7 +283,7 @@ void ALSMonster::Attack()
 		2.0f
 	);
 #endif
-
+*/
 
 	if (bResult)
 	{

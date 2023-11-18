@@ -16,7 +16,7 @@ ALSSection::ALSSection()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 	RootComponent = Mesh;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ITEM(TEXT("/Game/LS/Meshes/SM_floor.SM_floor"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ITEM(TEXT("/Game/Bazaar_Meshingun/Environment/Assets/Mesh/Architecture/SM_GoldPoint_01a.SM_GoldPoint_01a"));
 	if (ITEM.Succeeded())
 	{
 		Mesh->SetStaticMesh(ITEM.Object);
@@ -33,14 +33,14 @@ ALSSection::ALSSection()
 void ALSSection::BeginPlay()
 {
 	Super::BeginPlay();
-/*
+
 	if (GetWorld() && SectionStarter == nullptr)
 	{
 		//FActorSpawnParameters SpawnParameters;
 		//SpawnParameters.Owner = this;
 		SectionStarter = GetWorld()->SpawnActor<ALSSectionStarter>(
 			ALSSectionStarter::StaticClass(),
-			GetActorLocation(),
+			GetActorLocation() + FVector(0.0f, 90.0f, 0.0f),
 			GetActorRotation()
 			//SpawnParameters
 		);
@@ -53,7 +53,6 @@ void ALSSection::BeginPlay()
 			SectionStarter->Init(this);
 		}
 	}
-*/
 }
 
 void ALSSection::SetState(ESectionState NewState)
@@ -75,7 +74,7 @@ void ALSSection::SetState(ESectionState NewState)
 		{
 			Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 			CurrentState = NewState;
-			BattleStart();
+			//BattleStart();
 			break;
 		}
 		case ESectionState::ESS_Complete:
@@ -100,7 +99,7 @@ void ALSSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	
 	if (CurrentState == ESectionState::ESS_Ready)
 	{
-		SetState(ESectionState::ESS_Battle);
+		//SetState(ESectionState::ESS_Battle);
 	}
 	
 	ALSPlayer* LSPlayer = Cast<ALSPlayer>(OtherActor);
@@ -121,7 +120,7 @@ void ALSSection::BindInteractableObject()
 	if (SectionStarter)
 	{
 		LSLOG(Warning, TEXT("Bind Interactable Object"));
-		//SectionStarter->OnCompleteInteraction.BindUObject(this, &ALSSection::BattleStart);
+		SectionStarter->OnCompleteInteraction.BindUObject(this, &ALSSection::BattleStart);
 	}
 }
 
