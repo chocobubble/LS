@@ -7,7 +7,7 @@
 루트 슈터 게임의 각종 로직을 구현했으며, 자세한 내용은 GitHub Wiki에서 확인 가능합니다.
 
 - 게임 장르 : looter shooter(RPG + TPS)  
-- 제작 기간 : 2023. 6. ~ 
+- 제작 기간 : 2023. 6. ~ 10.
 - 제작 인원 : 1인 (개인 프로젝트)
 - 사용 엔진 : Unreal Engine v5.2 
 - 언어 : C++
@@ -15,9 +15,15 @@
 ### 플레이 영상
 - 이미지 클릭 시 유튜브에서 영상이 실행됩니다.
 
-[![play](https://img.youtube.com/vi/greOcRCExUE/0.jpg)](https://youtu.be/greOcRCExUE)
+[![play](https://img.youtube.com/vi/KDOwoE6ikm4/0.jpg)](https://youtu.be/KDOwoE6ikm4)
 
 <br>
+
+## 게임 로직 설명
+- 프로젝트 각 기능 관련 자세한 내용은 Document Wiki 에서 확인 가능합니다. 
+[[Document 링크]](https://github.com/chocobubble/LooterShooter/wiki/Document)
+
+<br><br>
 
 ## 주요 내용
 
@@ -67,10 +73,6 @@
 - 그리고 부가 속성을 추가할 때 마다 무기 클래스를 수정해야 했고 그 과정속에서 에러가 발생하는 경우가 있었습니다.
 - 해결 방안으로 다형성을 이용하여 유연하고 확장성있게 부가 속성을 구현했습니다.
 
-<br><br>
 
-## 게임 로직 설명
-- Document Wiki 에서 확인 가능합니다. 
-[[Document 링크]](https://github.com/chocobubble/LooterShooter/wiki/Document)
 
 
