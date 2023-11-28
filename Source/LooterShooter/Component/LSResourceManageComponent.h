@@ -40,7 +40,7 @@ private:
 	int32 MaxShotgunAmmo = 100;
 
 	UPROPERTY(VisibleAnywhere, Category = "Resource")
-	int32 CurrentRifleAmmo = 250; 
+	int32 CurrentRifleAmmo = 100; 
  
 	UPROPERTY(VisibleAnywhere, Category = "Resource")
 	int32 CurrentPistolAmmo = 125; 

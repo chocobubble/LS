@@ -36,6 +36,10 @@ void ALSWeaponInstance::Init()
 	SetWeaponStats();
 	SetWeaponSkeletalMesh();
 	RoundsRemaining = MagazineCapacity; 
+	if (BaseWeaponDefinition)
+	{
+		BaseWeaponDefinition->OnWeaponStatChanged.AddUObject(this, &ALSWeaponInstance::SetWeaponStats);
+	}
 }
 
 void ALSWeaponInstance::SetWeaponStats()

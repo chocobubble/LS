@@ -8,6 +8,7 @@
 
 class ALSMonster;
 class ALSDoor;
+class ALSSpawnPoint;
 
 /**
  * 
@@ -36,10 +37,7 @@ protected:
 
 private:
 	UPROPERTY()
-	TArray<FVector> MonsterSpawnPoints;
-
-	//UPROPERTY()
-	//FVector MonsterSpawnPoint;
+	TArray<ALSSpawnPoint*> MonsterSpawnPoints;
 
 	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	int32 KilledMonsterCount;
@@ -50,9 +48,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Monster")
 	TArray<ALSMonster*> MonsterArray;
 
-	UPROPERTY(VisibleAnywhere, Category = "Monster")
-	AActor* SpawnPointActor;
-
 	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
 	ALSDoor* LSDoor;
 
@@ -61,4 +56,23 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Obstacle")
 	AActor* NextDoor;
+
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	ALSSpawnPoint* FirstSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	ALSSpawnPoint* SecondSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	ALSSpawnPoint* ThirdSpawnPoint;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
+	FVector FirstSpawnPointPos;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
+	FVector SecondSpawnPointPos;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
+	FVector ThirdSpawnPointPos;
+
 };

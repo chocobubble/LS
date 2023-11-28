@@ -13,7 +13,7 @@ ALSWeapon::ALSWeapon()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPONMesh"));
 	RootComponent = WeaponMesh;
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/Weapons/Rifle/Mesh/SK_Rifle.SK_Rifle"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RIFLE(TEXT("/Game/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A"));
 	if (SK_RIFLE.Succeeded())
 	{
 		WeaponMesh->SetSkeletalMesh(SK_RIFLE.Object);

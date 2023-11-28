@@ -11,7 +11,7 @@ void ALSBossSection::BeginPlay()
     Super::BeginPlay();
 
     DoorSpawnPoint = FVector(1320.0f, 5230.0f, 190.0f);
-    MonsterSpawnPoint = FVector(1390.0f, 7260.0f, 0.0f);
+    MonsterSpawnPoint = FVector(-332.0f, 3618.0f, 7787.0f);
     EnemySpawnTime = 1.0f;
     MonsterLevel = 10; // 보스 몬스터 레벨 
 }
@@ -27,7 +27,7 @@ void ALSBossSection::BattleStart()
         false
     );
 
-    LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.0f, 180.0f, 0.0f));
+    //LSDoor = GetWorld()->SpawnActor<ALSDoor>(DoorSpawnPoint, FRotator(0.0f, 180.0f, 0.0f));
 }
 
 void ALSBossSection::OnMonsterSpawn()
@@ -35,7 +35,8 @@ void ALSBossSection::OnMonsterSpawn()
 	ALSMonster* Monster = GetWorld()->SpawnActor<ALSMonster>(MonsterSpawnPoint + FVector::UpVector * 88.0f, FRotator::ZeroRotator);
     if (Monster)
     {
-        Monster->SetMonsterLevel(MonsterLevel);
+        Monster->Init(10);//MonsterLevel);
+        //Monster->SetMonsterLevel(MonsterLevel);
         Monster->OnDestroyed.AddDynamic(this, &ALSBossSection::OnMonsterDestroyed);
     }
 }

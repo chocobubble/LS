@@ -264,7 +264,8 @@ void ALSPlayerController::InitResourceManager(ULSResourceManageComponent* Resour
 {
 	if (LSPlayerState && ResourceManager)
 	{
-		ResourceManager->SetGoldAmount(LSPlayerState->GetCurrentGold());
-		ResourceManager->SetCurrentAmmo(LSPlayerState->GetAmmoMap());
+        ResourceManager->SetGoldAmount(LSPlayerState->GetCurrentGold());
+        ResourceManager->SetCurrentAmmo(LSPlayerState->GetAmmoMap());
+        LSLOG(Warning, TEXT("Init ResourceManager"));
 	}
 }

@@ -107,7 +107,7 @@ private:
 	int32 Exp = 5;
 
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
-	int32 MonsterLevel = 2;
+	int32 MonsterLevel = 1;
 
 	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
 

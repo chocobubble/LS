@@ -88,6 +88,11 @@ void ALSMonster::BeginPlay()
 
 void ALSMonster::SetCharacterState(ECharacterState NewState)
 {
+	if (CurrentState == NewState)
+	{
+		return;
+	}
+
 	CurrentState = NewState;
 
 	switch (CurrentState)
@@ -104,12 +109,13 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 			SetActorHiddenInGame(false);
 			HPBarWidget->SetHiddenInGame(false);
 			SetCanBeDamaged(true);
+			/*
 			ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 			if (CharacterWidget && DefenseManager)
 			{				
 				CharacterWidget->BindDefenseComponent(DefenseManager);
 				CharacterWidget->SetMonsterLevel(MonsterLevel);
-			}
+			}*/
 			// TODO : default 로 생성되게 바꾸기
 			EquipWeapon();
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
@@ -133,6 +139,7 @@ void ALSMonster::SetCharacterState(ECharacterState NewState)
 			GetWorld()->GetTimerManager().SetTimer(
 				DeadTimerHandle,
 				FTimerDelegate::CreateLambda([this]() -> void {
+					LSLOG(Warning, TEXT("Monster Drop Item"));
 					DropItem();
 					MonsterWeapon->Destroy();
 					Destroy(); }),
@@ -161,15 +168,23 @@ void ALSMonster::PostInitializeComponents()
 void ALSMonster::Init(const int32 Level)
 {
 	SetMonsterLevel(Level);
+	LSGameInstance == nullptr ? Cast<ULSGameInstance>(GetGameInstance()) : LSGameInstance;
 	if (LSGameInstance)
 	{
-		FLSMonsterData* LSMonsterData = LSGameInstance->GetLSMonsterData(MonsterLevel);
+		FLSMonsterData* LSMonsterData = LSGameInstance->GetLSMonsterData(Level);
 		if (DefenseManager && LSMonsterData)
 		{
 			DefenseManager->SetMaxHP(LSMonsterData->MaxHP);
 			DefenseManager->SetMaxShield(LSMonsterData->MaxShield);
 		}
 	}
+	ULSCharacterWidget* CharacterWidget = Cast<ULSCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	if (CharacterWidget && DefenseManager)
+	{
+		CharacterWidget->BindDefenseComponent(DefenseManager);
+		CharacterWidget->SetMonsterLevel(Level);
+	}
+	LSLOG(Warning, TEXT("Monster Init"));
 }
 
 float ALSMonster::TakeDamage(const float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -199,7 +214,7 @@ void ALSMonster::EquipWeapon()
 {
 	FName WeaponSocket(TEXT("weapon_r_socket"));
 	FRotator rot(0.0, 0.0, 90.0);
-	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, rot);
+	MonsterWeapon = GetWorld()->SpawnActor<ALSWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 	if (MonsterWeapon)
 	{
 		MonsterWeapon->AttachToComponent(
@@ -226,17 +241,17 @@ void ALSMonster::DropItem()
 	float RandomNumber = FMath::FRandRange(0.0f, 1.0f);
 	if (RandomNumber < 0.3f)
 	{
-		GetWorld()->SpawnActor<AGoldAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AGoldAutoLootItem>(GetActorLocation() + FVector::UpVector * 80.0f, FRotator::ZeroRotator);
 		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_Gold, 100);
 	}
 	else if (RandomNumber < 0.6f)
 	{
-		GetWorld()->SpawnActor<AHPAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AHPAutoLootItem>(GetActorLocation() + FVector::UpVector * 80.0f, FRotator::ZeroRotator);
 		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_HP, 100);
 	}
 	else if (RandomNumber < 1.0f)
 	{
-		GetWorld()->SpawnActor<AAmmoAutoLootItem>(GetActorLocation(), FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AAmmoAutoLootItem>(GetActorLocation() + FVector::UpVector * 80.0f, FRotator::ZeroRotator);
 		//LSGameInstance->SpawnAutoLootItem(GetActorLocation(), ELootItemType::ELIT_RifleAmmo, 100);
 	}
 }

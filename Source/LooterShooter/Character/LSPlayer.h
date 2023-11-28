@@ -6,14 +6,12 @@
 #include "GameFramework/Character.h"
 #include "LooterShooter/Types/AmmoType.h"
 #include "LooterShooter/Data/PlayerBaseData.h"
-
 //////// recoil
 #include "Curves/CurveVector.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
 //////// end recoil
-
 #include "LSPlayer.generated.h"
 
 class USpringArmComponent;

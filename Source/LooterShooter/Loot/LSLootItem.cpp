@@ -14,7 +14,8 @@ ALSLootItem::ALSLootItem()
 	Trigger->SetSphereRadius(TriggerRange);
 	Trigger->SetCollisionProfileName(TEXT("LootItem"));
 	RootComponent = Trigger;
-	
+
+	/*
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LOOTITEM"));
 	ItemMesh->SetupAttachment(RootComponent);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_DEFAULTITEM(TEXT("/Game/LS/Meshes/Shape_Sphere.Shape_Sphere"));
@@ -23,6 +24,7 @@ ALSLootItem::ALSLootItem()
 		ItemMesh->SetStaticMesh(SM_DEFAULTITEM.Object);
 	}
 	ItemMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	*/
 
 	Effect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PARTICLE"));
 	Effect->SetupAttachment(RootComponent);

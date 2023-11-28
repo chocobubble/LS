@@ -46,6 +46,7 @@ void ALSPlayerState::SavePlayerData()
     {
         LSLOG_S(Error);
     }
+	LSLOG(Warning, TEXT("plyaer state weapon level - %d, enhance - %d"), CurrentOwnedWeapons[0]->GetWeaponLevel(), CurrentOwnedWeapons[0]->GetEnhancementLevel())
 }
 
 void ALSPlayerState::BindWithResourceManager(ULSResourceManageComponent* Target)
@@ -67,16 +68,13 @@ void ALSPlayerState::UpdateResourceData()
 	// CurrentAmmoMap 업데이트
 	// TODO : 다른 타입 총알도 적용
 	EAmmoType CurrentAmmoType = EAmmoType::EAT_Rifle;
-	SetCurrentAmmo(CurrentAmmoType, ResourceManger->GetCurrentAmmo(CurrentAmmoType));
-
+	CurrentAmmoMap[CurrentAmmoType] = ResourceManger->GetCurrentAmmo(CurrentAmmoType);
+	
 	SavePlayerData();
 }
 
-void ALSPlayerState::UpdateOwnedWeaponData(int32 Idx, int32 WeaponLevel, int32 WeaponEnhancementLevel)
+void ALSPlayerState::UpdateOwnedWeaponData()
 {
-	CurrentOwnedWeapons[Idx].Key = WeaponLevel;
-	CurrentOwnedWeapons[Idx].Value = WeaponEnhancementLevel;
-
 	SavePlayerData();
 }
 
@@ -152,7 +150,10 @@ void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)
 	CharacterLevel = NewCharacterLevel;
 }
 
-void ALSPlayerState::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
+void ALSPlayerState::SetCurrentAmmo(const TMap<EAmmoType, int32>& AmmoMap)
 {
-	CurrentAmmoMap[AmmoType] = Amount;
+	if (ResourceManger)
+	{
+		ResourceManger->SetCurrentAmmo(AmmoMap);
+	}
 }

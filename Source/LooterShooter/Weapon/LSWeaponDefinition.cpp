@@ -26,10 +26,11 @@ ALSWeaponInstance* ULSWeaponDefinition::InstantiateWeapon()
     return NewWeapon;
 }
 
-void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 WeaponLevel, int32 WeaponEnhancementLevel)
+void ULSWeaponDefinition::SetWeaponDefinitionData(FWeaponSaveData* WeaponSaveDataPtr)
 {
-	this->WeaponType = WeaponTypeParam;
-	WeaponItemLevel = WeaponLevel;
+	WeaponSaveData = WeaponSaveDataPtr;
+	WeaponType = WeaponSaveData->GetWeaponType();
+	WeaponItemLevel = WeaponSaveData->GetWeaponLevel();
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (LSGameInstance)
 	{
@@ -40,7 +41,7 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(EWeaponType WeaponTypeParam, i
 		}
 	}
 
-	EnhancementLevel = WeaponEnhancementLevel;
+	EnhancementLevel = WeaponSaveData->GetEnhancementLevel();
 	if (EnhancementLevel > 0)
 	{
 		for (int32 Idx = 0; Idx < EnhancementLevel; ++Idx)
@@ -73,25 +74,30 @@ void ULSWeaponDefinition::SetWeaponDefaultStats()
 	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
 	MaxRange = WeaponBaseData->MaxRange;
 	EnhancementLevel = 0;
-	OnWeaponStatChanged.Broadcast();
+	//OnWeaponStatChanged.Broadcast();
 }
 
 bool ULSWeaponDefinition::TryEnhanceWeapon()
 {
+	bool ReturnValue;
 	const float Rnd = FMath::FRandRange(0.0f, 1.0f);
 	if (Rnd <= 0.5f)
 	{
 		SetWeaponDefaultStats();
-		return false;
+		ReturnValue = false;
 	}
 	else
 	{
 		++EnhancementLevel;
 		EnhanceWeapon();
-		return true;
+		ReturnValue = true;
 	}
 	WeaponInstance->SetWeaponStats();
+	WeaponSaveData->SetEnhancementLevel(EnhancementLevel);
+	OnWeaponStatChanged.Broadcast();
+	LSLOG(Warning, TEXT("Enhance result : level - %d, enhance - %d"), WeaponSaveData->GetWeaponLevel(), WeaponSaveData->GetEnhancementLevel());
 
+	return ReturnValue;
 }
 
 void ULSWeaponDefinition::EnhanceWeapon()
@@ -100,10 +106,7 @@ void ULSWeaponDefinition::EnhanceWeapon()
 	BulletDamage = BulletDamage * 1.1f;
 	CriticalHitChance = CriticalHitChance * 1.1f;
 	CriticalHitMultiplier = CriticalHitMultiplier * 1.1f;
-	OnWeaponStatChanged.Broadcast(); 
-	//WeaponInstance->SetBaseWeaponDefinition(this);
-	//WeaponInstance->SetWeaponStats();
-	//WeaponInstance->Init();
+	//OnWeaponStatChanged.Broadcast(); 
 }
 
 void ULSWeaponDefinition::SetWeaponDefinitionStats()
@@ -113,14 +116,14 @@ void ULSWeaponDefinition::SetWeaponDefinitionStats()
 		return;
 	}
 
-	MagazineCapacity = WeaponBaseData->MagazineCapacity + FMath::FRandRange(-10.0f, 10.0f);
-	FireRate = WeaponBaseData->FireRate + FMath::FRandRange(-200.0f, 200.0f);
+	MagazineCapacity = WeaponBaseData->MagazineCapacity;
+	FireRate = WeaponBaseData->FireRate;
 	MovementSpeed = WeaponBaseData->MovementSpeed;
-	BulletDamage = WeaponBaseData->BulletDamage + FMath::FRandRange(-10.0f, 10.0f);
-	CriticalHitChance = WeaponBaseData->CriticalHitChance + FMath::FRandRange(-0.01f, 0.05f);
-	CriticalHitMultiplier = WeaponBaseData->CriticalHitMultiplier + FMath::FRandRange(-0.3f, 0.5f);
+	BulletDamage = WeaponBaseData->BulletDamage;
+	CriticalHitChance = WeaponBaseData->CriticalHitChance;
+	CriticalHitMultiplier = WeaponBaseData->CriticalHitMultiplier;
 	DamageReduceDistance = WeaponBaseData->DamageReduceDistance;
-	ReloadTime = WeaponBaseData->ReloadTime + FMath::FRandRange(-0.5f, 0.5f);
+	ReloadTime = WeaponBaseData->ReloadTime;
 	BulletsPerCatridge = WeaponBaseData->BulletsPerCatridge;
 	MaxRange = WeaponBaseData->MaxRange;
 }

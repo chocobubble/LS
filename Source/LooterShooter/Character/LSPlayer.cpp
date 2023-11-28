@@ -325,7 +325,6 @@ void ALSPlayer::Tick(float DeltaTime)
 	{
 		CurrentGrapplingCastingTime += DeltaTime;
 		Cable->CableLength = FMath::FInterpTo(0.0f, 1000.0f, DeltaTime, 50.0f);
-		LSLOG(Warning, TEXT("Grappling Cast"));
 	}
 
 	// 그래플링 훅 사용한 경우
@@ -355,6 +354,7 @@ void ALSPlayer::Tick(float DeltaTime)
 	// 반동 tick
 	RecoilTick(DeltaTime);
 
+	// fabrik
 	FVector OutPos;
 	FRotator OutRot;
 	if (CurrentWeapon && CurrentWeapon->GetWeaponMeshComponent())
@@ -437,7 +437,6 @@ void ALSPlayer::Look(const FInputActionValue& Value)
 	LSPlayerAnim = (LSPlayerAnim == nullptr) ? Cast<ULSPlayerAnimInstance>(GetMesh()->GetAnimInstance()) : LSPlayerAnim;
 	if (LSPlayerAnim)
 	{
-		LSLOG(Warning, TEXT("%f"), LookAxisVector.Y);
 		AOPitch = FMath::Clamp(AOPitch - LookAxisVector.Y, -30.0f, 30.0f);
 		LSPlayerAnim->SetAOPitch(AOPitch);
 	}
@@ -472,11 +471,12 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 
 	// 사격 후 소지 총알 감소
 	int32 CurrentRoundsRemaining = EquipmentManager->DecreaseRoundsRemaining();
-	LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetController());
-	if (LSPlayerController && LSPlayerController->GetPlayerState())
+	// LSPlayerController = LSPlayerController ? LSPlayerController : Cast<ALSPlayerController>(GetController());
+	if (ResourceManager)
 	{
 		// TODO: EAmmoType 다양하게
-		LSPlayerController->GetPlayerState()->SetCurrentAmmo(EAmmoType::EAT_Rifle, CurrentRoundsRemaining);
+		//LSPlayerController->GetPlayerState()->SetCurrentAmmo(EAmmoType::EAT_Rifle, CurrentRoundsRemaining);
+		//ResourceManager->SetCurrentAmmo(EAmmoType::EAT_Rifle, CurrentRoundsRemaining);
 	}
 	
 	
@@ -485,11 +485,9 @@ void ALSPlayer::Shoot(const FInputActionValue& Value)
 	{
 		if (HitResult.HasValidHitObjectHandle())
 		{
-			// LSLOG(Warning, TEXT("Hit Actor : %s"), *HitResult.GetActor()->GetName());
 			bool bIsWeakPoint = false;
 			if (HitResult.BoneName == TEXT("head"))
 			{
-				// LSLOG(Warning, TEXT("hit %s"), *HitResult.BoneName.ToString());
 				bIsWeakPoint = true;
 			}
 			const float FinalAttackDamage = GetFinalAttackDamage(bIsWeakPoint);
@@ -655,7 +653,6 @@ void ALSPlayer::OnReloadComplete()
 // TODO: equip 1,2,3 합치기
 void ALSPlayer::EquipFirstWeapon()
 {
-	LSLOG(Warning, TEXT("EquipFirstWeapon"));
 	if (EquipmentManager->GetWeaponInstance(0) == nullptr)
 	{
 		return;
@@ -668,7 +665,6 @@ void ALSPlayer::EquipFirstWeapon()
 
 void ALSPlayer::EquipSecondWeapon(const FInputActionValue& Value)
 {
-	LSLOG(Warning, TEXT("EquipSecondWeapon"));
 	if (EquipmentManager->GetWeaponInstance(1) == nullptr)
 	{
 		return;
@@ -679,7 +675,6 @@ void ALSPlayer::EquipSecondWeapon(const FInputActionValue& Value)
 
 void ALSPlayer::EquipThirdWeapon(const FInputActionValue& Value)
 {
-	LSLOG(Warning, TEXT("EquipThirdWeapon"));
 	if (EquipmentManager->GetWeaponInstance(2) == nullptr)
 	{
 		return;
@@ -709,7 +704,6 @@ void ALSPlayer::InteractCheck()
 
 	if (bResult)
 	{
-		//LSLOG(Warning, TEXT("Channel3"));
 		//InteractingObject = Cast<ALSInteractableObject>(HitResult.GetActor());
 	}
 }
@@ -718,7 +712,6 @@ void ALSPlayer::ThrowHook()
 {
 	if (HookHitResult.HasValidHitObjectHandle())
 	{
-		LSLOG(Warning, TEXT("Hit Actor : %s"), *HookHitResult.GetActor()->GetName());
 		bIsGrapplingCasting = true;
 		CurrentGrapplingCastingTime = 0.0f;
 		GetWorld()->GetTimerManager().SetTimer(
@@ -735,14 +728,6 @@ void ALSPlayer::ThrowHook()
 		AActor* TargetPos = GetWorld()->SpawnActor<ACableEnd>(GrappleToLocation, FRotator::ZeroRotator);
 		Cable->SetAttachEndTo(TargetPos, NAME_None);
 		Cable->SetVisibility(true);
-
-		/*
-		FVector Dir = GrappleToLocation - GetActorLocation();
-		Dir.Normalize();
-		LSLOG(Warning, TEXT("%f, %f, %f  - %f, %f, %f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z, Dir.X, Dir.Y, Dir.Z);
-		Cable->EndLocation = GetActorLocation() + (Dir * (Cable->CableLength));
-		*/
-
 	}
 }
 
@@ -764,25 +749,14 @@ void ALSPlayer::OnInteractButtonPressed(const FInputActionValue& Value)
 
 	if (bResult)
 	{
-		LSLOG(Warning, TEXT("Channel4"));
-		//InteractingObject = Cast<ALSInteractableObject>(HitResult.GetActor());
-		/*
-		ALSItemBox* ItemBox = Cast<ALSItemBox>(HitResult.GetActor());
-		if (ItemBox)
-		{
-			WeaponDefinition = ItemBox->GetWeaponItem();
-			InventoryManager->AddWeaponToInventory(WeaponDefinition);
-		}
-		*/
+
 	}
 }
 
 void ALSPlayer::UseFirstSkill()
 {
-	LSLOG(Warning, TEXT("Use First Skill"));
 	if (SkillManager)
 	{
-		LSLOG(Warning, TEXT("Use First Skill Success"));
 		SkillManager->CastFirstSkill();
 	}
 }
@@ -801,11 +775,13 @@ void ALSPlayer::SetInteractionElapsedTime(float ElapsedTime)
 	InteractionElapsedTime = ElapsedTime;
 	// Interact Progress Bar 업데이트 함수 호출
 	OnInteractProgress.Broadcast(GetInteractionElapsedRatio());
-	if (InteractionCompleteTime - InteractionElapsedTime <= 0.1f)
+	if (InteractionCompleteTime - InteractionElapsedTime <= 0.05f)
 	{
-		LSLOG(Warning, TEXT("Interact 1"));
 		InteractWithObject();
 		bCanInteract = false;
+		InteractionElapsedTime = 0.0f;
+		OnInteractProgress.Broadcast(0.0f);
+		SetIsNearInteractableObject(false);
 	}
 }
 
@@ -813,7 +789,6 @@ void ALSPlayer::InteractWithObject()
 {
 	if (InteractingObject)
 	{
-		LSLOG(Warning, TEXT("Interact 2"));
 		InteractingObject->Interact();
 	}	
 }
@@ -847,6 +822,7 @@ void ALSPlayer::CheckHit()
 		);
 		if (HitResult.bBlockingHit)
 		{
+			/*
 			DrawDebugSphere(
 				GetWorld(),
 				HitResult.ImpactPoint,
@@ -854,6 +830,7 @@ void ALSPlayer::CheckHit()
 				12,
 				FColor::Yellow
 			);
+			*/
 		}
 		else
 		{
@@ -869,7 +846,6 @@ void ALSPlayer::PlayThrowGrenadeMontage()
 {
 	if (LSPlayerAnim)
 	{
-		LSLOG(Warning, TEXT("Play Grenade Montage"));
 		LSPlayerAnim->Montage_Play(ThrowGrenadeMontage);
 		FName MontageSectionName = FName("ThrowGrenade");
 		LSPlayerAnim->Montage_JumpToSection(MontageSectionName);
@@ -880,7 +856,6 @@ void ALSPlayer::PlayRifleShootMontage()
 {
 	if (LSPlayerAnim)
 	{
-		LSLOG(Warning, TEXT("Play Shooting Montage"));
 		LSPlayerAnim->Montage_Play(RifleShootMontage);
 		//FName MontageSectionName = FName("Default");
 		//LSPlayerAnim->Montage_JumpToSection(MontageSectionName);
@@ -889,15 +864,12 @@ void ALSPlayer::PlayRifleShootMontage()
 
 void ALSPlayer::InitPlayerData()
 {
-	LSLOG(Warning, TEXT("Init Player Data"));
 	ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(GetPlayerState());
 	if (LSGameInstance && LSPlayerState && DefenseManager)
 	{
-		LSLOG(Warning, TEXT("FInd Player Data"));
 		PlayerData = LSGameInstance->GetLSPlayerData(LSPlayerState->GetCharacterLevel());
 		if (PlayerData)
 		{
-			LSLOG(Warning, TEXT("Set stats"));
 			DefenseManager->SetMaxHP(PlayerData->MaxHP);
 			DefenseManager->SetMaxMP(PlayerData->MaxMP);
 			DefenseManager->SetMaxShield(PlayerData->MaxShield);
@@ -972,9 +944,7 @@ bool ALSPlayer::CanShoot(EAmmoType AmmoType)
 float ALSPlayer::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	const float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-	//LSLOG(Warning, TEXT("Actor %s took damage : %f"), *GetName(), FinalDamage);
-	
+		
 	if (DefenseManager)
 	{
 		DefenseManager->SetDamage(FinalDamage);
@@ -1221,7 +1191,5 @@ FVector ALSPlayer::GetThrowSocketPos() const
 			return ThrowSocketPos;
 		}
 	}
-
-	LSLOG(Warning, TEXT("ZeroVector Pos"));
 	return FVector::ZeroVector;
 }

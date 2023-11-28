@@ -19,7 +19,7 @@ void ULSResourceManageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnResourceChanged.Broadcast();
+	//OnResourceChanged.Broadcast();
 }
 
 void ULSResourceManageComponent::SetCurrentAmmo(EAmmoType AmmoType, int32 Amount)
@@ -95,7 +95,7 @@ int32 ULSResourceManageComponent::GetMaxAmmo(EAmmoType AmmoType) const
 void ULSResourceManageComponent::SetGoldAmount(int32 Amount)
 {
 	GoldAmount = Amount;
-	OnResourceChanged.Broadcast();
+	//OnResourceChanged.Broadcast();
 }
 
 void ULSResourceManageComponent::ConsumeAmmo(EAmmoType AmmoType, int32 Amount)

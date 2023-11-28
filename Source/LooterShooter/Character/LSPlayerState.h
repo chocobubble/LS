@@ -5,6 +5,7 @@
 #include "LooterShooter/LooterShooter.h"
 #include "LooterShooter/System/LSGameInstance.h"
 #include "LooterShooter/Types/AmmoType.h"
+#include "LooterShooter/Data/WeaponSaveData.h"
 #include "GameFramework/PlayerState.h"
 #include "LSPlayerState.generated.h"
 
@@ -39,7 +40,7 @@ public:
 	UFUNCTION()
 	void UpdateResourceData();
 
-	void UpdateOwnedWeaponData(int32 Idx, int32 WeaponLevel, int32 WeaponEnhancementLevel);
+	void UpdateOwnedWeaponData();
 
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 
@@ -70,8 +71,7 @@ private:
 
 	TMap<EAmmoType, int32> CurrentAmmoMap;
 
-	// 무기 레벨, 무기 강화
-	TArray<TPair<int32, int32>> CurrentOwnedWeapons;
+	TArray<FWeaponSaveData*> CurrentOwnedWeapons;
 
 	FLSPlayerData* PlayerStatData;
 
@@ -98,7 +98,7 @@ public:
 		return CurrentAmmoMap;
 	}
 
-	TArray<TPair<int32, int32>>& GetOwnedWeapons()
+	TArray<FWeaponSaveData*>& GetOwnedWeapons()
 	{
 		return CurrentOwnedWeapons;
 	}
@@ -107,5 +107,6 @@ public:
 
 	void SetCharacterLevel(int32 NewCharacterLevel);
 
-	void SetCurrentAmmo(EAmmoType AmmoType, int32 Amount);
+	void SetCurrentAmmo(const TMap<EAmmoType, int32>& AmmoMap);
+
 };

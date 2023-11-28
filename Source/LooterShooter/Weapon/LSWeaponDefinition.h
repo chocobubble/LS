@@ -4,7 +4,7 @@
 
 #include "LooterShooter/LooterShooter.h"
 #include "UObject/NoExportTypes.h"
-#include "LooterShooter/Types/WeaponType.h"
+#include "LooterShooter/Data/WeaponSaveData.h"
 #include "LooterSHooter/Data/WeaponBaseData.h"
 #include "LSWeaponDefinition.generated.h"
 
@@ -30,7 +30,8 @@ public:
 	ALSWeaponInstance* InstantiateWeapon();
 
 	/** 아이템 레벨, 무기 타입에 따라 기본 스탯 설정 */
-	void SetWeaponDefinitionData(EWeaponType WeaponTypeParam, int32 WeaponLevel, int32 WeaponEnhancementLevel);
+	//void SetWeaponDefinitionData(const TSharedPtr<FWeaponSaveData>& WeaponSaveDataPtr);
+	void SetWeaponDefinitionData(FWeaponSaveData* WeaponSaveDataPtr);
 
 	/** 랜덤성을 부여하기 위해 랜덤으로 스탯 수치 수정 */
 	void SetWeaponDefinitionStats();
@@ -41,7 +42,10 @@ public:
 
 	void EnhanceWeapon();
 
-	FOnWeaponStatChangedDelegate OnWeaponStatChanged; 
+	FOnWeaponStatChangedDelegate OnWeaponStatChanged;
+
+	//TWeakPtr<FWeaponSaveData> WeaponSaveData;
+	FWeaponSaveData* WeaponSaveData;
 	
 private:
 	/** 

@@ -37,14 +37,16 @@ void ULSInventoryComponent::BeginPlay()
 	}
 	else
 	{
-		for (auto& Elem : LSPlayerState->GetOwnedWeapons())
+		for (FWeaponSaveData* Elem : LSPlayerState->GetOwnedWeapons())
 		{
 			int32 TempNum = GetEmptyIndex();
 			WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-			WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, Elem.Key, Elem.Value);
+			WeaponList[TempNum]->SetWeaponDefinitionData(Elem);
+			//WeaponList[TempNum]->WeaponSaveData = Elem;
 			EquipItem(TempNum);
 			++CurrentInventoryCapacity;
 			WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
+			LSLOG(Warning, TEXT("Default Weapon Created"));
 		}
 	}
 }
@@ -55,13 +57,13 @@ void ULSInventoryComponent::SetDefaultWeapon()
 	int32 DefaultWeaponEnhancementLevel = 1;
 	int32 TempNum = GetEmptyIndex();
 	WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);
-	WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
+	//WeaponList[TempNum]->SetWeaponDefinitionData(EWeaponType::EWT_Rifle, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
 	EquipItem(TempNum);
 	++CurrentInventoryCapacity;
 	WeaponList[TempNum]->OnWeaponStatChanged.AddUObject(this, &ULSInventoryComponent::UpdateWeaponDefinition);
 	
 	// 무기 상태 업데이트
-	LSPlayerState->UpdateOwnedWeaponData(0, DefaultWeaponLevel, DefaultWeaponEnhancementLevel);
+	LSPlayerState->UpdateOwnedWeaponData();
 }
 
 int32 ULSInventoryComponent::GetEmptyIndex()
@@ -104,6 +106,7 @@ void ULSInventoryComponent::EquipItem(int32 ItemIndex)
 
 void ULSInventoryComponent::UpdateWeaponDefinition()
 {
+	LSLOG(Warning, TEXT("Before Weapon State Update"));
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn)
 	{
@@ -113,7 +116,8 @@ void ULSInventoryComponent::UpdateWeaponDefinition()
 			LSPlayerState = Cast<ALSPlayerState>(Controller->GetPlayerState<ALSPlayerState>());
 			if (LSPlayerState)
 			{
-				LSPlayerState->UpdateOwnedWeaponData(0, WeaponList[0]->GetWeaponItemLevel(), WeaponList[0]->GetEnhancementLevel());
+				LSPlayerState->UpdateOwnedWeaponData();
+				LSLOG(Warning, TEXT("Weapon State Update"));
 			}
 		}
 	}
