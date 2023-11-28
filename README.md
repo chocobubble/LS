@@ -15,7 +15,7 @@
 ### 플레이 영상
 - 이미지 클릭 시 유튜브에서 영상이 실행됩니다.
 
-[![play](https://img.youtube.com/vi/KDOwoE6ikm4/0.jpg)](https://youtu.be/KDOwoE6ikm4)
+[![play](https://img.youtube.com/vi/FKlwz-1G0EQ/0.jpg)](https://youtu.be/FKlwz-1G0EQ)
 
 <br>
 
