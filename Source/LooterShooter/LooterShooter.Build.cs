@@ -21,6 +21,13 @@ public class LooterShooter : ModuleRules
 			"GameplayTasks",
 			"CableComponent",
 			"Niagara",
-			"MultiplayerSessions", "OnlineSubsystem", "OnlineSubsystemSteam"});
+			"MultiplayerSessions",
+			"OnlineSubsystem",
+			"OnlineSubsystemSteam",
+			"ExamplePlugin",
+			"protobuf",
+			"HTTP"});
+
+		//PublicIncludePathModuleNames.AddRange(new string[] { "ExamplePlugin/Public", "ExamplePlugin/Private" });
 	}
 }

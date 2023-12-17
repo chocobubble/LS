@@ -7,6 +7,8 @@
 #include "LooterShooter/Types/AmmoType.h"
 #include "LooterShooter/Data/WeaponSaveData.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "CharacterData.pb.h"
 #include "LSPlayerState.generated.h"
 
 
@@ -17,6 +19,7 @@ class ULSInventoryComponent;
 class ULSGameInstance;
 class ULSResourceManageComponent;
 class ULSWeaponDefinition;
+class AAHttpActor;
 struct FLSPlayerData;
 /**
  * 
@@ -42,7 +45,16 @@ public:
 
 	void UpdateOwnedWeaponData();
 
+	UFUNCTION()
+	void SaveDataToServer();//(const FString& SlotName, const int32 UserIndex, bool Value);
+
+	UFUNCTION()
+	void LoadDataFromServer();
+
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
+
+protected:
+	virtual void BeginPlay();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "State")
@@ -74,6 +86,14 @@ private:
 	TArray<FWeaponSaveData*> CurrentOwnedWeapons;
 
 	FLSPlayerData* PlayerStatData;
+
+	FAsyncSaveGameToSlotDelegate SavedDelegate;
+
+	UPROPERTY()
+	AAHttpActor* HttpActor;
+
+	CharacterData CurrentCharacterData;
+	WeaponSaveData CurrentWeaponData;
 
 public:
 	int32 GetCharacterLevel() const

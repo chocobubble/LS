@@ -8,11 +8,14 @@
 #include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
 #include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Network/AHttpActor.h"
+#include "CharacterData.pb.h"
 
 ALSPlayerState::ALSPlayerState()
 {
     SaveSlotName = TEXT("Player");
 	CurrentAmmoMap.Add(EAmmoType::EAT_Rifle, 0);
+	//SavedDelegate.BindUObject(this, &ALSPlayerState::SaveDataToServer);
 }
 
 void ALSPlayerState::InitPlayerData()
@@ -30,6 +33,8 @@ void ALSPlayerState::InitPlayerData()
 	CurrentAmmoMap[EAmmoType::EAT_Rifle] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::EAT_Rifle];
 
     SavePlayerData();
+
+	//SavedDelegate.BindUObject(this, &ALSPlayerState::Test);
 }
 
 void ALSPlayerState::SavePlayerData()
@@ -42,10 +47,13 @@ void ALSPlayerState::SavePlayerData()
 	NewPlayerData->SaveOwnedWeapons(CurrentOwnedWeapons);
 	NewPlayerData->SaveAmmoMap(CurrentAmmoMap);
 
+	
     if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
     {
         LSLOG_S(Error);
     }
+
+	//UGameplayStatics::AsyncSaveGameToSlot(NewPlayerData, SaveSlotName, 0, SavedDelegate);
 	LSLOG(Warning, TEXT("plyaer state weapon level - %d, enhance - %d"), CurrentOwnedWeapons[0]->GetWeaponLevel(), CurrentOwnedWeapons[0]->GetEnhancementLevel())
 }
 
@@ -76,6 +84,46 @@ void ALSPlayerState::UpdateResourceData()
 void ALSPlayerState::UpdateOwnedWeaponData()
 {
 	SavePlayerData();
+}
+
+void ALSPlayerState::SaveDataToServer()//(const FString& SlotName, const int32 UserIndex, bool Value)
+{
+	LSLOG(Warning, TEXT("save delegate"));
+	/*CharacterData CurrentCharacterData;
+	WeaponSaveData CurrentWeaponData;*/
+	CurrentWeaponData.set_weapontype(WeaponSaveData_WeaponType_EWT_RIFLE);
+	CurrentWeaponData.set_weaponlevel(CurrentOwnedWeapons[0]->GetWeaponLevel());
+	CurrentWeaponData.set_weaponenhancementlevel(CurrentOwnedWeapons[0]->GetEnhancementLevel());
+	CurrentCharacterData.set_level(CharacterLevel);
+	CurrentCharacterData.set_exp(CurrentExp);
+	CurrentCharacterData.set_playername(TCHAR_TO_ANSI(*GetPlayerName()));
+	CurrentCharacterData.set_gold(CurrentGold);
+	CurrentCharacterData.set_allocated_weaponsavedata(&CurrentWeaponData);
+
+	CurrentCharacterData.set_rifleammo(CurrentAmmoMap[EAmmoType::EAT_Rifle]);
+
+	//CurrentCharacterData.release_weaponsavedata();
+
+	if (HttpActor)
+	{
+		HttpActor->SaveData(CurrentCharacterData);
+		LSLOG(Warning, TEXT(" 서버에 데이터를 저장하는 데 성공했습니다. "));
+	}
+}
+
+void ALSPlayerState::LoadDataFromServer()
+{
+	if (HttpActor)
+	{
+		CurrentCharacterData = HttpActor->LoadData();
+		LSLOG(Warning, TEXT(" 서버에서 데이터를 가져오는 데 성공했습니다. "));
+	}
+}
+
+void ALSPlayerState::BeginPlay()
+{
+	FActorSpawnParameters SpawnParam;
+	HttpActor = GetWorld()->SpawnActor<AAHttpActor>(AAHttpActor::StaticClass(), FTransform());
 }
 
 int32 ALSPlayerState::GetNextExp() 
