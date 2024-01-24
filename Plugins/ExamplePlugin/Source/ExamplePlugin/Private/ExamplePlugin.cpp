@@ -3,7 +3,6 @@
 #include "ExamplePlugin.h"
 
 // protobuf
-#include "CharacterData.pb.h"
 ////
 
 #define LOCTEXT_NAMESPACE "FExamplePluginModule"

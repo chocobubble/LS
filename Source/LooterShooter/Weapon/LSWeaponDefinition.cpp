@@ -26,11 +26,11 @@ ALSWeaponInstance* ULSWeaponDefinition::InstantiateWeapon()
     return NewWeapon;
 }
 
-void ULSWeaponDefinition::SetWeaponDefinitionData(FWeaponSaveData* WeaponSaveDataPtr)
+void ULSWeaponDefinition::SetWeaponDefinitionData(const FWeaponSaveData& CurrentWeaponSaveData)
 {
-	WeaponSaveData = WeaponSaveDataPtr;
-	WeaponType = WeaponSaveData->GetWeaponType();
-	WeaponItemLevel = WeaponSaveData->GetWeaponLevel();
+	WeaponSaveData = CurrentWeaponSaveData;
+	WeaponType = WeaponSaveData.GetWeaponType();
+	WeaponItemLevel = WeaponSaveData.GetWeaponLevel();
 	ULSGameInstance* LSGameInstance = Cast<ULSGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (LSGameInstance)
 	{
@@ -41,7 +41,7 @@ void ULSWeaponDefinition::SetWeaponDefinitionData(FWeaponSaveData* WeaponSaveDat
 		}
 	}
 
-	EnhancementLevel = WeaponSaveData->GetEnhancementLevel();
+	EnhancementLevel = WeaponSaveData.GetEnhancementLevel();
 	if (EnhancementLevel > 0)
 	{
 		for (int32 Idx = 0; Idx < EnhancementLevel; ++Idx)
@@ -93,9 +93,9 @@ bool ULSWeaponDefinition::TryEnhanceWeapon()
 		ReturnValue = true;
 	}
 	WeaponInstance->SetWeaponStats();
-	WeaponSaveData->SetEnhancementLevel(EnhancementLevel);
+	WeaponSaveData.SetEnhancementLevel(EnhancementLevel);
 	OnWeaponStatChanged.Broadcast();
-	LSLOG(Warning, TEXT("Enhance result : level - %d, enhance - %d"), WeaponSaveData->GetWeaponLevel(), WeaponSaveData->GetEnhancementLevel());
+	LSLOG(Warning, TEXT("Enhance result : level - %d, enhance - %d"), WeaponSaveData.GetWeaponLevel(), WeaponSaveData.GetEnhancementLevel());
 
 	return ReturnValue;
 }

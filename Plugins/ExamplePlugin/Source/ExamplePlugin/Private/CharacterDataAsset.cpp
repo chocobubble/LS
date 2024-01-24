@@ -3,65 +3,64 @@
 
 #include "CharacterDataAsset.h"
 
+
 void UCharacterDataAsset::MakeProto(size_t& OutSize)
 {
-    CharacterData characterData;
-    WeaponSaveData weaponSaveData;
-    weaponSaveData.set_weapontype(WeaponSaveData_WeaponType_EWT_RIFLE);
-    weaponSaveData.set_weaponlevel(2);
-    weaponSaveData.set_weaponenhancementlevel(3);
-    characterData.set_level(3);
-    characterData.set_exp(5);
-    characterData.set_playername("palyer");
-    characterData.set_gold(100);
-    //characterData.CharacterData::
-    WeaponSaveData t = characterData.weaponsavedata();
-    t.set_weaponenhancementlevel(3);
-    t.set_weaponlevel(2);
-    t.set_weapontype(WeaponSaveData_WeaponType_EWT_RIFLE);
-    characterData.set_rifleammo(1000);
-    //byte[] bytes = Encoding.UTF8.GetBytes("prototo");
-    
-    //OutSize = characterData.ByteSizeLong();
-    /*OutSize = 1000;
-    void* buffer = malloc(OutSize);
-    characterData.SerializeToArray(buffer, OutSize);*/
+    //weaponSaveData.set_weapontype(EWT_RIFLE);
+    //weaponSaveData.set_weaponlevel(2);
+    //weaponSaveData.set_weaponenhancementlevel(3);
+    //characterData.set_level(3);
+    //characterData.set_exp(5);
+    //characterData.set_playername("palyer");
+    //characterData.set_gold(100);
+    ////characterData.CharacterData::
+    //WeaponSaveData t = characterData.weaponsavedata();
+    //t.set_weaponenhancementlevel(3);
+    //t.set_weaponlevel(2);
+    //t.set_weapontype(EWT_RIFLE);
+    //characterData.set_rifleammo(1000);
+    ////byte[] bytes = Encoding.UTF8.GetBytes("prototo");
+    //
+    ////OutSize = characterData.ByteSizeLong();
+    ///*OutSize = 1000;
+    //void* buffer = malloc(OutSize);
+    //characterData.SerializeToArray(buffer, OutSize);*/
 
-    //FString str = UTF8_TO_TCHAR(characterData.SerializeAsString().c_str());
+    ////FString str = UTF8_TO_TCHAR(characterData.SerializeAsString().c_str());
 
 
-    std::string str = characterData.SerializeAsString();
-    UE_LOG(LogTemp, Warning, TEXT("data string : %s , size is : %d"), UTF8_TO_TCHAR(str.c_str()), str.size());
-    UE_LOG(LogTemp, Warning, TEXT("%s"), &str);
+    //std::string str = characterData.SerializeAsString();
+    //UE_LOG(LogTemp, Warning, TEXT("data string : %s , size is : %d"), UTF8_TO_TCHAR(str.c_str()), str.size());
+    //UE_LOG(LogTemp, Warning, TEXT("%s"), &str);
 
-    CharacterData secondData;
-    secondData.ParseFromString(str);
-    UE_LOG(LogTemp, Warning, TEXT("second data level : %d"), secondData.level());
+    //CharacterData secondData;
+    //secondData.ParseFromString(str);
+    //UE_LOG(LogTemp, Warning, TEXT("second data level : %d"), secondData.level());
 
-    uint8 buffer[100];
-    if (characterData.SerializeToArray(buffer, 100))
-    {
-        FString Result;
-        for (int32 idx = 0; idx < 100; ++idx)
-        {
-            int8 value = buffer[idx];
-            Result += TCHAR(value);
+    //uint8 buffer[100];
+    //if (characterData.SerializeToArray(buffer, 100))
+    //{
+    //    FString Result;
+    //    for (int32 idx = 0; idx < 100; ++idx)
+    //    {
+    //        int8 value = buffer[idx];
+    //        Result += TCHAR(value);
 
-        }
-        UE_LOG(LogTemp, Warning, TEXT("second serialize string : %s"), *Result);
-    }
+    //    }
+    //    UE_LOG(LogTemp, Warning, TEXT("second serialize string : %s"), *Result);
+    //}
 
 
-    // test
-    /*CharacterData test;
-    test.ParseFromArray(buffer, OutSize);
-    UE_LOG(LogTemp, Warning, TEXT("OUtSize : %d"), OutSize);
-    UE_LOG(LogTemp, Warning, TEXT("test - levle : %d"), test.level());
-    
-    free(buffer);*/
-    //return buffer;
+    //// test
+    ///*CharacterData test;
+    //test.ParseFromArray(buffer, OutSize);
+    //UE_LOG(LogTemp, Warning, TEXT("OUtSize : %d"), OutSize);
+    //UE_LOG(LogTemp, Warning, TEXT("test - levle : %d"), test.level());
+    //
+    //free(buffer);*/
+    ////return buffer;
    
-    google::protobuf::ShutdownProtobufLibrary();
+    //google::protobuf::ShutdownProtobufLibrary();//
 }
 
 bool UCharacterDataAsset::Parse(const uint8*& Buffer, size_t length)
@@ -137,7 +136,24 @@ bool UCharacterDataAsset::ParseTest()
 
 int32 UCharacterDataAsset::Test()
 {
-
     return data.level();
 }
+
+void UCharacterDataAsset::SerializeData()
+{
+    weaponSaveData.set_weapontype(EWT_RIFLE);
+    weaponSaveData.set_weaponlevel(2);
+    weaponSaveData.set_weaponenhancementlevel(3);
+    characterData.set_level(3);
+    characterData.set_exp(5);
+    characterData.set_playername("player");
+    characterData.set_gold(100);
+    characterData.set_allocated_weaponsavedata(&weaponSaveData);
+    characterData.set_rifleammo(100);
+    //characterData.release_weaponsavedata();
+}
+
+//void UCharacterDataAsset::SynchronizeCharacterData(const FServerSaveData& SaveData)
+//{
+//}
 

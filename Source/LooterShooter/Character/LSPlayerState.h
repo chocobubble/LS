@@ -8,7 +8,6 @@
 #include "LooterShooter/Data/WeaponSaveData.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "CharacterData.pb.h"
 #include "LSPlayerState.generated.h"
 
 
@@ -19,8 +18,10 @@ class ULSInventoryComponent;
 class ULSGameInstance;
 class ULSResourceManageComponent;
 class ULSWeaponDefinition;
-class AAHttpActor;
+class AHttpActor;
+class ULSSaveGame;
 struct FLSPlayerData;
+struct FServerSaveData;
 /**
  * 
  */
@@ -33,6 +34,10 @@ public:
 	ALSPlayerState();
 
 	bool AddExp(int32 IncomeExp);
+
+	void SaveSessionId();
+
+	void CreateNewSaveData();
 
 	void InitPlayerData();
 
@@ -48,8 +53,12 @@ public:
 	UFUNCTION()
 	void SaveDataToServer();//(const FString& SlotName, const int32 UserIndex, bool Value);
 
+
 	UFUNCTION()
-	void LoadDataFromServer();
+	void DataLoadRequestToServer();
+
+	UFUNCTION()
+	void LoadDataFromServer(const FServerSaveData& LoadData);
 
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 
@@ -83,17 +92,23 @@ private:
 
 	TMap<EAmmoType, int32> CurrentAmmoMap;
 
-	TArray<FWeaponSaveData*> CurrentOwnedWeapons;
+	TArray<FWeaponSaveData> CurrentOwnedWeapons;
 
 	FLSPlayerData* PlayerStatData;
 
 	FAsyncSaveGameToSlotDelegate SavedDelegate;
 
 	UPROPERTY()
-	AAHttpActor* HttpActor;
+	AHttpActor* HttpActor;
 
-	CharacterData CurrentCharacterData;
-	WeaponSaveData CurrentWeaponData;
+	UPROPERTY(VisibleAnywhere, Category = "Network")
+	FString SessionId = "Default";
+
+	UPROPERTY(VisibleAnywhere, Category = "Network")
+	bool IsLogin = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Save")
+	ULSSaveGame* LSSaveGame;
 
 public:
 	int32 GetCharacterLevel() const
@@ -118,9 +133,14 @@ public:
 		return CurrentAmmoMap;
 	}
 
-	TArray<FWeaponSaveData*>& GetOwnedWeapons()
+	TArray<FWeaponSaveData>& GetOwnedWeapons()
 	{
 		return CurrentOwnedWeapons;
+	}
+
+	const FString& GetSessionId() const
+	{
+		return SessionId;
 	}
 
 	float GetExpRatio();
@@ -129,4 +149,8 @@ public:
 
 	void SetCurrentAmmo(const TMap<EAmmoType, int32>& AmmoMap);
 
+	AHttpActor* GetHttpActor()
+	{
+		return HttpActor;
+	}
 };

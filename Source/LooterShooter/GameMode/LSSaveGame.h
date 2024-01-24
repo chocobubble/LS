@@ -59,7 +59,10 @@ private:
 
 	TMap<EAmmoType, int32> AmmoMap;
 
-	TArray<FWeaponSaveData*> SavedWeapons;
+	TArray<FWeaponSaveData> SavedWeapons;
+
+	UPROPERTY(VisibleAnywhere, Category = "Network")
+	FString SessionId = "DefaultSessionId";
 
 public:
 	int32 GetSavedCharacterLevel() const
@@ -82,7 +85,12 @@ public:
 		return Gold;
 	}
 
-	TArray<FWeaponSaveData*>& GetSavedOwnedWeapons()
+	FString GetSavedSessionId() const
+	{
+		return SessionId;
+	}
+
+	TArray<FWeaponSaveData>& GetSavedOwnedWeapons()
 	//TArray<TSharedPtr<FWeaponSaveData>>& GetSavedOwnedWeapons()
 	{
 		return SavedWeapons;
@@ -101,7 +109,7 @@ public:
 		Exp = CurrentExp;
 	}
 
-	void SavePlayerName(FString Name)
+	void SavePlayerName(const FString& Name)
 	{
 		PlayerName = Name;
 	}
@@ -113,6 +121,12 @@ public:
 
 	void SaveAmmoMap(TMap<EAmmoType, int32>& CurrentAmmoMap);
 
+	void SaveSessionId(const FString& CurrentSessionId)
+	{
+		SessionId = CurrentSessionId;
+	}
+
+
 	//void SaveOwnedWeapons(TArray<TPair<int32, int32>>& CurrentOwnedWeapons)
 	//void SaveOwnedWeapons(const TArray<TSharedPtr<FWeaponSaveData>>* CurrentOwnedWeapons)
 	//{
@@ -123,5 +137,5 @@ public:
 			OwnedWeapons[Index]->SetEnhancementLevel(*CurrentOwnedWeapons[Index]->GetEnhancementLevel());
 		}*/
 	//}
-	void SaveOwnedWeapons(TArray<FWeaponSaveData*>& CurrentOwnedWeapons);
+	void SaveOwnedWeapons(TArray<FWeaponSaveData>& CurrentOwnedWeapons);
 };

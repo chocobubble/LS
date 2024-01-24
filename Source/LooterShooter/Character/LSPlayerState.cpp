@@ -8,23 +8,39 @@
 #include "LooterShooter/Component/LSResourceManageComponent.h"
 #include "LooterShooter/Component/LSInventoryComponent.h"
 #include "LooterShooter/Character/LSPlayerController.h"
-#include "LooterShooter/Network/AHttpActor.h"
-#include "CharacterData.pb.h"
+#include "LooterShooter/Network/HttpActor.h"
+#include "LooterShooter/Data/ServerSaveData.h"
 
 ALSPlayerState::ALSPlayerState()
 {
-    SaveSlotName = TEXT("Player");
+    SaveSlotName = TEXT("Player12345");
 	CurrentAmmoMap.Add(EAmmoType::EAT_Rifle, 0);
 	//SavedDelegate.BindUObject(this, &ALSPlayerState::SaveDataToServer);
 }
 
+
+void ALSPlayerState::CreateNewSaveData()
+{
+	LSLOG(Warning, TEXT("Create New Save Game"));
+	LSSaveGame = GetMutableDefault<ULSSaveGame>();
+	//LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::CreateSaveGameObject(ULSSaveGame::StaticClass()));
+}
+
 void ALSPlayerState::InitPlayerData()
 {
-    ULSSaveGame* LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
-    if (LSSaveGame == nullptr)
-    {
-        LSSaveGame = GetMutableDefault<ULSSaveGame>();
-    }
+	LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+
+	if (LSSaveGame == nullptr)
+	{
+		CreateNewSaveData();
+	}
+
+	SessionId = LSSaveGame->GetSavedSessionId();
+	if (HttpActor)
+	{
+		HttpActor->SetSessionId(SessionId);
+	}
+
     SetPlayerName(LSSaveGame->GetSavedPlayerName());
     SetCharacterLevel(LSSaveGame->GetSavedCharacterLevel());
     CurrentExp = LSSaveGame->GetSavedCharacterExp();
@@ -32,7 +48,12 @@ void ALSPlayerState::InitPlayerData()
 	CurrentOwnedWeapons = LSSaveGame->GetSavedOwnedWeapons();
 	CurrentAmmoMap[EAmmoType::EAT_Rifle] = LSSaveGame->GetSavedAmmoMap()[EAmmoType::EAT_Rifle];
 
+	LSLOG(Warning, TEXT("Init Player Data"));
+
     SavePlayerData();
+
+	///////
+	LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 
 	//SavedDelegate.BindUObject(this, &ALSPlayerState::Test);
 }
@@ -48,13 +69,20 @@ void ALSPlayerState::SavePlayerData()
 	NewPlayerData->SaveAmmoMap(CurrentAmmoMap);
 
 	
-    if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
+    /*if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
     {
         LSLOG_S(Error);
-    }
+    }*/
+
+	LSSaveGame = NewPlayerData;
+	if (!UGameplayStatics::SaveGameToSlot(LSSaveGame, SaveSlotName, 0))
+	{
+		LSLOG_S(Error);
+	}
 
 	//UGameplayStatics::AsyncSaveGameToSlot(NewPlayerData, SaveSlotName, 0, SavedDelegate);
-	LSLOG(Warning, TEXT("plyaer state weapon level - %d, enhance - %d"), CurrentOwnedWeapons[0]->GetWeaponLevel(), CurrentOwnedWeapons[0]->GetEnhancementLevel())
+	LSLOG(Warning, TEXT("plyaer state weapon level - %d, enhance - %d"), CurrentOwnedWeapons[0].GetWeaponLevel(), CurrentOwnedWeapons[0].GetEnhancementLevel())
+		LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 }
 
 void ALSPlayerState::BindWithResourceManager(ULSResourceManageComponent* Target)
@@ -78,7 +106,12 @@ void ALSPlayerState::UpdateResourceData()
 	EAmmoType CurrentAmmoType = EAmmoType::EAT_Rifle;
 	CurrentAmmoMap[CurrentAmmoType] = ResourceManger->GetCurrentAmmo(CurrentAmmoType);
 	
+	LSLOG(Warning, TEXT("Update REsource Data"));
 	SavePlayerData();
+	if (IsLogin)
+	{
+		//SaveDataToServer();
+	}
 }
 
 void ALSPlayerState::UpdateOwnedWeaponData()
@@ -89,9 +122,7 @@ void ALSPlayerState::UpdateOwnedWeaponData()
 void ALSPlayerState::SaveDataToServer()//(const FString& SlotName, const int32 UserIndex, bool Value)
 {
 	LSLOG(Warning, TEXT("save delegate"));
-	/*CharacterData CurrentCharacterData;
-	WeaponSaveData CurrentWeaponData;*/
-	CurrentWeaponData.set_weapontype(WeaponSaveData_WeaponType_EWT_RIFLE);
+	/*CurrentWeaponData.set_weapontype(EWT_RIFLE);
 	CurrentWeaponData.set_weaponlevel(CurrentOwnedWeapons[0]->GetWeaponLevel());
 	CurrentWeaponData.set_weaponenhancementlevel(CurrentOwnedWeapons[0]->GetEnhancementLevel());
 	CurrentCharacterData.set_level(CharacterLevel);
@@ -100,30 +131,88 @@ void ALSPlayerState::SaveDataToServer()//(const FString& SlotName, const int32 U
 	CurrentCharacterData.set_gold(CurrentGold);
 	CurrentCharacterData.set_allocated_weaponsavedata(&CurrentWeaponData);
 
-	CurrentCharacterData.set_rifleammo(CurrentAmmoMap[EAmmoType::EAT_Rifle]);
+	CurrentCharacterData.set_rifleammo(CurrentAmmoMap[EAmmoType::EAT_Rifle]);*/
 
-	//CurrentCharacterData.release_weaponsavedata();
+	FServerSaveData SaveData;
+	SaveData.CharacterLevel = CharacterLevel;
+	SaveData.CharacterExp = CurrentExp;
+	SaveData.PlayerName = TCHAR_TO_ANSI(*GetPlayerName());
+	SaveData.Gold = CurrentGold;
+	SaveData.RifleAmmo = CurrentAmmoMap[EAmmoType::EAT_Rifle];
+	SaveData.WeaponType = EWeaponType::EWT_Rifle;
+	SaveData.WeaponLevel = CurrentOwnedWeapons[0].GetWeaponLevel();
+	SaveData.EnhancementLevel = CurrentOwnedWeapons[0].GetEnhancementLevel();
+
+	LSLOG(Warning, TEXT("CharacterLevel : %d \n Exp : %d \n PlayerName %s \n GOld : %d \n WeaponType : %d \n Weapon Level : %d \n Ammo : %d"),
+		SaveData.CharacterLevel, SaveData.CharacterExp, *SaveData.PlayerName, SaveData.Gold, SaveData.WeaponType, SaveData.WeaponLevel,
+		SaveData.EnhancementLevel, SaveData.RifleAmmo);
 
 	if (HttpActor)
 	{
-		HttpActor->SaveData(CurrentCharacterData);
-		LSLOG(Warning, TEXT(" 서버에 데이터를 저장하는 데 성공했습니다. "));
+		HttpActor->SetSessionId(SessionId);
+		HttpActor->SynchronizeCharacterData(SaveData);
+		HttpActor->SaveData();
+		// LSLOG(Warning, TEXT(" 서버에 데이터를 저장하는 데 성공했습니다. "));
 	}
 }
 
-void ALSPlayerState::LoadDataFromServer()
+void ALSPlayerState::DataLoadRequestToServer()
 {
 	if (HttpActor)
 	{
-		CurrentCharacterData = HttpActor->LoadData();
-		LSLOG(Warning, TEXT(" 서버에서 데이터를 가져오는 데 성공했습니다. "));
+		HttpActor->SetSessionId(SessionId);
+		HttpActor->LoadData();
 	}
+}
+
+void ALSPlayerState::LoadDataFromServer(const FServerSaveData& LoadData)
+{
+	//CharacterLevel = LoadData.CharacterLevel;
+	//CurrentExp = LoadData.CharacterExp;
+	////SetPlayerName()
+	//CurrentGold = LoadData.Gold;
+	//CurrentAmmoMap[EAmmoType::EAT_Rifle] = LoadData.RifleAmmo;
+	////SaveData.WeaponType = EWeaponType::EWT_Rifle;
+	//CurrentOwnedWeapons[0]->SetWeaponLevel(LoadData.WeaponLevel);
+	//CurrentOwnedWeapons[0]->SetEnhancementLevel(LoadData.EnhancementLevel);
+	//SavePlayerData();
+
+	ULSSaveGame* NewPlayerData = NewObject<ULSSaveGame>();
+	NewPlayerData->SavePlayerName(GetPlayerName());
+	NewPlayerData->SaveCharacterLevel(LoadData.CharacterLevel);
+	NewPlayerData->SaveCharacterExp(LoadData.CharacterExp);
+	NewPlayerData->SaveGold(LoadData.Gold);
+	if (CurrentOwnedWeapons.Num() == 0)
+	{
+		CurrentOwnedWeapons.Add(FWeaponSaveData());
+	}
+	CurrentOwnedWeapons[0].EnhancementLevel = LoadData.EnhancementLevel;
+	CurrentOwnedWeapons[0].WeaponLevel = LoadData.WeaponLevel;
+	CurrentOwnedWeapons[0].WeaponType = EWeaponType((int)LoadData.WeaponType);
+	NewPlayerData->SaveOwnedWeapons(CurrentOwnedWeapons);
+	CurrentAmmoMap[EAmmoType::EAT_Rifle] = LoadData.RifleAmmo;
+	NewPlayerData->SaveAmmoMap(CurrentAmmoMap);
+
+
+	/*if (!UGameplayStatics::SaveGameToSlot(NewPlayerData, SaveSlotName, 0))
+	{
+		LSLOG_S(Error);
+	}*/
+
+	LSSaveGame = NewPlayerData;
+	if (!UGameplayStatics::SaveGameToSlot(LSSaveGame, SaveSlotName, 0))
+	{
+		LSLOG_S(Error);
+	}
+
+	LSSaveGame = Cast<ULSSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 }
 
 void ALSPlayerState::BeginPlay()
 {
 	FActorSpawnParameters SpawnParam;
-	HttpActor = GetWorld()->SpawnActor<AAHttpActor>(AAHttpActor::StaticClass(), FTransform());
+	HttpActor = GetWorld()->SpawnActor<AHttpActor>(AHttpActor::StaticClass(), FTransform());
+	HttpActor->Init(this);
 }
 
 int32 ALSPlayerState::GetNextExp() 
@@ -186,6 +275,23 @@ bool ALSPlayerState::AddExp(int32 IncomeExp)
     SavePlayerData();
 
     return bDidLevelUp;
+}
+
+void ALSPlayerState::SaveSessionId()
+{
+	if (HttpActor)
+	{
+		SessionId = HttpActor->GetSessionId();
+	}
+
+	//ULSSaveGame* NewPlayerData = NewObject<ULSSaveGame>();
+	//NewPlayerData->SaveSessionId(SessionId);
+	LSSaveGame->SaveSessionId(SessionId);
+
+	if (!UGameplayStatics::SaveGameToSlot(LSSaveGame, SaveSlotName, 0))
+	{
+		LSLOG_S(Error);
+	}
 }
 
 void ALSPlayerState::SetCharacterLevel(int32 NewCharacterLevel)

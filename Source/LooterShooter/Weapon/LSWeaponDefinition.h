@@ -31,7 +31,7 @@ public:
 
 	/** 아이템 레벨, 무기 타입에 따라 기본 스탯 설정 */
 	//void SetWeaponDefinitionData(const TSharedPtr<FWeaponSaveData>& WeaponSaveDataPtr);
-	void SetWeaponDefinitionData(FWeaponSaveData* WeaponSaveDataPtr);
+	void SetWeaponDefinitionData(const FWeaponSaveData& CurrentWeaponSaveData);
 
 	/** 랜덤성을 부여하기 위해 랜덤으로 스탯 수치 수정 */
 	void SetWeaponDefinitionStats();
@@ -45,7 +45,7 @@ public:
 	FOnWeaponStatChangedDelegate OnWeaponStatChanged;
 
 	//TWeakPtr<FWeaponSaveData> WeaponSaveData;
-	FWeaponSaveData* WeaponSaveData;
+	FWeaponSaveData WeaponSaveData;
 	
 private:
 	/** 

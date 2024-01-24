@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "CharacterData.pb.h"
+#include "Protocol.pb.h"
 
 #include "CharacterDataAsset.generated.h"
 
@@ -16,6 +16,7 @@ class EXAMPLEPLUGIN_API UCharacterDataAsset : public UObject
 {
 	GENERATED_BODY()
 
+	friend class AHttpActor;
 public:
 	 void MakeProto(size_t& OutSize);
 
@@ -26,7 +27,13 @@ public:
 	 bool ParseTest();
 	 int32 Test();
 
-public:
+	 void SerializeData();
+	// void SynchronizeCharacterData(const FServerSaveData& SaveData);
+private:
 	 CharacterData data;
-	
+	 CharacterData characterData;
+	 WeaponSaveData weaponSaveData;
+	 FString SerializedCharacterData;
+
+
 };

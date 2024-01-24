@@ -37,7 +37,7 @@ void ULSInventoryComponent::BeginPlay()
 	}
 	else
 	{
-		for (FWeaponSaveData* Elem : LSPlayerState->GetOwnedWeapons())
+		for (const FWeaponSaveData& Elem : LSPlayerState->GetOwnedWeapons())
 		{
 			int32 TempNum = GetEmptyIndex();
 			WeaponList[TempNum] = NewObject<ULSWeaponDefinition>(this);

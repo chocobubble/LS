@@ -122,6 +122,10 @@ private:
 //////////////test///////
 	UPROPERTY(VisibleAnywhere, Category = "TEST")
 	UMaterialInstance* MI;
+
+	UPROPERTY(EditAnywhere, Category = "TEST", meta = (AllowPrivateAccess = "true"))
+	int32 SessionId = 1;
+	/////////////////////////
 /////////////////////////
 
 public:

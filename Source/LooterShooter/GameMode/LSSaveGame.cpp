@@ -13,7 +13,7 @@ ULSSaveGame::ULSSaveGame()
 
 	if (SavedWeapons.Num() == 0)
 	{
-		SavedWeapons.Add(&FirstWeaponData);
+		SavedWeapons.Add(FirstWeaponData);
 	}
 }
 
@@ -34,14 +34,14 @@ void ULSSaveGame::SaveAmmoMap(TMap<EAmmoType, int32>& CurrentAmmoMap)
 	LSLOG(Warning, TEXT("%d rifle ammo saved"), RifleAmmo);
 }
 
-void ULSSaveGame::SaveOwnedWeapons(TArray<FWeaponSaveData*>& CurrentOwnedWeapons)
+void ULSSaveGame::SaveOwnedWeapons(TArray<FWeaponSaveData>& CurrentOwnedWeapons)
 {
-	if (SavedWeapons[0] == nullptr || CurrentOwnedWeapons[0] == nullptr)
+	if (SavedWeapons.IsEmpty() || CurrentOwnedWeapons.IsEmpty())
 	{
 		LSLOG(Warning, TEXT("SavedOwnWeaponS nullptr"));
 		return;
 	}
 	//SavedWeapons[0]->SetWeaponLevel(CurrentOwnedWeapons[0]->GetWeaponLevel());
-	SavedWeapons[0]->SetEnhancementLevel(CurrentOwnedWeapons[0]->GetEnhancementLevel());
+	SavedWeapons[0].SetEnhancementLevel(CurrentOwnedWeapons[0].GetEnhancementLevel());
 	LSLOG(Warning, TEXT("%d Owndweapon level, %d owned weapon enhancement"), FirstWeaponData.WeaponLevel, FirstWeaponData.EnhancementLevel);
 }

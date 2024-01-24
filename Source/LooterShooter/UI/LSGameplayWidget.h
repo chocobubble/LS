@@ -24,7 +24,7 @@ public:
 	void OnReturnToTitleClicked();
 	
 	UFUNCTION()
-	void OnRetryGameClicked();
+	void OnSaveClicked();
 
 protected:
 	virtual void NativeConstruct() override;
@@ -37,5 +37,5 @@ protected:
 	UButton* ReturnToTitleButton;
 
 	UPROPERTY()
-	UButton* RetryGameButton;
+	UButton* SaveButton;
 };

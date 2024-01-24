@@ -4,6 +4,8 @@
 #include "LSGameplayWidget.h"
 #include "Components/Button.h"
 #include "LooterShooter/Character/LSPlayerController.h"
+#include "LooterShooter/Character/LSPlayerState.h"
+#include "LooterShooter/Network/HttpActor.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULSGameplayWidget::NativeConstruct()
@@ -22,10 +24,10 @@ void ULSGameplayWidget::NativeConstruct()
         ReturnToTitleButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnReturnToTitleClicked);
     }
 
-    RetryGameButton = Cast<UButton>(GetWidgetFromName(TEXT("btnRetryGame")));
-    if (RetryGameButton)
+    SaveButton = Cast<UButton>(GetWidgetFromName(TEXT("btnSave")));
+    if (SaveButton)
     {
-        RetryGameButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnRetryGameClicked);
+        SaveButton->OnClicked.AddDynamic(this, &ULSGameplayWidget::OnSaveClicked);
     }
 }
 
@@ -46,11 +48,15 @@ void ULSGameplayWidget::OnReturnToTitleClicked()
     UGameplayStatics::OpenLevel(GetWorld(), TEXT("Title"));
 }
 
-void ULSGameplayWidget::OnRetryGameClicked()
+void ULSGameplayWidget::OnSaveClicked()
 {
     ALSPlayerController* LSPlayerController = Cast<ALSPlayerController>(GetOwningPlayer());
     if (LSPlayerController)
     {
-        LSPlayerController->RestartLevel();
+        ALSPlayerState* LSPlayerState = Cast<ALSPlayerState>(LSPlayerController->PlayerState);
+        if (LSPlayerState)
+        {
+            LSPlayerState->SaveDataToServer();
+        }
     }
 }
